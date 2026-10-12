@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: meu-assessor-financeiro
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+    disk:
+      name: data-disk
+      mountPath: /app/data
+      sizeGB: 1

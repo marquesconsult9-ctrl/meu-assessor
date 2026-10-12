@@ -1,0 +1,141 @@
+{
+  "id": "wf-financeiro-salvo",
+  "nodes": [
+    {
+      "id": "node-trigger-webhook",
+      "type": "trigger-webhook",
+      "title": "Gatilho: Webhook Financeiro",
+      "subtitle": "Recebe eventos de pagamentos instantâneos",
+      "x": 120,
+      "y": 180,
+      "config": {
+        "endpointId": "financeiro-pix",
+        "httpMethod": "POST",
+        "authType": "bearer",
+        "secretToken": "secret_fin_token_2026",
+        "filterEvent": "pix.recebido",
+        "expectedSchema": "PixPayment",
+        "responseStatus": 200,
+        "responseJson": "{\n  \"status\": \"received\",\n  \"system\": \"FinFlow Engine\",\n  \"processed\": true\n}"
+      }
+    },
+    {
+      "id": "node-filter-valor",
+      "type": "condition",
+      "title": "Condição: Valor Mínimo",
+      "subtitle": "payload.valor >= 50.00",
+      "x": 520,
+      "y": 180,
+      "config": {
+        "conditionField": "valor",
+        "conditionOperator": ">=",
+        "conditionValue": "50.00"
+      }
+    },
+    {
+      "id": "node-action-conciliacao",
+      "type": "financial-action",
+      "title": "Conciliação Financeira",
+      "subtitle": "Lançar no Contas a Receber",
+      "x": 900,
+      "y": 100,
+      "config": {
+        "tipoLancamento": "RECEITA",
+        "categoria": "Vendas Online (Pix)",
+        "contaBancaria": "Conta Digital PJ (0001 / 98765-4)",
+        "autoCompensar": true
+      }
+    },
+    {
+      "id": "node-action-notificacao",
+      "type": "notification",
+      "title": "Notificação Push / Slack",
+      "subtitle": "Canal #financeiro-alertas",
+      "x": 900,
+      "y": 290,
+      "config": {
+        "canal": "#financeiro-recebimentos",
+        "template": "💰 *Novo Pix Confirmado!*\n• Valor: R$ {{payload.valor}}\n• Pagador: {{payload.pagador.nome}}\n• ID Transação: {{payload.endToEndId}}"
+      }
+    },
+    {
+      "id": "node_financial-action_mv54cdzn",
+      "type": "financial-action",
+      "title": "Conciliação Financeira",
+      "subtitle": "Lança crédito no contas a receber",
+      "x": 179,
+      "y": 306,
+      "config": {
+        "tipoLancamento": "RECEITA",
+        "categoria": "Vendas Online (Pix)",
+        "contaBancaria": "Conta Digital PJ (0001 / 98765-4)",
+        "autoCompensar": true
+      }
+    },
+    {
+      "id": "node_tax-invoice_mv54cg6f",
+      "type": "tax-invoice",
+      "title": "Emitir NFS-e / Recibo",
+      "subtitle": "Gera comprovante ou nota fiscal",
+      "x": 179,
+      "y": 306,
+      "config": {
+        "modelo": "NFS-e Municipal",
+        "aliquotaIss": "2.00%",
+        "descricaoServico": "Serviços de consultoria financeira e tecnologia"
+      }
+    },
+    {
+      "id": "node_notification_mv54chf6",
+      "type": "notification",
+      "title": "Notificação WhatsApp / Slack",
+      "subtitle": "Dispara alerta para equipe financeira",
+      "x": 179,
+      "y": 306,
+      "config": {
+        "canal": "#financeiro-recebimentos",
+        "template": "💰 *Novo Pix Confirmado!*\n• Valor: R$ {{payload.valor}}\n• Pagador: {{payload.pagador.nome}}\n• ID Transação: {{payload.endToEndId}}"
+      }
+    },
+    {
+      "id": "node_trigger-webhook_mv54cip7",
+      "type": "trigger-webhook",
+      "title": "Gatilho: Webhook",
+      "subtitle": "Disparo via requisição HTTP externa",
+      "x": 179,
+      "y": 306,
+      "config": {
+        "endpointId": "financeiro-pix",
+        "httpMethod": "POST",
+        "authType": "bearer",
+        "secretToken": "secret_fin_token_2026",
+        "filterEvent": "pix.recebido",
+        "responseStatus": 200,
+        "responseJson": "{\n  \"status\": \"received\",\n  \"system\": \"FinFlow Engine\",\n  \"processed\": true\n}"
+      }
+    }
+  ],
+  "connections": [
+    {
+      "id": "conn-1",
+      "fromNode": "node-trigger-webhook",
+      "fromPort": "output",
+      "toNode": "node-filter-valor",
+      "toPort": "input"
+    },
+    {
+      "id": "conn-2",
+      "fromNode": "node-filter-valor",
+      "fromPort": "output-true",
+      "toNode": "node-action-conciliacao",
+      "toPort": "input"
+    },
+    {
+      "id": "conn-3",
+      "fromNode": "node-filter-valor",
+      "fromPort": "output-true",
+      "toNode": "node-action-notificacao",
+      "toPort": "input"
+    }
+  ]
+}

@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meu Assessor • Gestão Financeira, Cartões & WhatsApp</title>
+  <meta name="description" content="Sistema financeiro inteligente estilo Meu Assessor com registro via WhatsApp, controle de limites e cartões, e projeção de término de faturas.">
+
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- CSS Stylesheets -->
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+
+  <div id="app-container" style="display: flex; flex-direction: column; height: 100vh; overflow: hidden;">
+    <!-- TOP NAVBAR -->
+    <header class="app-header">
+      <div class="brand-wrapper">
+        <div class="brand-avatar">🤖</div>
+        <div class="brand-texts">
+          <h1>Meu Assessor <span>•</span> Finanças</h1>
+          <p>Assistente WhatsApp & Gestão de Cartões</p>
+        </div>
+      </div>
+
+      <!-- NAVIGATION TABS -->
+      <nav class="nav-tabs">
+        <button class="nav-tab-btn active" data-tab="tab-overview">
+          <span>📊</span> Visão Geral
+        </button>
+        <button class="nav-tab-btn" data-tab="tab-cards">
+          <span>💳</span> Cartões & Faturas
+        </button>
+        <button class="nav-tab-btn" data-tab="tab-connect-whatsapp">
+          <span>📲</span> Conectar WhatsApp
+        </button>
+        <button class="nav-tab-btn" data-tab="tab-chat">
+          <span>💬</span> Chat Simulador
+        </button>
+        <button class="nav-tab-btn" data-tab="tab-transactions">
+          <span>📜</span> Extrato
+        </button>
+        <button class="nav-tab-btn" data-tab="tab-cloud">
+          <span>☁️</span> Nuvem 24/7
+        </button>
+      </nav>
+
+      <!-- HEADER ACTIONS -->
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <div class="status-badge" id="header-status-badge">
+          <span class="status-pulse-dot"></span>
+          <span>Pronto</span>
+        </div>
+        <button id="btn-open-new-tx-modal" class="btn btn-primary">
+          <span>+</span> Novo Lançamento
+        </button>
+      </div>
+    </header>
+
+    <!-- MAIN SCROLLABLE CONTENT -->
+    <main class="main-scroll-view">
+      
+      <!-- ===================================================================
+           TAB 1: VISÃO GERAL (DASHBOARD GERAL)
+           =================================================================== -->
+      <div class="tab-pane active" id="tab-overview">
+        <!-- METRICS ROW -->
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-card-top">
+              <span class="metric-title">Saldo Disponível</span>
+              <div class="metric-icon-box" style="background: rgba(16, 185, 129, 0.15); color: #34d399;">💵</div>
+            </div>
+            <div class="metric-val positive" id="metric-balance">R$ 0,00</div>
+            <div class="metric-sub">Conta corrente & investimentos líquidos</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-card-top">
+              <span class="metric-title">Receitas no Mês</span>
+              <div class="metric-icon-box" style="background: rgba(16, 185, 129, 0.15); color: #34d399;">📈</div>
+            </div>
+            <div class="metric-val positive" id="metric-income">R$ 0,00</div>
+            <div class="metric-sub">Entradas via Pix, salário e freelas</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-card-top">
+              <span class="metric-title">Despesas no Mês</span>
+              <div class="metric-icon-box" style="background: rgba(239, 68, 68, 0.15); color: #f87171;">📉</div>
+            </div>
+            <div class="metric-val negative" id="metric-expense">R$ 0,00</div>
+            <div class="metric-sub">Gastos avulsos em conta e débito</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-card-top">
+              <span class="metric-title">Faturas Atuais (Cartões)</span>
+              <div class="metric-icon-box" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24;">💳</div>
+            </div>
+            <div class="metric-val warning" id="metric-invoices">R$ 0,00</div>
+            <div class="metric-sub">Soma das faturas abertas deste mês</div>
+          </div>
+        </div>
+
+        <!-- QUICK PROJECTION HIGHLIGHT -->
+        <div class="projection-hero-banner">
+          <div class="projection-banner-left">
+            <span class="projection-pill">🏁 Projeção dos seus Parcelamentos</span>
+            <h2 class="projection-banner-title">
+              Faturas totalmente quitadas em: <span id="overview-proj-finish">Calculando...</span>
+            </h2>
+            <p class="projection-banner-desc">
+              Você possui compras parceladas nos cartões de crédito. Acesse a aba <strong>Cartões & Faturas</strong> para ver a previsão mês a mês de como sua fatura irá reduzir até zerar.
+            </p>
+          </div>
+          <div class="projection-banner-stats">
+            <div class="projection-stat-badge">
+              <span>Status dos Parcelamentos</span>
+              <span id="overview-proj-months" style="color: #a855f7;">--</span>
+            </div>
+            <button class="btn btn-secondary" onclick="document.querySelector('[data-tab=\'tab-cards\']').click()">
+              Ver Projeção Detalhada →
+            </button>
+          </div>
+        </div>
+
+        <!-- RECENT TRANSACTIONS PREVIEW -->
+        <div class="chart-card">
+          <div class="chart-header">
+            <div>
+              <h3>Últimas Movimentações</h3>
+              <p>Transações registradas diretamente pelo WhatsApp ou painel</p>
+            </div>
+            <button class="btn-ghost" onclick="document.querySelector('[data-tab=\'tab-transactions\']').click()">Ver Extrato Completo</button>
+          </div>
+          <div id="overview-recent-transactions" style="display: flex; flex-direction: column;"></div>
+        </div>
+      </div>
+
+      <!-- ===================================================================
+           TAB 2: CARTÕES & PROJEÇÃO DE FATURAS
+           =================================================================== -->
+      <div class="tab-pane" id="tab-cards">
+        <div class="projection-hero-banner" id="projection-hero-box"></div>
+
+        <div>
+          <h3 style="font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 14px; display: flex; align-items: center; gap: 8px;">
+            <span>💳</span> Seus Cartões de Crédito & Limites
+          </h3>
+          <div class="credit-cards-grid" id="credit-cards-grid"></div>
+        </div>
+
+        <div class="chart-card">
+          <div class="chart-header">
+            <div>
+              <h3>📉 Projeção de Faturas Futuras (Próximos 18 Meses)</h3>
+              <p>Observe a redução gradual da sua fatura à medida que os parcelamentos são quitados. Clique em uma barra para ver os itens de cada mês.</p>
+            </div>
+            <span class="table-finish-badge">Clique no mês para ver itens</span>
+          </div>
+
+          <div class="projection-bars-container" id="projection-bars-container"></div>
+        </div>
+
+        <div class="installments-table-card">
+          <div class="table-header-box">
+            <div>
+              <h3>🛍️ Compras Parceladas Ativas</h3>
+              <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">
+                Estas compras compõem a sua fatura atual e as projeções futuras até a data final de quitação.
+              </p>
+            </div>
+          </div>
+          <div style="overflow-x: auto;">
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Compra / Descrição</th>
+                  <th>Cartão</th>
+                  <th>Valor da Parcela</th>
+                  <th>Progresso (Atual/Total)</th>
+                  <th>Valor Total</th>
+                  <th>Previsão de Término</th>
+                </tr>
+              </thead>
+              <tbody id="installments-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===================================================================
+           TAB 3: CONECTAR WHATSAPP (QR CODE DIRETO NO CELULAR)
+           =================================================================== -->
+      <div class="tab-pane" id="tab-connect-whatsapp">
+        <div class="chart-card" style="align-items: center; text-align: center; max-width: 800px; margin: 0 auto; width: 100%;">
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+            <span id="wa-connection-badge" class="table-finish-badge" style="background: rgba(255,255,255,0.1); color: var(--text-muted); font-size: 13px; padding: 6px 14px;">
+              ○ Desconectado
+            </span>
+            <h2 id="wa-status-title" style="font-size: 22px; font-weight: 800; color: #fff; margin-top: 6px;">
+              Conecte seu WhatsApp com QR Code
+            </h2>
+            <p style="font-size: 13px; color: var(--text-muted); max-width: 500px;">
+              Vincule seu WhatsApp pessoal ou um número secundário para registrar gastos e consultar faturas conversando direto pelo aplicativo no celular.
+            </p>
+          </div>
+
+          <!-- QR CODE CONTAINER -->
+          <div id="wa-qrcode-box" style="margin: 24px 0; display: flex; flex-direction: column; align-items: center;">
+            <div style="width: 260px; height: 260px; border: 2px dashed var(--border-medium); border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: var(--text-subtle);">
+              <span style="font-size: 38px;">📷</span>
+              <span style="font-size: 13px;">Clique abaixo para gerar o QR Code</span>
+            </div>
+          </div>
+
+          <!-- CONNECTED BOX (SHOWN WHEN CONNECTED) -->
+          <div id="wa-connected-box" style="display: none; flex-direction: column; align-items: center; gap: 12px; margin: 24px 0; background: rgba(16, 185, 129, 0.1); border: 1.5px solid rgba(16, 185, 129, 0.4); padding: 24px 32px; border-radius: 16px;">
+            <span style="font-size: 42px;">📱✅</span>
+            <h3 style="font-size: 18px; font-weight: 800; color: #34d399;">WhatsApp Vinculado com Sucesso!</h3>
+            <p style="font-size: 13px; color: #cbd5e1;">Número Conectado: <strong id="wa-connected-phone-display" style="color: #fff; font-family: var(--font-mono);"></strong></p>
+            <p style="font-size: 12px; color: var(--text-muted); max-width: 440px;">
+              Agora abra seu WhatsApp no celular e envie uma mensagem como <em>"Almoço 35 no débito"</em> ou <em>"quando acabo a fatura?"</em> para si mesmo ou para o número!
+            </p>
+          </div>
+
+          <!-- ACTION BUTTONS -->
+          <div style="display: flex; gap: 12px;">
+            <button id="btn-whatsapp-connect" class="btn btn-primary" style="padding: 12px 24px; font-size: 14px;">
+              📲 Conectar com QR Code
+            </button>
+            <button id="btn-whatsapp-logout" class="btn btn-ghost" style="display: none; padding: 12px 20px; font-size: 14px; color: var(--color-danger); border-color: rgba(239, 68, 68, 0.3);">
+              Desconectar WhatsApp
+            </button>
+          </div>
+
+          <!-- INSTRUCTIONS ACCORDION -->
+          <div style="margin-top: 32px; text-align: left; background: rgba(0,0,0,0.3); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 20px; width: 100%;">
+            <h4 style="font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+              <span>📖</span> Como Conectar pelo Celular Passo a Passo:
+            </h4>
+            <ol style="margin-left: 20px; font-size: 12px; color: #cbd5e1; display: flex; flex-direction: column; gap: 8px; line-height: 1.5;">
+              <li>Abra o <strong>WhatsApp</strong> no seu smartphone.</li>
+              <li>Toque nos <strong>três pontinhos ⋮</strong> (no Android) ou em <strong>Ajustes ⚙️</strong> (no iPhone).</li>
+              <li>Toque na opção <strong>Aparelhos Conectados</strong>.</li>
+              <li>Toque em <strong>Conectar um Aparelho</strong>.</li>
+              <li>Aponte a câmera do seu celular para o <strong>QR Code</strong> exibido nesta tela.</li>
+              <li>Pronto! O robô do Meu Assessor estará ativo e responderá às suas mensagens no WhatsApp.</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===================================================================
+           TAB 4: CHAT SIMULADOR DO WHATSAPP (TESTES NA WEB)
+           =================================================================== -->
+      <div class="tab-pane" id="tab-chat">
+        <div class="whatsapp-chat-container">
+          <div class="chat-sidebar">
+            <div class="chat-sidebar-header">
+              <div class="contact-avatar">🤖</div>
+              <div style="font-size: 14px; font-weight: 700; color: #e9edef;">Conversas</div>
+            </div>
+            <div class="chat-contact-item">
+              <div class="contact-avatar">🤖</div>
+              <div class="contact-info">
+                <div class="contact-name-row">
+                  <span class="contact-name">Meu Assessor IA</span>
+                  <span style="font-size: 10px; color: #8696a0;">Agora</span>
+                </div>
+                <span class="contact-last-msg">Assistente Financeiro Pessoal</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="chat-main-window">
+            <div class="chat-topbar">
+              <div class="chat-partner-info">
+                <div class="contact-avatar" style="width: 38px; height: 38px; font-size: 18px;">🤖</div>
+                <div>
+                  <div style="font-size: 14px; font-weight: 700; color: #e9edef;">Meu Assessor IA</div>
+                  <div class="chat-status-text">● Online • Simulador Web</div>
+                </div>
+              </div>
+              <span style="font-size: 11px; color: #8696a0;">WhatsApp Simulado</span>
+            </div>
+
+            <div class="chat-messages-area" id="chat-messages-area"></div>
+
+            <div class="chat-suggestions-bar">
+              <span style="font-size: 11px; color: #8696a0; white-space: nowrap;">Atalhos rápidos:</span>
+              <button class="chat-suggestion-chip" data-msg="Almoço 45 no débito">🍔 Almoço 45</button>
+              <button class="chat-suggestion-chip" data-msg="Comprei TV 2400 em 10x no nubank">📺 TV 2400 em 10x Nubank</button>
+              <button class="chat-suggestion-chip" data-msg="Recebi 3500 de salário">💵 Recebi 3500 salário</button>
+              <button class="chat-suggestion-chip" data-msg="quando acabo de pagar a fatura?">🏁 Quando acabo a fatura?</button>
+              <button class="chat-suggestion-chip" data-msg="fatura">💳 Ver Faturas e Limites</button>
+              <button class="chat-suggestion-chip" data-msg="saldo">💰 Saldo e Resumo</button>
+            </div>
+
+            <div class="chat-input-bar">
+              <input type="text" id="chat-input" class="chat-text-input" placeholder="Digite uma mensagem... Ex: 'Comprei tênis 300 em 3x no inter' ou 'quando acabo a fatura?'" />
+              <button id="chat-send-btn" class="chat-send-btn" title="Enviar Mensagem">➤</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===================================================================
+           TAB 5: EXTRATO COMPLETO DE TRANSAÇÕES
+           =================================================================== -->
+      <div class="tab-pane" id="tab-transactions">
+        <div class="installments-table-card">
+          <div class="table-header-box">
+            <div>
+              <h3>Extrato Geral de Movimentações</h3>
+              <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">
+                Histórico detalhado de receitas, despesas em conta corrente e compras nos cartões.
+              </p>
+            </div>
+            <button class="btn btn-secondary" onclick="document.getElementById('btn-open-new-tx-modal').click()">+ Lançar Movimentação</button>
+          </div>
+          <div style="overflow-x: auto;">
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Descrição / Data</th>
+                  <th>Tipo</th>
+                  <th>Categoria</th>
+                  <th>Forma de Pagamento</th>
+                  <th>Valor</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody id="transactions-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===================================================================
+           TAB 6: SUBIR PARA NUVEM 24/7 (RENDER, RAILWAY OU TÚNEL)
+           =================================================================== -->
+      <div class="tab-pane" id="tab-cloud">
+        <div class="chart-card">
+          <div class="chart-header">
+            <div>
+              <h3>☁️ Hospedagem na Nuvem 24/7 (Acesso de Qualquer Lugar)</h3>
+              <p>Coloque o seu sistema online para funcionar mesmo com o seu computador desligado.</p>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 18px; margin-top: 10px;">
+            <!-- OPÇÃO 1: RENDER.COM (GRÁTIS) -->
+            <div style="background: rgba(0,0,0,0.3); border: 1.5px solid rgba(139, 92, 246, 0.4); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 12px;">
+              <span class="table-finish-badge" style="background: rgba(139, 92, 246, 0.2); color: #c084fc;">🚀 1-Click Deploy Gratuito</span>
+              <h4 style="font-size: 16px; font-weight: 800; color: #fff;">Hospedar no Render.com</h4>
+              <p style="font-size: 12px; color: var(--text-muted); line-height: 1.5;">
+                O Render oferece hospedagem Node.js gratuita e nós já geramos o arquivo <code>render.yaml</code> e <code>Dockerfile</code> prontos no seu projeto.
+              </p>
+              <ol style="margin-left: 18px; font-size: 12px; color: #cbd5e1; line-height: 1.6;">
+                <li>Crie uma conta gratuita em <a href="https://render.com" target="_blank" style="color: #38bdf8;">render.com</a>.</li>
+                <li>Clique em <strong>New +</strong> ➡️ <strong>Web Service</strong>.</li>
+                <li>Conecte seu repositório GitHub desta pasta.</li>
+                <li>Pronto! Ele iniciará automaticamente com URL pública HTTPS (ex: <code>https://meu-assessor.onrender.com</code>).</li>
+              </ol>
+            </div>
+
+            <!-- OPÇÃO 2: RAILWAY.APP -->
+            <div style="background: rgba(0,0,0,0.3); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 12px;">
+              <span class="table-finish-badge" style="background: rgba(16, 185, 129, 0.2); color: #34d399;">⚡ Super Rápido</span>
+              <h4 style="font-size: 16px; font-weight: 800; color: #fff;">Hospedar no Railway.app</h4>
+              <p style="font-size: 12px; color: var(--text-muted); line-height: 1.5;">
+                O Railway detecta o <code>Dockerfile</code> automaticamente e sobe em menos de 1 minuto com persistência.
+              </p>
+              <ol style="margin-left: 18px; font-size: 12px; color: #cbd5e1; line-height: 1.6;">
+                <li>Acesse <a href="https://railway.app" target="_blank" style="color: #38bdf8;">railway.app</a>.</li>
+                <li>Selecione <strong>Deploy from GitHub repo</strong>.</li>
+                <li>Gera domínio público com SSL automático na hora.</li>
+              </ol>
+            </div>
+
+            <!-- OPÇÃO 3: TÚNEL IMEDIATO DO COMPUTADOR -->
+            <div style="background: rgba(0,0,0,0.3); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 12px;">
+              <span class="table-finish-badge" style="background: rgba(245, 158, 11, 0.2); color: #fbbf24;">⚡ Imediato sem conta</span>
+              <h4 style="font-size: 16px; font-weight: 800; color: #fff;">Túnel Público pelo Terminal</h4>
+              <p style="font-size: 12px; color: var(--text-muted); line-height: 1.5;">
+                Você também pode rodar um túnel instantâneo pelo terminal agora mesmo usando:
+              </p>
+              <div class="snippet-box" style="margin-top: 4px;">
+                <pre>npx localtunnel --port 3000</pre>
+              </div>
+              <p style="font-size: 11px; color: var(--text-subtle);">
+                Gera na hora uma URL pública segura HTTPS para você acessar no celular enquanto o computador estiver ligado.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- MODAL: NOVO LANÇAMENTO MANUAL -->
+  <div class="modal-overlay" id="new-tx-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Novo Lançamento Financeiro</h3>
+        <button class="btn-ghost" id="close-new-tx-modal" style="border: none; font-size: 18px;">✕</button>
+      </div>
+      <form id="new-tx-form" class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Descrição</label>
+          <input class="form-input" id="tx-in-desc" placeholder="Ex: Almoço restaurante, Farmácia, Salário" required />
+        </div>
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label class="form-label">Tipo</label>
+            <select class="form-select" id="tx-in-type">
+              <option value="EXPENSE">Despesa (-)</option>
+              <option value="INCOME">Receita (+)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Valor (R$)</label>
+            <input class="form-input" id="tx-in-amount" type="number" step="0.01" placeholder="0.00" required />
+          </div>
+        </div>
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label class="form-label">Categoria</label>
+            <select class="form-select" id="tx-in-category">
+              <option value="Alimentação">Alimentação</option>
+              <option value="Mercado">Mercado</option>
+              <option value="Transporte">Transporte</option>
+              <option value="Saúde">Saúde</option>
+              <option value="Moradia & Contas">Moradia & Contas</option>
+              <option value="Renda & Salário">Renda & Salário</option>
+              <option value="Lazer">Lazer</option>
+              <option value="Outros">Outros</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Forma de Pagamento</label>
+            <select class="form-select" id="tx-in-method">
+              <option value="DEBIT">Débito em Conta</option>
+              <option value="PIX">Pix</option>
+              <option value="CREDIT_CARD">Cartão de Crédito</option>
+              <option value="CASH">Dinheiro</option>
+            </select>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary" style="margin-top: 10px;">Salvar Lançamento</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: DETALHES DOS ITENS DA FATURA PROJETADA DE UM MÊS -->
+  <div class="modal-overlay" id="details-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="details-modal-title">Itens da Fatura</h3>
+        <button class="btn-ghost" id="close-details-modal" style="border: none; font-size: 18px;">✕</button>
+      </div>
+      <div class="modal-body" id="details-modal-body"></div>
+    </div>
+  </div>
+
+  <!-- TOAST CONTAINER -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- SCRIPTS -->
+  <script src="js/dashboard.js"></script>
+</body>
+</html>
