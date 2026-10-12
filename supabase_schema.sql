@@ -157,11 +157,28 @@ ALTER TABLE budgets ENABLE ROW LEVEL SECURITY;
 ALTER TABLE goals ENABLE ROW LEVEL SECURITY;
 ALTER TABLE bills ENABLE ROW LEVEL SECURITY;
 
+-- Políticas de acesso (com DROP IF EXISTS para permitir executar várias vezes sem erro)
+DROP POLICY IF EXISTS "Acesso público completo settings" ON financial_settings;
 CREATE POLICY "Acesso público completo settings" ON financial_settings FOR ALL USING (true) WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Acesso público completo cards" ON cards;
 CREATE POLICY "Acesso público completo cards" ON cards FOR ALL USING (true) WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Acesso público completo installments" ON installments;
 CREATE POLICY "Acesso público completo installments" ON installments FOR ALL USING (true) WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Acesso público completo transactions" ON transactions;
 CREATE POLICY "Acesso público completo transactions" ON transactions FOR ALL USING (true) WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Acesso público completo chat" ON chat_history;
 CREATE POLICY "Acesso público completo chat" ON chat_history FOR ALL USING (true) WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Acesso público completo budgets" ON budgets;
 CREATE POLICY "Acesso público completo budgets" ON budgets FOR ALL USING (true) WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Acesso público completo goals" ON goals;
 CREATE POLICY "Acesso público completo goals" ON goals FOR ALL USING (true) WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Acesso público completo bills" ON bills;
 CREATE POLICY "Acesso público completo bills" ON bills FOR ALL USING (true) WITH CHECK (true);
+
