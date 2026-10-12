@@ -86,6 +86,10 @@ function initTabsNavigation() {
 }
 
 window.navigateToTab = function(tabId) {
+  if (tabId === 'tab-whatsapp') {
+    tabId = 'tab-settings';
+  }
+
   // Update sidebar active state
   document.querySelectorAll('.app-sidebar .nav-link').forEach(l => {
     l.classList.toggle('active', l.getAttribute('data-tab') === tabId);
@@ -105,8 +109,7 @@ window.navigateToTab = function(tabId) {
     'tab-lancamentos': 'Lançamentos',
     'tab-planejamento': 'Planejamento',
     'tab-open-finance': 'Open Finance & Cartões',
-    'tab-whatsapp': 'WhatsApp 24/7 & Assistente',
-    'tab-settings': 'Meu Perfil & Configurações'
+    'tab-settings': 'Configurações & Integrações'
   };
   const titleEl = document.getElementById('topbar-title');
   if (titleEl && titles[tabId]) titleEl.textContent = titles[tabId];
