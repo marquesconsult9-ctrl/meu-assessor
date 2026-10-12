@@ -12,19 +12,8 @@ let isPrivacyMode = false;
 let currentFilter = 'todos';
 let calcExpression = '10+4';
 
-// Sample Bills for Pagar / A Receber (Matches Images 3 & 4)
-let billsToPay = [
-  { id: 'p1', date: '10/10', desc: 'Energia Elétrica (Enel)', amount: 185.40, paid: false },
-  { id: 'p2', date: '15/10', desc: 'Internet Fibra', amount: 129.90, paid: false },
-  { id: 'p3', date: '20/10', desc: 'Aluguel & Condomínio', amount: 2200.00, paid: false },
-  { id: 'p4', date: '24/10', desc: 'Fatura Nubank Ultravioleta', amount: 960.00, paid: false }
-];
-
-let billsToReceive = [
-  { id: 'r1', date: '05/10', desc: 'Salário Mensal', amount: 8500.00, received: true },
-  { id: 'r2', date: '12/10', desc: 'Consultoria Financeira', amount: 1500.00, received: false },
-  { id: 'r3', date: '28/10', desc: 'Dividendos & Rendimentos', amount: 480.00, received: false }
-];
+let billsToPay = [];
+let billsToReceive = [];
 
 // Helper: Currency Formatter with Privacy toggle
 function formatCurrency(val) {
@@ -174,12 +163,12 @@ function initHeaderTools() {
 function updateHeroBalanceView(btype) {
   const valEl = document.getElementById('dash-metric-balance');
   if (!valEl) return;
-  const balance = currentFinancialData ? currentFinancialData.accountBalance : 4580.50;
+  const balance = currentFinancialData ? currentFinancialData.accountBalance : 0;
 
   if (btype === 'emergencia') {
-    valEl.textContent = formatCurrency(currentFinancialData?.emergencyReserve || 1832.20);
+    valEl.textContent = formatCurrency(currentFinancialData?.emergencyReserve || 0);
   } else if (btype === 'investimento') {
-    valEl.textContent = formatCurrency(currentFinancialData?.investmentsBalance || 1603.17);
+    valEl.textContent = formatCurrency(currentFinancialData?.investmentsBalance || 0);
   } else {
     valEl.textContent = formatCurrency(balance);
   }
@@ -252,9 +241,10 @@ function renderAllViews() {
   const expenseEl = document.getElementById('dash-metric-expense');
   const balanceEl = document.getElementById('dash-metric-balance');
 
-  if (incomeEl) incomeEl.textContent = formatCurrency(currentFinancialData.currentMonthIncome || 8500);
-  if (expenseEl) expenseEl.textContent = formatCurrency((currentFinancialData.currentMonthExpenses || 0) + (currentFinancialData.totalInvoicesCurrent || 1200));
-  if (balanceEl) balanceEl.textContent = formatCurrency(currentFinancialData.accountBalance);
+  if (incomeEl) incomeEl.textContent = formatCurrency(currentFinancialData.currentMonthIncome || 0);
+  const totalExp = (currentFinancialData.currentMonthExpenses || 0) + (currentFinancialData.totalInvoicesCurrent || 0);
+  if (expenseEl) expenseEl.textContent = formatCurrency(totalExp);
+  if (balanceEl) balanceEl.textContent = formatCurrency(currentFinancialData.accountBalance || 0);
 
   // Render recent mini table
   renderRecentTxTable();

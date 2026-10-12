@@ -34,9 +34,9 @@ if (isSupabaseConfigured) {
 
 // Local In-Memory Store
 let localDb = {
-  accountBalance: 4580.50,
-  emergencyReserve: 1832.20,
-  investmentsBalance: 1603.17,
+  accountBalance: 0,
+  emergencyReserve: 0,
+  investmentsBalance: 0,
   alertDueDates: true,
   alertBudgetLimit: true,
   alertWeeklyReport: true,
@@ -44,24 +44,9 @@ let localDb = {
   installments: [],
   transactions: [],
   chatHistory: [],
-  budgets: [
-    { id: 'orc-1', category: 'Operacional', monthlyLimit: 3000.00, spentAmount: 1650.00 },
-    { id: 'orc-2', category: 'Tecnologia & Software', monthlyLimit: 1200.00, spentAmount: 540.00 },
-    { id: 'orc-3', category: 'Logística & Transporte', monthlyLimit: 2000.00, spentAmount: 1200.00 }
-  ],
-  goals: [
-    { id: 'goal-1', title: 'Aporte Imobiliário', targetAmount: 50000.00, currentAmount: 40500.00, deadlineDate: '2027-12-31' },
-    { id: 'goal-2', title: 'Renovação de Veículo', targetAmount: 45500.00, currentAmount: 36400.00, deadlineDate: '2027-06-30' }
-  ],
-  bills: [
-    { id: 'bill-p1', description: 'Energia Elétrica (Enel)', amount: 185.40, dueDate: '2026-10-10', type: 'PAY', isPaid: false },
-    { id: 'bill-p2', description: 'Internet Fibra', amount: 129.90, dueDate: '2026-10-15', type: 'PAY', isPaid: false },
-    { id: 'bill-p3', description: 'Aluguel & Condomínio', amount: 2200.00, dueDate: '2026-10-20', type: 'PAY', isPaid: false },
-    { id: 'bill-p4', description: 'Fatura Nubank Ultravioleta', amount: 960.00, dueDate: '2026-10-24', type: 'PAY', isPaid: false },
-    { id: 'bill-r1', description: 'Salário Mensal', amount: 8500.00, dueDate: '2026-10-05', type: 'RECEIVE', isPaid: true },
-    { id: 'bill-r2', description: 'Consultoria Financeira', amount: 1500.00, dueDate: '2026-10-12', type: 'RECEIVE', isPaid: false },
-    { id: 'bill-r3', description: 'Dividendos & Rendimentos', amount: 480.00, dueDate: '2026-10-28', type: 'RECEIVE', isPaid: false }
-  ]
+  budgets: [],
+  goals: [],
+  bills: []
 };
 
 function readLocalDb() {
@@ -93,23 +78,23 @@ async function getData() {
   if (supabase) {
     try {
       const [settingsRes, cardsRes, instRes, txRes, chatRes, budgetsRes, goalsRes, billsRes] = await Promise.all([
-        supabase.from('financial_settings').select('*').eq('id', 'main').single().catch(() => ({ data: null })),
-        supabase.from('cards').select('*').catch(() => ({ data: [] })),
-        supabase.from('installments').select('*').catch(() => ({ data: [] })),
-        supabase.from('transactions').select('*').order('date', { ascending: false }).catch(() => ({ data: [] })),
-        supabase.from('chat_history').select('*').order('timestamp', { ascending: true }).catch(() => ({ data: [] })),
-        supabase.from('budgets').select('*').order('created_at', { ascending: true }).catch(() => ({ data: [] })),
-        supabase.from('goals').select('*').order('created_at', { ascending: true }).catch(() => ({ data: [] })),
-        supabase.from('bills').select('*').order('due_date', { ascending: true }).catch(() => ({ data: [] }))
+        supabase.from('financial_settings').select('*').eq('id', 'main').single(),
+        supabase.from('cards').select('*'),
+        supabase.from('installments').select('*'),
+        supabase.from('transactions').select('*').order('date', { ascending: false }),
+        supabase.from('chat_history').select('*').order('timestamp', { ascending: true }),
+        supabase.from('budgets').select('*').order('created_at', { ascending: true }),
+        supabase.from('goals').select('*').order('created_at', { ascending: true }),
+        supabase.from('bills').select('*').order('due_date', { ascending: true })
       ]);
 
-      const balance = settingsRes.data ? Number(settingsRes.data.account_balance) : (localDb.accountBalance || 0);
+      const balance = settingsRes.data ? Number(settingsRes.data.account_balance || 0) : Number(localDb.accountBalance || 0);
       const emergencyReserve = settingsRes.data && settingsRes.data.emergency_reserve != null 
         ? Number(settingsRes.data.emergency_reserve) 
-        : (localDb.emergencyReserve || 1832.20);
+        : Number(localDb.emergencyReserve || 0);
       const investmentsBalance = settingsRes.data && settingsRes.data.investments_balance != null 
         ? Number(settingsRes.data.investments_balance) 
-        : (localDb.investmentsBalance || 1603.17);
+        : Number(localDb.investmentsBalance || 0);
 
       const cards = ((cardsRes && cardsRes.data) || []).map(c => ({
         id: c.id,
@@ -192,13 +177,13 @@ async function getData() {
           alertBudgetLimit: settingsRes.data ? settingsRes.data.alert_budget_limit !== false : true,
           alertWeeklyReport: settingsRes.data ? settingsRes.data.alert_weekly_report !== false : true
         },
-        cards: cards.length > 0 ? cards : localDb.cards,
-        installments: installments.length > 0 ? installments : localDb.installments,
-        transactions: transactions.length > 0 ? transactions : localDb.transactions,
-        chatHistory: chatHistory.length > 0 ? chatHistory : localDb.chatHistory,
-        budgets: budgets.length > 0 ? budgets : (localDb.budgets || []),
-        goals: goals.length > 0 ? goals : (localDb.goals || []),
-        bills: bills.length > 0 ? bills : (localDb.bills || [])
+        cards: Array.isArray(cardsRes?.data) ? cards : localDb.cards,
+        installments: Array.isArray(instRes?.data) ? installments : localDb.installments,
+        transactions: Array.isArray(txRes?.data) ? transactions : localDb.transactions,
+        chatHistory: Array.isArray(chatRes?.data) ? chatHistory : localDb.chatHistory,
+        budgets: Array.isArray(budgetsRes?.data) ? budgets : (localDb.budgets || []),
+        goals: Array.isArray(goalsRes?.data) ? goals : (localDb.goals || []),
+        bills: Array.isArray(billsRes?.data) ? bills : (localDb.bills || [])
       };
     } catch (err) {
       console.error('Supabase query error, falling back to local store:', err);

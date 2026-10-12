@@ -183,9 +183,9 @@ async function calculateFinancials() {
   });
 
   return {
-    accountBalance: db.accountBalance,
-    emergencyReserve: db.emergencyReserve || 1832.20,
-    investmentsBalance: db.investmentsBalance || 1603.17,
+    accountBalance: Number(db.accountBalance || 0),
+    emergencyReserve: Number(db.emergencyReserve != null ? db.emergencyReserve : 0),
+    investmentsBalance: Number(db.investmentsBalance != null ? db.investmentsBalance : 0),
     settings: db.settings || {},
     currentMonthIncome,
     currentMonthExpenses,
