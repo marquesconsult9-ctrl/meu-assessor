@@ -1,5 +1,5 @@
 // ==========================================================================
-// MONEY INSIGHTS • DASHBOARD, CALCULATOR, CHARTS & WHATSAPP ENGINE
+// LANÇEI • DASHBOARD, CALCULATOR, CHARTS & WHATSAPP ENGINE
 // ==========================================================================
 
 let currentFinancialData = null;
