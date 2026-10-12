@@ -177,9 +177,9 @@ function updateHeroBalanceView(btype) {
   const balance = currentFinancialData ? currentFinancialData.accountBalance : 4580.50;
 
   if (btype === 'emergencia') {
-    valEl.textContent = formatCurrency(balance * 0.4);
+    valEl.textContent = formatCurrency(currentFinancialData?.emergencyReserve || 1832.20);
   } else if (btype === 'investimento') {
-    valEl.textContent = formatCurrency(balance * 0.35);
+    valEl.textContent = formatCurrency(currentFinancialData?.investmentsBalance || 1603.17);
   } else {
     valEl.textContent = formatCurrency(balance);
   }
@@ -264,6 +264,14 @@ function renderAllViews() {
   renderSidebarMiniCards();
   // Render open finance cards
   renderOpenFinanceCards();
+  // Render bills lists (Pagar & Receber)
+  renderBillsLists();
+  // Render budgets (Tetos Orçamentários)
+  renderBudgets();
+  // Render goals (Metas Estratégicas)
+  renderGoals();
+  // Sync settings inputs
+  syncSettingsUI();
 }
 
 function renderRecentTxTable() {
@@ -348,7 +356,7 @@ function renderSidebarMiniCards() {
     <div class="mini-card-item">
       <div class="mini-card-header">
         <span class="mini-card-name">${c.name}</span>
-        <button class="btn-pay-invoice-pill" onclick="window.showToast('Fatura do ${c.name} agendada para pagamento!', '💳')">Pagar fatura</button>
+        <button class="btn-pay-invoice-pill" onclick="payCardInvoice('${c.id}')">Pagar fatura</button>
       </div>
       <div class="mini-card-meta">
         <span>Fechamento: Dia ${c.closingDay}</span>
@@ -368,6 +376,21 @@ function renderSidebarMiniCards() {
     </div>
   `).join('');
 }
+
+window.payCardInvoice = async function(cardId) {
+  if (!confirm('Deseja liquidar integralmente a fatura atual com débito na conta principal?')) return;
+  try {
+    const res = await fetch(`/api/cards/${cardId}/pay-invoice`, { method: 'POST' }).then(r => r.json());
+    if (res.success) {
+      window.showToast(res.message, '💳');
+      await refreshAllData();
+    } else {
+      window.showToast(res.error || 'Erro ao processar pagamento', '⚠️');
+    }
+  } catch (err) {
+    console.error(err);
+  }
+};
 
 function renderOpenFinanceCards() {
   const container = document.getElementById('open-finance-cards-grid');
@@ -419,72 +442,217 @@ function renderOpenFinanceCards() {
 }
 
 // ==========================================================================
-// BILLS WIDGETS (PAGAR & A RECEBER - Images 3 & 4)
+// BILLS WIDGETS (PAGAR & A RECEBER - PERSISTED NO SUPABASE)
 // ==========================================================================
 function renderBillsLists() {
   const pagarBox = document.getElementById('dash-pagar-container');
   const receberBox = document.getElementById('dash-receber-container');
+  const allBills = (currentFinancialData && currentFinancialData.bills) || [];
+
+  const payItems = allBills.filter(b => b.type === 'PAY');
+  const receiveItems = allBills.filter(b => b.type === 'RECEIVE');
 
   if (pagarBox) {
-    pagarBox.innerHTML = billsToPay.map(b => `
-      <div class="action-bill-row">
-        <span class="bill-date">${b.date}</span>
-        <span class="bill-desc">${b.desc}</span>
-        <span class="bill-val pay">${formatCurrency(b.amount)}</span>
-        <div class="check-action-circle ${b.paid ? 'checked' : ''}" onclick="toggleBillPay('${b.id}')">✓</div>
-      </div>
-    `).join('');
+    if (payItems.length === 0) {
+      pagarBox.innerHTML = '<div style="font-size: 11px; color: var(--text-muted); text-align: center; padding: 12px;">Sem contas a pagar pendentes.</div>';
+    } else {
+      pagarBox.innerHTML = payItems.map(b => {
+        const dStr = b.dueDate ? b.dueDate.slice(8, 10) + '/' + b.dueDate.slice(5, 7) : '--/--';
+        return `
+          <div class="action-bill-row">
+            <span class="bill-date">${dStr}</span>
+            <span class="bill-desc" title="${escapeHtml(b.description)}">${escapeHtml(b.description)}</span>
+            <span class="bill-val pay">${formatCurrency(b.amount)}</span>
+            <div class="check-action-circle ${b.isPaid ? 'checked' : ''}" onclick="toggleBillStatus('${b.id}', ${b.isPaid})">✓</div>
+          </div>
+        `;
+      }).join('');
+    }
   }
 
   if (receberBox) {
-    receberBox.innerHTML = billsToReceive.map(b => `
-      <div class="action-bill-row">
-        <span class="bill-date">${b.date}</span>
-        <span class="bill-desc">${b.desc}</span>
-        <span class="bill-val receive">${formatCurrency(b.amount)}</span>
-        <div class="check-action-circle ${b.received ? 'checked' : ''}" onclick="toggleBillReceive('${b.id}')">✓</div>
-      </div>
-    `).join('');
+    if (receiveItems.length === 0) {
+      receberBox.innerHTML = '<div style="font-size: 11px; color: var(--text-muted); text-align: center; padding: 12px;">Sem recebíveis previstos.</div>';
+    } else {
+      receberBox.innerHTML = receiveItems.map(b => {
+        const dStr = b.dueDate ? b.dueDate.slice(8, 10) + '/' + b.dueDate.slice(5, 7) : '--/--';
+        return `
+          <div class="action-bill-row">
+            <span class="bill-date">${dStr}</span>
+            <span class="bill-desc" title="${escapeHtml(b.description)}">${escapeHtml(b.description)}</span>
+            <span class="bill-val receive">${formatCurrency(b.amount)}</span>
+            <div class="check-action-circle ${b.isPaid ? 'checked' : ''}" onclick="toggleBillStatus('${b.id}', ${b.isPaid})">✓</div>
+          </div>
+        `;
+      }).join('');
+    }
   }
 
   // Pagar tudo button
   const btnPayAll = document.getElementById('btn-pay-all');
   if (btnPayAll) {
-    btnPayAll.onclick = () => {
-      billsToPay.forEach(b => b.paid = true);
-      renderBillsLists();
-      window.showToast('Todas as contas foram marcadas como pagas!', '💳');
+    btnPayAll.onclick = async () => {
+      try {
+        const res = await fetch('/api/bills/pay-all', { method: 'POST' }).then(r => r.json());
+        if (res.success) {
+          window.showToast('Todas as contas foram liquidadas!', '💳');
+          await refreshAllData();
+        }
+      } catch (err) { console.error(err); }
     };
   }
 
   // Receber tudo button
   const btnReceiveAll = document.getElementById('btn-receive-all');
   if (btnReceiveAll) {
-    btnReceiveAll.onclick = () => {
-      billsToReceive.forEach(b => b.received = true);
-      renderBillsLists();
-      window.showToast('Todas as receitas foram confirmadas na conta!', '💵');
+    btnReceiveAll.onclick = async () => {
+      try {
+        const res = await fetch('/api/bills/receive-all', { method: 'POST' }).then(r => r.json());
+        if (res.success) {
+          window.showToast('Todas as receitas foram conciliadas!', '💵');
+          await refreshAllData();
+        }
+      } catch (err) { console.error(err); }
     };
   }
 }
 
-window.toggleBillPay = function(id) {
-  const b = billsToPay.find(item => item.id === id);
-  if (b) {
-    b.paid = !b.paid;
-    renderBillsLists();
-    window.showToast(b.paid ? 'Conta marcada como paga!' : 'Conta desmarcada', '✓');
+window.toggleBillStatus = async function(id, currentStatus) {
+  try {
+    const res = await fetch(`/api/bills/${id}/toggle`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ isPaid: !currentStatus })
+    }).then(r => r.json());
+
+    if (res.success) {
+      window.showToast(!currentStatus ? 'Status liquidado!' : 'Status reaberto', '✓');
+      await refreshAllData();
+    }
+  } catch (err) {
+    console.error(err);
   }
 };
 
-window.toggleBillReceive = function(id) {
-  const b = billsToReceive.find(item => item.id === id);
-  if (b) {
-    b.received = !b.received;
-    renderBillsLists();
-    window.showToast(b.received ? 'Receita confirmada na conta!' : 'Receita desmarcada', '✓');
+// ==========================================================================
+// ORÇAMENTOS (BUDGETS) & METAS (GOALS) PERSISTIDOS NO SUPABASE
+// ==========================================================================
+function renderBudgets() {
+  const box = document.getElementById('active-budgets-container');
+  if (!box) return;
+
+  const budgets = (currentFinancialData && currentFinancialData.budgets) || [];
+  if (budgets.length === 0) {
+    box.innerHTML = '<div style="color: var(--text-muted); font-size: 11px; padding: 14px; text-align: center; border: 1px dashed var(--border-subtle); border-radius: 4px;">Nenhum teto orçamentário configurado.</div>';
+    return;
+  }
+
+  box.innerHTML = budgets.map(b => {
+    const pct = b.percentage != null ? b.percentage : Math.min(100, Math.round(((b.spentAmount || 0) / (b.monthlyLimit || 1)) * 100));
+    const isWarning = pct >= 80;
+    return `
+      <div class="budget-card-box">
+        <div class="budget-card-header">
+          <span style="font-weight: 600;">${escapeHtml(b.category)}</span>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="color: ${isWarning ? '#f59e0b' : 'var(--color-primary-light)'}; font-weight: 600;">${pct}% executado</span>
+            <button class="btn-action-text" style="width: auto; padding: 0 4px; color: var(--color-danger); font-size: 10px;" onclick="deleteBudget('${b.id}')" title="Excluir Orçamento">✕</button>
+          </div>
+        </div>
+        <div class="progress-bar-track">
+          <div class="progress-bar-fill" style="width: ${pct}%; background: ${isWarning ? '#f59e0b' : 'var(--color-primary-gradient)'};"></div>
+        </div>
+        <div class="budget-card-values">
+          <span>Gasto: ${formatCurrency(b.spentAmount)}</span>
+          <span>Teto: ${formatCurrency(b.monthlyLimit)}</span>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+window.deleteBudget = async function(id) {
+  if (!confirm('Deseja excluir este teto orçamentário?')) return;
+  try {
+    const res = await fetch(`/api/budgets/${id}`, { method: 'DELETE' }).then(r => r.json());
+    if (res.success) {
+      window.showToast('Orçamento excluído!', '🗑️');
+      await refreshAllData();
+    }
+  } catch (err) {
+    console.error(err);
   }
 };
+
+function renderGoals() {
+  const box = document.getElementById('active-goals-container');
+  if (!box) return;
+
+  const goals = (currentFinancialData && currentFinancialData.goals) || [];
+  if (goals.length === 0) {
+    box.innerHTML = '<div style="color: var(--text-muted); font-size: 11px; padding: 14px; text-align: center; border: 1px dashed var(--border-subtle); border-radius: 4px;">Nenhuma meta estratégica cadastrada.</div>';
+    return;
+  }
+
+  box.innerHTML = goals.map(g => {
+    const pct = g.targetAmount > 0 ? Math.min(100, Math.round(((g.currentAmount || 0) / g.targetAmount) * 100)) : 0;
+    return `
+      <div class="progress-row-item" style="background: var(--bg-card); padding: 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+        <div class="progress-label-row">
+          <span style="font-weight: 600;">${escapeHtml(g.title)}</span>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span class="progress-pct-badge">${pct}% concluído</span>
+            <button class="btn-action-text" style="width: auto; padding: 0 4px; color: var(--color-danger); font-size: 10px;" onclick="deleteGoal('${g.id}')" title="Excluir Meta">✕</button>
+          </div>
+        </div>
+        <div class="progress-bar-track">
+          <div class="progress-bar-fill" style="width: ${pct}%;"></div>
+        </div>
+        <div class="budget-card-values" style="margin-top: 4px;">
+          <span>Posição Atual: ${formatCurrency(g.currentAmount)}</span>
+          <span>Objetivo: ${formatCurrency(g.targetAmount)}</span>
+        </div>
+        <div class="meta-timeline-phrase" style="margin-top: 4px; font-size: 10px; color: var(--text-subtle);">
+          Prazo: ${g.deadlineDate ? formatDate(g.deadlineDate) : 'Meta contínua'}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+window.deleteGoal = async function(id) {
+  if (!confirm('Deseja excluir esta meta?')) return;
+  try {
+    const res = await fetch(`/api/goals/${id}`, { method: 'DELETE' }).then(r => r.json());
+    if (res.success) {
+      window.showToast('Meta estratégica removida!', '🗑️');
+      await refreshAllData();
+    }
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+function syncSettingsUI() {
+  if (!currentFinancialData) return;
+  const balIn = document.getElementById('settings-balance');
+  const resIn = document.getElementById('settings-reserve');
+  const invIn = document.getElementById('settings-investments');
+  if (balIn && document.activeElement !== balIn) balIn.value = currentFinancialData.accountBalance || '';
+  if (resIn && document.activeElement !== resIn) resIn.value = currentFinancialData.emergencyReserve || '';
+  if (invIn && document.activeElement !== invIn) invIn.value = currentFinancialData.investmentsBalance || '';
+
+  const settings = currentFinancialData.settings || {};
+  const tDue = document.getElementById('toggle-alert-due');
+  const tBud = document.getElementById('toggle-alert-budget');
+  const tWk = document.getElementById('toggle-alert-weekly');
+  const tDb = document.getElementById('toggle-supabase-status');
+
+  if (tDue && settings.alertDueDates !== undefined) tDue.checked = settings.alertDueDates;
+  if (tBud && settings.alertBudgetLimit !== undefined) tBud.checked = settings.alertBudgetLimit;
+  if (tWk && settings.alertWeeklyReport !== undefined) tWk.checked = settings.alertWeeklyReport;
+  if (tDb) tDb.checked = currentFinancialData.isUsingSupabase !== false;
+}
 
 // ==========================================================================
 // CALENDÁRIO DE VENCIMENTO (Images 3 & 4)
@@ -716,6 +884,107 @@ function initModals() {
       }
     });
   }
+
+  // Form: Novo Orçamento
+  const formBudget = document.getElementById('form-novo-orcamento');
+  if (formBudget) {
+    formBudget.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const category = document.getElementById('orc-target').value;
+      const limit = parseFloat(document.getElementById('orc-limit').value);
+      try {
+        const res = await fetch('/api/budgets', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ category, monthlyLimit: limit })
+        }).then(r => r.json());
+        if (res.success) {
+          window.showToast('Orçamento salvo no Supabase!', '🎯');
+          closeModal('modal-novo-orcamento');
+          formBudget.reset();
+          await refreshAllData();
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    });
+  }
+
+  // Form: Nova Meta
+  const formMeta = document.getElementById('form-nova-meta');
+  if (formMeta) {
+    formMeta.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const title = document.getElementById('meta-name').value;
+      const targetAmount = parseFloat(document.getElementById('meta-target').value);
+      const currentAmount = parseFloat(document.getElementById('meta-current').value);
+      const deadlineDate = document.getElementById('meta-deadline').value;
+      try {
+        const res = await fetch('/api/goals', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ title, targetAmount, currentAmount, deadlineDate })
+        }).then(r => r.json());
+        if (res.success) {
+          window.showToast('Meta estratégica gravada no Supabase!', '🚀');
+          closeModal('modal-nova-meta');
+          formMeta.reset();
+          await refreshAllData();
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    });
+  }
+
+  // Form: Configurações de Saldos
+  const formBalances = document.getElementById('form-settings-balances');
+  if (formBalances) {
+    formBalances.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const balance = parseFloat(document.getElementById('settings-balance').value);
+      const reserve = parseFloat(document.getElementById('settings-reserve').value);
+      const invest = parseFloat(document.getElementById('settings-investments').value);
+      try {
+        const res = await fetch('/api/settings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            accountBalance: balance,
+            emergencyReserve: reserve,
+            investmentsBalance: invest
+          })
+        }).then(r => r.json());
+        if (res.success) {
+          window.showToast('Saldos e reservas atualizados no Supabase!', '💾');
+          await refreshAllData();
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    });
+  }
+
+  // Toggles de Alertas
+  ['toggle-alert-due', 'toggle-alert-budget', 'toggle-alert-weekly'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.addEventListener('change', async () => {
+        const payload = {};
+        if (id === 'toggle-alert-due') payload.alertDueDates = el.checked;
+        if (id === 'toggle-alert-budget') payload.alertBudgetLimit = el.checked;
+        if (id === 'toggle-alert-weekly') payload.alertWeeklyReport = el.checked;
+        try {
+          await fetch('/api/settings', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          window.showToast('Preferência gravada', '✓');
+        } catch (e) { console.error(e); }
+      });
+    }
+  });
 
   // Filter pills in Lançamentos
   const filterPills = document.querySelectorAll('#tx-filter-pills-group .filter-pill');

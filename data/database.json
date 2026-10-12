@@ -1,5 +1,10 @@
 {
   "accountBalance": 1668.5,
+  "emergencyReserve": 1832.2,
+  "investmentsBalance": 1603.17,
+  "alertDueDates": true,
+  "alertBudgetLimit": true,
+  "alertWeeklyReport": true,
   "cards": [
     {
       "id": "card-nubank",
@@ -70400,6 +70405,100 @@
         "date": "2026-10-12T11:36:47.605Z",
         "source": "WHATSAPP"
       }
+    }
+  ],
+  "budgets": [
+    {
+      "id": "orc-1",
+      "category": "Operacional",
+      "monthlyLimit": 3000,
+      "spentAmount": 1650
+    },
+    {
+      "id": "orc-2",
+      "category": "Tecnologia & Software",
+      "monthlyLimit": 1200,
+      "spentAmount": 540
+    },
+    {
+      "id": "orc-3",
+      "category": "Logística & Transporte",
+      "monthlyLimit": 2000,
+      "spentAmount": 1200
+    }
+  ],
+  "goals": [
+    {
+      "id": "goal-1",
+      "title": "Aporte Imobiliário",
+      "targetAmount": 50000,
+      "currentAmount": 40500,
+      "deadlineDate": "2027-12-31"
+    },
+    {
+      "id": "goal-2",
+      "title": "Renovação de Veículo",
+      "targetAmount": 45500,
+      "currentAmount": 36400,
+      "deadlineDate": "2027-06-30"
+    }
+  ],
+  "bills": [
+    {
+      "id": "bill-p1",
+      "description": "Energia Elétrica (Enel)",
+      "amount": 185.4,
+      "dueDate": "2026-10-10",
+      "type": "PAY",
+      "isPaid": false
+    },
+    {
+      "id": "bill-p2",
+      "description": "Internet Fibra",
+      "amount": 129.9,
+      "dueDate": "2026-10-15",
+      "type": "PAY",
+      "isPaid": false
+    },
+    {
+      "id": "bill-p3",
+      "description": "Aluguel & Condomínio",
+      "amount": 2200,
+      "dueDate": "2026-10-20",
+      "type": "PAY",
+      "isPaid": false
+    },
+    {
+      "id": "bill-p4",
+      "description": "Fatura Nubank Ultravioleta",
+      "amount": 960,
+      "dueDate": "2026-10-24",
+      "type": "PAY",
+      "isPaid": false
+    },
+    {
+      "id": "bill-r1",
+      "description": "Salário Mensal",
+      "amount": 8500,
+      "dueDate": "2026-10-05",
+      "type": "RECEIVE",
+      "isPaid": true
+    },
+    {
+      "id": "bill-r2",
+      "description": "Consultoria Financeira",
+      "amount": 1500,
+      "dueDate": "2026-10-12",
+      "type": "RECEIVE",
+      "isPaid": false
+    },
+    {
+      "id": "bill-r3",
+      "description": "Dividendos & Rendimentos",
+      "amount": 480,
+      "dueDate": "2026-10-28",
+      "type": "RECEIVE",
+      "isPaid": false
     }
   ]
 }

@@ -492,98 +492,29 @@
           <div class="planejamento-grid">
             <!-- Orçamento Column -->
             <div>
-              <h3 style="font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 10px;">Orçamentos Ativos</h3>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <h3 style="font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin: 0;">Orçamentos Ativos</h3>
+                <span style="font-size: 10px; color: var(--text-muted);">Tetos Mensais</span>
+              </div>
               
-              <div class="budget-card-box">
-                <div class="budget-card-header">
-                  <span>Aporte Imobiliário</span>
-                  <span style="color: var(--color-primary-light);">80% concluído</span>
-                </div>
-                <div class="progress-bar-track">
-                  <div class="progress-bar-fill" style="width: 80%;"></div>
-                </div>
-                <div class="budget-card-values">
-                  <span>R$ 40.500,00</span>
-                  <span>R$ 45.500,00</span>
-                </div>
-              </div>
-
-              <div class="budget-card-box">
-                <div class="budget-card-header">
-                  <span>Renovação de Veículo</span>
-                  <span style="color: var(--color-primary-light);">80% concluído</span>
-                </div>
-                <div class="progress-bar-track">
-                  <div class="progress-bar-fill" style="width: 80%;"></div>
-                </div>
-                <div class="budget-card-values">
-                  <span>R$ 40.500,00</span>
-                  <span>R$ 45.500,00</span>
-                </div>
-              </div>
-
-              <div class="budget-card-box">
-                <div class="budget-card-header">
-                  <span>Despesas Operacionais</span>
-                  <span style="color: var(--color-primary-light);">55% concluído</span>
-                </div>
-                <div class="progress-bar-track">
-                  <div class="progress-bar-fill" style="width: 55%;"></div>
-                </div>
-                <div class="budget-card-values">
-                  <span>R$ 1.650,00</span>
-                  <span>R$ 3.000,00</span>
-                </div>
+              <div id="active-budgets-container" style="display: flex; flex-direction: column; gap: 10px;">
+                <!-- Populated dynamically from DB -->
               </div>
             </div>
 
             <!-- Metas Column with Evolution Graph -->
             <div>
-              <h3 style="font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 10px;">Curva de Evolução</h3>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <h3 style="font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin: 0;">Curva de Evolução & Metas</h3>
+                <span style="font-size: 10px; color: var(--text-muted);">Horizonte Estratégico</span>
+              </div>
 
               <div class="meta-timeline-card">
-                <div style="display: flex; justify-content: flex-end; gap: 12px; font-size: 10px; margin-bottom: 10px; color: var(--text-muted);">
-                  <span style="display: flex; align-items: center; gap: 4px;">
-                    <span style="width: 6px; height: 6px; border-radius: 1px; background: #2563eb;"></span> Imobiliário
-                  </span>
-                  <span style="display: flex; align-items: center; gap: 4px;">
-                    <span style="width: 6px; height: 6px; border-radius: 1px; background: #64748b;"></span> Veículo
-                  </span>
-                </div>
-
                 <!-- SVG Evolution Chart -->
                 <div style="height: 150px; width: 100%;" id="meta-evolution-svg-box"></div>
 
-                <div style="margin-top: 16px; display: flex; flex-direction: column; gap: 12px;">
-                  <div class="progress-row-item">
-                    <div class="progress-label-row">
-                      <span>Aporte Imobiliário</span>
-                      <span class="progress-pct-badge">80% executado</span>
-                    </div>
-                    <div class="progress-bar-track">
-                      <div class="progress-bar-fill" style="width: 80%;"></div>
-                    </div>
-                    <div class="budget-card-values">
-                      <span>R$ 40.500,00</span>
-                      <span>R$ 45.500,00</span>
-                    </div>
-                    <div class="meta-timeline-phrase">Projeção: Liquidação prevista em 14 meses.</div>
-                  </div>
-
-                  <div class="progress-row-item">
-                    <div class="progress-label-row">
-                      <span>Renovação de Veículo</span>
-                      <span class="progress-pct-badge">80% executado</span>
-                    </div>
-                    <div class="progress-bar-track">
-                      <div class="progress-bar-fill" style="width: 80%;"></div>
-                    </div>
-                    <div class="budget-card-values">
-                      <span>R$ 40.500,00</span>
-                      <span>R$ 45.500,00</span>
-                    </div>
-                    <div class="meta-timeline-phrase">Projeção: Liquidação prevista em 14 meses.</div>
-                  </div>
+                <div style="margin-top: 16px; display: flex; flex-direction: column; gap: 12px;" id="active-goals-container">
+                  <!-- Populated dynamically from DB -->
                 </div>
 
               </div>
@@ -731,17 +662,25 @@
                 <h3 style="font-size: 13px; font-weight: 600;">Marques</h3>
                 <p style="font-size: 11px; color: var(--text-muted);">Assinatura Corporativa Ativa</p>
 
-                <!-- Personal Info form -->
-                <div style="text-align: left; display: flex; flex-direction: column; gap: 10px; margin-top: 14px;">
-                  <div style="font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--text-muted);">Credenciais</div>
-                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                    <input type="text" class="form-input-pill" value="Marques" placeholder="Nome" />
-                    <input type="text" class="form-input-pill" value="Consultoria" placeholder="Sobrenome" />
+                <!-- Personal & Financial Balances form -->
+                <form id="form-settings-balances" style="text-align: left; display: flex; flex-direction: column; gap: 10px; margin-top: 14px;">
+                  <div style="font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--text-muted);">Parametrização de Saldos</div>
+                  <div>
+                    <label style="font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 2px; display: block;">Saldo Conta Corrente (R$)</label>
+                    <input type="number" step="0.01" class="form-input-pill" id="settings-balance" placeholder="4580.50" />
                   </div>
-                  <input type="email" class="form-input-pill" value="marques@exemplo.com" placeholder="E-mail" />
-                  <input type="tel" class="form-input-pill" value="+55 (11) 99999-9999" placeholder="Telefone" />
-                  <button class="btn-submit-action" onclick="window.showToast('Parâmetros gravados com sucesso', '✓')">Salvar Alterações</button>
-                </div>
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                    <div>
+                      <label style="font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 2px; display: block;">Reserva Emergência (R$)</label>
+                      <input type="number" step="0.01" class="form-input-pill" id="settings-reserve" placeholder="1832.20" />
+                    </div>
+                    <div>
+                      <label style="font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 2px; display: block;">Investimentos (R$)</label>
+                      <input type="number" step="0.01" class="form-input-pill" id="settings-investments" placeholder="1603.17" />
+                    </div>
+                  </div>
+                  <button type="submit" class="btn-submit-action">Atualizar Saldos no Supabase</button>
+                </form>
               </div>
 
               <!-- Change Password Card -->
@@ -771,7 +710,7 @@
                   </div>
                 </div>
                 <label class="switch-control">
-                  <input type="checkbox" checked />
+                  <input type="checkbox" id="toggle-alert-due" checked />
                   <span class="switch-slider"></span>
                 </label>
               </div>
@@ -784,7 +723,7 @@
                   </div>
                 </div>
                 <label class="switch-control">
-                  <input type="checkbox" checked />
+                  <input type="checkbox" id="toggle-alert-budget" checked />
                   <span class="switch-slider"></span>
                 </label>
               </div>
@@ -797,7 +736,7 @@
                   </div>
                 </div>
                 <label class="switch-control">
-                  <input type="checkbox" checked />
+                  <input type="checkbox" id="toggle-alert-weekly" checked />
                   <span class="switch-slider"></span>
                 </label>
               </div>
@@ -810,7 +749,7 @@
                   </div>
                 </div>
                 <label class="switch-control">
-                  <input type="checkbox" checked />
+                  <input type="checkbox" id="toggle-supabase-status" checked />
                   <span class="switch-slider"></span>
                 </label>
               </div>

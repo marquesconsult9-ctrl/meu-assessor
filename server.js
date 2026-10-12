@@ -168,8 +168,25 @@ async function calculateFinancials() {
     .filter(tx => tx.type === 'EXPENSE')
     .reduce((sum, tx) => sum + (Number(tx.amount) || 0), 0);
 
+  // Dynamic budget spent amounts calculation
+  const budgetsWithSpent = (db.budgets || []).map(b => {
+    const txSpent = currentMonthTransactions
+      .filter(tx => tx.type === 'EXPENSE' && tx.category && tx.category.toLowerCase().includes(b.category.toLowerCase()))
+      .reduce((sum, tx) => sum + (Number(tx.amount) || 0), 0);
+    const spent = txSpent > 0 ? txSpent : (b.spentAmount || 0);
+    const percentage = b.monthlyLimit > 0 ? Math.min(100, Math.round((spent / b.monthlyLimit) * 100)) : 0;
+    return {
+      ...b,
+      spentAmount: spent,
+      percentage
+    };
+  });
+
   return {
     accountBalance: db.accountBalance,
+    emergencyReserve: db.emergencyReserve || 1832.20,
+    investmentsBalance: db.investmentsBalance || 1603.17,
+    settings: db.settings || {},
     currentMonthIncome,
     currentMonthExpenses,
     totalInvoicesCurrent,
@@ -177,6 +194,9 @@ async function calculateFinancials() {
     totalLimitUsed,
     totalLimitAvailable,
     cards: cardsSummary,
+    budgets: budgetsWithSpent,
+    goals: db.goals || [],
+    bills: db.bills || [],
     isUsingSupabase: dbAdapter.isSupabaseConfigured(),
     projection: {
       months: projectionMonths,
@@ -666,6 +686,240 @@ const server = http.createServer(async (req, res) => {
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ success: true, message: 'Transação removida' }));
     return;
+  }
+
+  // =========================================================================
+  // BUDGETS API: /api/budgets
+  // =========================================================================
+  if (pathname === '/api/budgets') {
+    if (req.method === 'GET') {
+      const fin = await calculateFinancials();
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ success: true, budgets: fin.budgets }));
+      return;
+    }
+    if (req.method === 'POST') {
+      try {
+        const body = await parseBody(req);
+        const newBudget = {
+          id: 'orc-' + Date.now().toString(36),
+          category: body.category || 'Geral',
+          monthlyLimit: parseFloat(body.monthlyLimit) || 1000.00,
+          spentAmount: parseFloat(body.spentAmount) || 0.00
+        };
+        await dbAdapter.addBudget(newBudget);
+        const updatedFin = await calculateFinancials();
+        broadcastSSE('financial-updated', updatedFin);
+        res.writeHead(201, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: true, budget: newBudget }));
+      } catch (err) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: err.message }));
+      }
+      return;
+    }
+  }
+
+  if (pathname.startsWith('/api/budgets/') && req.method === 'DELETE') {
+    const id = pathname.replace('/api/budgets/', '');
+    await dbAdapter.deleteBudget(id);
+    const updatedFin = await calculateFinancials();
+    broadcastSSE('financial-updated', updatedFin);
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ success: true, message: 'Orçamento removido' }));
+    return;
+  }
+
+  // =========================================================================
+  // GOALS API: /api/goals
+  // =========================================================================
+  if (pathname === '/api/goals') {
+    if (req.method === 'GET') {
+      const db = await dbAdapter.getData();
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ success: true, goals: db.goals || [] }));
+      return;
+    }
+    if (req.method === 'POST') {
+      try {
+        const body = await parseBody(req);
+        const newGoal = {
+          id: 'goal-' + Date.now().toString(36),
+          title: body.title || 'Nova Meta',
+          targetAmount: parseFloat(body.targetAmount) || 10000.00,
+          currentAmount: parseFloat(body.currentAmount) || 0.00,
+          deadlineDate: body.deadlineDate || null
+        };
+        await dbAdapter.addGoal(newGoal);
+        const updatedFin = await calculateFinancials();
+        broadcastSSE('financial-updated', updatedFin);
+        res.writeHead(201, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: true, goal: newGoal }));
+      } catch (err) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: err.message }));
+      }
+      return;
+    }
+  }
+
+  if (pathname.startsWith('/api/goals/') && req.method === 'DELETE') {
+    const id = pathname.replace('/api/goals/', '');
+    await dbAdapter.deleteGoal(id);
+    const updatedFin = await calculateFinancials();
+    broadcastSSE('financial-updated', updatedFin);
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ success: true, message: 'Meta removida' }));
+    return;
+  }
+
+  // =========================================================================
+  // BILLS API: /api/bills
+  // =========================================================================
+  if (pathname === '/api/bills') {
+    if (req.method === 'GET') {
+      const db = await dbAdapter.getData();
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ success: true, bills: db.bills || [] }));
+      return;
+    }
+    if (req.method === 'POST') {
+      try {
+        const body = await parseBody(req);
+        const newBill = {
+          id: 'bill-' + Date.now().toString(36),
+          description: body.description || 'Novo Título',
+          amount: parseFloat(body.amount) || 0,
+          dueDate: body.dueDate || new Date().toISOString().slice(0, 10),
+          type: body.type === 'RECEIVE' ? 'RECEIVE' : 'PAY',
+          isPaid: Boolean(body.isPaid)
+        };
+        await dbAdapter.addBill(newBill);
+        const updatedFin = await calculateFinancials();
+        broadcastSSE('financial-updated', updatedFin);
+        res.writeHead(201, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: true, bill: newBill }));
+      } catch (err) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: err.message }));
+      }
+      return;
+    }
+  }
+
+  if (pathname.startsWith('/api/bills/') && pathname.endsWith('/toggle') && req.method === 'PATCH') {
+    try {
+      const id = pathname.replace('/api/bills/', '').replace('/toggle', '');
+      const body = await parseBody(req);
+      await dbAdapter.toggleBill(id, body.isPaid);
+      const updatedFin = await calculateFinancials();
+      broadcastSSE('financial-updated', updatedFin);
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ success: true, message: 'Status alterado' }));
+    } catch (err) {
+      res.writeHead(400, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: err.message }));
+    }
+    return;
+  }
+
+  if (pathname === '/api/bills/pay-all' && req.method === 'POST') {
+    await dbAdapter.payAllBills();
+    const updatedFin = await calculateFinancials();
+    broadcastSSE('financial-updated', updatedFin);
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ success: true, message: 'Todas as contas pagas' }));
+    return;
+  }
+
+  if (pathname === '/api/bills/receive-all' && req.method === 'POST') {
+    await dbAdapter.receiveAllBills();
+    const updatedFin = await calculateFinancials();
+    broadcastSSE('financial-updated', updatedFin);
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ success: true, message: 'Todas as receitas conciliadas' }));
+    return;
+  }
+
+  if (pathname.startsWith('/api/bills/') && req.method === 'DELETE') {
+    const id = pathname.replace('/api/bills/', '');
+    await dbAdapter.deleteBill(id);
+    const updatedFin = await calculateFinancials();
+    broadcastSSE('financial-updated', updatedFin);
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ success: true, message: 'Conta removida' }));
+    return;
+  }
+
+  // =========================================================================
+  // CARD INVOICE SETTLEMENT: /api/cards/:id/pay-invoice
+  // =========================================================================
+  if (pathname.startsWith('/api/cards/') && pathname.endsWith('/pay-invoice') && req.method === 'POST') {
+    try {
+      const cardId = pathname.replace('/api/cards/', '').replace('/pay-invoice', '');
+      const fin = await calculateFinancials();
+      const card = fin.cards.find(c => c.id === cardId);
+      if (!card) {
+        res.writeHead(404, { 'Content-Type': 'application/json' });
+        return res.end(JSON.stringify({ error: 'Cartão não encontrado' }));
+      }
+
+      const invoiceAmount = card.currentInvoice || 0;
+      if (invoiceAmount > 0) {
+        // Register payment transaction
+        const payTx = {
+          id: 'tx-pay-inv-' + Date.now().toString(36),
+          description: `Pagamento Fatura ${card.name}`,
+          type: 'EXPENSE',
+          amount: invoiceAmount,
+          category: 'Faturas & Cartões',
+          paymentMethod: 'DEBIT',
+          cardId: null,
+          isInstallment: false,
+          date: new Date().toISOString(),
+          source: 'WEB'
+        };
+
+        const db = await dbAdapter.getData();
+        await dbAdapter.updateBalance(Math.max(0, db.accountBalance - invoiceAmount));
+        await dbAdapter.addTransaction(payTx);
+      }
+
+      const updatedFin = await calculateFinancials();
+      broadcastSSE('financial-updated', updatedFin);
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ success: true, message: `Fatura de ${formatBRL(invoiceAmount)} liquidada com sucesso!` }));
+    } catch (err) {
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: err.message }));
+    }
+    return;
+  }
+
+  // =========================================================================
+  // SETTINGS API: /api/settings
+  // =========================================================================
+  if (pathname === '/api/settings') {
+    if (req.method === 'GET') {
+      const db = await dbAdapter.getData();
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ success: true, settings: db.settings }));
+      return;
+    }
+    if (req.method === 'POST') {
+      try {
+        const body = await parseBody(req);
+        const updated = await dbAdapter.updateSettings(body);
+        const updatedFin = await calculateFinancials();
+        broadcastSSE('financial-updated', updatedFin);
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: true, settings: updated }));
+      } catch (err) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: err.message }));
+      }
+      return;
+    }
   }
 
   // 7. Chat API: /api/chat/message
