@@ -38,13 +38,13 @@ function formatDate(isoStr) {
   return d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
 }
 
-// Toast helper
-window.showToast = function(msg, icon = '⚡') {
+// Toast helper (Enterprise clean)
+window.showToast = function(msg, icon = '•') {
   const container = document.getElementById('toast-container');
   if (!container) return;
   const t = document.createElement('div');
-  t.style.cssText = 'background: #111928; border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; padding: 12px 18px; color: #fff; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); animation: fadeIn 0.2s ease;';
-  t.innerHTML = `<span style="font-size: 16px;">${icon}</span> <span>${msg}</span>`;
+  t.style.cssText = 'background: #0f1118; border: 1px solid rgba(255,255,255,0.12); border-radius: 4px; padding: 8px 14px; color: #f1f5f9; font-size: 11px; font-weight: 500; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.6); animation: fadeIn 0.15s ease;';
+  t.innerHTML = `<span style="color: #3b82f6; font-size: 12px; font-weight: bold;">${icon}</span> <span>${msg}</span>`;
   container.appendChild(t);
   setTimeout(() => {
     t.style.opacity = '0';
@@ -315,12 +315,10 @@ function renderFullTransactionsTable() {
       <td class="tx-amount ${tx.type === 'INCOME' ? 'positive' : 'negative'}">
         ${tx.type === 'INCOME' ? '+' : '-'} ${formatCurrency(tx.amount)}
       </td>
-      <td>
-        <div class="tx-actions-group">
-          <button class="icon-action-btn" title="Editar" onclick="window.showToast('Edição do lançamento', '✏️')">✏️</button>
-          <button class="icon-action-btn" title="Excluir" onclick="deleteTx('${tx.id}')">🗑️</button>
-          <span title="Sincronizado Supabase" style="font-size: 13px; color: var(--color-cyan);">☁️</span>
-          <button class="icon-action-btn" title="Marcar como pago" style="color: var(--color-success);" onclick="window.showToast('Lançamento confirmado!', '✓')">✓</button>
+      <td style="text-align: right;">
+        <div class="tx-actions-group" style="justify-content: flex-end;">
+          <button class="btn-action-text" style="font-size: 11px; padding: 2px 6px; width: auto;" onclick="window.showToast('Edição do lançamento', '✓')">Editar</button>
+          <button class="btn-action-text" style="font-size: 11px; color: var(--color-danger); padding: 2px 6px; width: auto;" onclick="deleteTx('${tx.id}')">Excluir</button>
         </div>
       </td>
     </tr>
@@ -580,12 +578,12 @@ function renderBarsChart() {
     const expY = svgH - 25 - expH;
 
     barsSvg += `
-      <!-- Income Bar (Blue) -->
-      <rect x="${x}" y="${incY}" width="${barW}" height="${incH}" rx="3" fill="#2563eb">
+      <!-- Income Bar (Cobalt) -->
+      <rect x="${x}" y="${incY}" width="${barW}" height="${incH}" rx="1" fill="#2563eb">
         <title>${m} • Entradas: R$ ${incomes[idx]}</title>
       </rect>
-      <!-- Expense Bar (Light Blue) -->
-      <rect x="${x + barW + 2}" y="${expY}" width="${barW}" height="${expH}" rx="3" fill="#38bdf8">
+      <!-- Expense Bar (Slate) -->
+      <rect x="${x + barW + 2}" y="${expY}" width="${barW}" height="${expH}" rx="1" fill="#475569">
         <title>${m} • Saídas: R$ ${expenses[idx]}</title>
       </rect>
       <!-- Month Label -->
@@ -619,10 +617,10 @@ function renderDonutChart() {
 
   box.innerHTML = `
     <svg viewBox="0 0 160 160" width="100%" height="100%" style="transform: rotate(-90deg);">
-      <circle cx="80" cy="80" r="60" fill="transparent" stroke="#2563eb" stroke-width="26" stroke-dasharray="${s1} ${c - s1}" stroke-dashoffset="0" />
-      <circle cx="80" cy="80" r="60" fill="transparent" stroke="#38bdf8" stroke-width="26" stroke-dasharray="${s2} ${c - s2}" stroke-dashoffset="-${s1}" />
-      <circle cx="80" cy="80" r="60" fill="transparent" stroke="#7dd3fc" stroke-width="26" stroke-dasharray="${s3} ${c - s3}" stroke-dashoffset="-${s1 + s2}" />
-      <circle cx="80" cy="80" r="60" fill="transparent" stroke="#0f172a" stroke-width="26" stroke-dasharray="${s4} ${c - s4}" stroke-dashoffset="-${s1 + s2 + s3}" />
+      <circle cx="80" cy="80" r="60" fill="transparent" stroke="#2563eb" stroke-width="20" stroke-dasharray="${s1} ${c - s1}" stroke-dashoffset="0" />
+      <circle cx="80" cy="80" r="60" fill="transparent" stroke="#3b82f6" stroke-width="20" stroke-dasharray="${s2} ${c - s2}" stroke-dashoffset="-${s1}" />
+      <circle cx="80" cy="80" r="60" fill="transparent" stroke="#64748b" stroke-width="20" stroke-dasharray="${s3} ${c - s3}" stroke-dashoffset="-${s1 + s2}" />
+      <circle cx="80" cy="80" r="60" fill="transparent" stroke="#1e293b" stroke-width="20" stroke-dasharray="${s4} ${c - s4}" stroke-dashoffset="-${s1 + s2 + s3}" />
     </svg>
   `;
 }
@@ -639,20 +637,20 @@ function renderMetaTimelineChart() {
       <line x1="30" y1="100" x2="430" y2="100" stroke="var(--border-subtle)" stroke-dasharray="2 2" />
       <line x1="30" y1="140" x2="430" y2="140" stroke="var(--border-subtle)" />
 
-      <!-- Curve 1: Entrada da Casa (Blue) -->
-      <path d="M 50 140 Q 150 70, 230 85 T 330 35 T 410 35" fill="none" stroke="#2563eb" stroke-width="3" />
-      <circle cx="50" cy="140" r="4" fill="#2563eb" />
-      <circle cx="150" cy="90" r="4" fill="#2563eb" />
-      <circle cx="230" cy="85" r="4" fill="#2563eb" />
-      <circle cx="330" cy="35" r="4" fill="#2563eb" />
-      <circle cx="410" cy="35" r="4" fill="#2563eb" />
+      <!-- Curve 1: Imobiliário (Cobalt) -->
+      <path d="M 50 140 Q 150 70, 230 85 T 330 35 T 410 35" fill="none" stroke="#2563eb" stroke-width="2" />
+      <circle cx="50" cy="140" r="3" fill="#2563eb" />
+      <circle cx="150" cy="90" r="3" fill="#2563eb" />
+      <circle cx="230" cy="85" r="3" fill="#2563eb" />
+      <circle cx="330" cy="35" r="3" fill="#2563eb" />
+      <circle cx="410" cy="35" r="3" fill="#2563eb" />
 
-      <!-- Curve 2: Carro (Cyan) -->
-      <path d="M 50 140 Q 140 50, 230 65 T 330 70 T 410 50" fill="none" stroke="#38bdf8" stroke-width="3" />
-      <circle cx="140" cy="55" r="4" fill="#38bdf8" />
-      <circle cx="230" cy="65" r="4" fill="#38bdf8" />
-      <circle cx="330" cy="70" r="4" fill="#38bdf8" />
-      <circle cx="410" cy="50" r="4" fill="#38bdf8" />
+      <!-- Curve 2: Veículo (Slate) -->
+      <path d="M 50 140 Q 140 50, 230 65 T 330 70 T 410 50" fill="none" stroke="#64748b" stroke-width="2" />
+      <circle cx="140" cy="55" r="3" fill="#64748b" />
+      <circle cx="230" cy="65" r="3" fill="#64748b" />
+      <circle cx="330" cy="70" r="3" fill="#64748b" />
+      <circle cx="410" cy="50" r="3" fill="#64748b" />
 
       <!-- Year Labels -->
       <text x="50" y="155" font-size="10" fill="var(--text-subtle)" text-anchor="middle">2021</text>

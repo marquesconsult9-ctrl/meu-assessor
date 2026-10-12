@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lançei • Gestão Financeira Inteligente & WhatsApp 24h</title>
-  <meta name="description" content="Lançei - Sistema financeiro inteligente com registro via WhatsApp, projeção preditiva de faturas, orçamentos e open finance.">
+  <title>Lançei • Terminal Financeiro & WhatsApp</title>
+  <meta name="description" content="Lançei - Sistema de gestão financeira corporativa e pessoal de alta performance.">
 
   <!-- Google Fonts: Inter & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
   <!-- CSS Stylesheets -->
   <link rel="stylesheet" href="css/tokens.css">
@@ -21,83 +21,83 @@
   <div id="app-root">
 
     <!-- ===================================================================
-         SIDEBAR (LANÇEI)
+         SIDEBAR (LANÇEI ENTERPRISE)
          =================================================================== -->
     <aside class="app-sidebar">
       <div>
         <!-- Brand Logo -->
         <div class="sidebar-brand" onclick="navigateToTab('tab-dashboard')">
-          <svg class="brand-icon-svg" viewBox="0 0 100 100" fill="none">
-            <circle cx="50" cy="50" r="46" stroke="#2b7fff" stroke-width="8" stroke-dasharray="140 160" />
-            <path d="M50 10 A40 40 0 0 1 90 50 L50 50 Z" fill="#38bdf8" />
-            <path d="M50 50 L50 90 A40 40 0 0 1 10 50 Z" fill="#1d4ed8" />
-            <path d="M10 50 A40 40 0 0 1 50 10 L50 50 Z" fill="#2b7fff" />
+          <svg class="brand-icon-svg" viewBox="0 0 24 24" fill="none">
+            <rect x="3" y="3" width="8" height="8" rx="1.5" fill="#2563eb" />
+            <rect x="13" y="3" width="8" height="8" rx="1.5" fill="#3b82f6" opacity="0.6" />
+            <rect x="3" y="13" width="8" height="8" rx="1.5" fill="#3b82f6" opacity="0.3" />
+            <rect x="13" y="13" width="8" height="8" rx="1.5" stroke="#2563eb" stroke-width="1.5" />
           </svg>
           <div class="brand-title">Lanç<span>ei</span></div>
         </div>
 
-        <!-- Navigation Links -->
+        <!-- Navigation Links (Monochrome Vector Icons) -->
         <ul class="sidebar-nav">
           <li class="nav-item">
             <button class="nav-link active" data-tab="tab-dashboard">
-              <span class="nav-icon">📊</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
               <span>Dashboard</span>
             </button>
           </li>
           <li class="nav-item">
             <button class="nav-link" data-tab="tab-lancamentos">
-              <span class="nav-icon">📋</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
               <span>Lançamentos</span>
             </button>
           </li>
           <li class="nav-item">
             <button class="nav-link" data-tab="tab-planejamento">
-              <span class="nav-icon">🎯</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
               <span>Planejamento</span>
             </button>
           </li>
           <li class="nav-item">
             <button class="nav-link" data-tab="tab-open-finance">
-              <span class="nav-icon">💳</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
               <span>Open Finance</span>
             </button>
           </li>
           <li class="nav-item">
             <button class="nav-link" data-tab="tab-whatsapp">
-              <span class="nav-icon">📲</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
               <span>WhatsApp 24/7</span>
             </button>
           </li>
           <li class="nav-item">
             <button class="nav-link" data-tab="tab-settings">
-              <span class="nav-icon">⚙️</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
               <span>Configurações</span>
             </button>
           </li>
         </ul>
 
-        <!-- Primeiros Passos Card (From Images 3, 4, 5, 6, 8) -->
+        <!-- Minimalist Workspace Setup Card -->
         <div class="sidebar-checklist-card">
           <div class="checklist-title">
-            <span>Primeiros Passos</span>
-            <span style="font-size: 11px; opacity: 0.8;">2/4</span>
+            <span>Configuração</span>
+            <span>2/4</span>
           </div>
           <ul class="checklist-items">
             <li class="checklist-item done" onclick="this.classList.toggle('done')">
               <div class="checklist-circle"></div>
-              <span>Preencha as informações iniciais.</span>
+              <span>Informações da conta</span>
             </li>
             <li class="checklist-item done" onclick="this.classList.toggle('done')">
               <div class="checklist-circle"></div>
-              <span>Cadastre uma conta bancária.</span>
+              <span>Conta corrente vinculada</span>
             </li>
             <li class="checklist-item" onclick="this.classList.toggle('done')">
               <div class="checklist-circle"></div>
-              <span>Cadastre um cartão de Crédito.</span>
+              <span>Cartões e limites</span>
             </li>
             <li class="checklist-item" onclick="this.classList.toggle('done')">
               <div class="checklist-circle"></div>
-              <span>Complete seu cadastro.</span>
+              <span>WhatsApp sincronizado</span>
             </li>
           </ul>
         </div>
@@ -105,9 +105,9 @@
 
       <!-- Sidebar Footer -->
       <div class="sidebar-footer">
-        <button class="nav-link" style="padding: 8px 10px; font-size: 13px;" onclick="navigateToTab('tab-settings')">
-          <span class="nav-icon">⚙️</span>
-          <span>Configurações</span>
+        <button class="nav-link" style="padding: 6px 8px; font-size: 11px;" onclick="navigateToTab('tab-settings')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          <span>Preferências</span>
         </button>
       </div>
     </aside>
@@ -127,7 +127,7 @@
           <!-- Notification Bell -->
           <button id="btn-toggle-notifs" class="icon-btn" title="Notificações">
             <span class="badge-dot"></span>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
               <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
               <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
             </svg>
@@ -135,7 +135,7 @@
 
           <!-- Privacy Eye (Hide / Show balances) -->
           <button id="btn-toggle-privacy" class="icon-btn" title="Ocultar valores">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
               <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
               <circle cx="12" cy="12" r="3"></circle>
             </svg>
@@ -143,7 +143,7 @@
 
           <!-- Theme Switcher (Light / Dark) -->
           <button id="btn-toggle-theme" class="icon-btn" title="Alternar Modo Claro / Escuro">
-            <span id="theme-icon">🌙</span>
+            <span id="theme-icon" style="font-size: 13px;">◐</span>
           </button>
 
           <!-- User Badge -->
@@ -163,7 +163,7 @@
       <div class="app-content-scroll">
 
         <!-- ===============================================================
-             TAB 1: DASHBOARD (Images 3 & 4)
+             TAB 1: DASHBOARD
              =============================================================== -->
         <div class="tab-content-pane active" id="tab-dashboard">
           
@@ -171,32 +171,32 @@
           <div class="top-summary-grid">
             <!-- Entradas -->
             <div class="mi-card summary-card-metric">
-              <div class="metric-label-small">Entradas</div>
+              <div class="metric-label-small">Entradas no Mês</div>
               <div class="metric-value-huge primary" id="dash-metric-income" data-val="100000000.00">R$ 100.000.000,00</div>
               <div class="metric-trend-pill positive">
-                <span>↗ Esse mês teve +5% de entradas</span>
+                <span>+5,2% vs período anterior</span>
               </div>
             </div>
 
             <!-- Saídas -->
             <div class="mi-card summary-card-metric">
-              <div class="metric-label-small">Saídas</div>
+              <div class="metric-label-small">Despesas Consolidadas</div>
               <div class="metric-value-huge" id="dash-metric-expense" data-val="10000.00">R$ 10.000,00</div>
               <div class="metric-trend-pill negative">
-                <span>↘ Esse mês teve -5% de despesas</span>
+                <span>-4,8% dentro do orçamento</span>
               </div>
             </div>
 
-            <!-- Saldo do Mês (Blue Card with Tabs) -->
+            <!-- Saldo do Mês -->
             <div class="mi-card balance-hero-card">
               <div class="balance-card-tabs">
-                <button class="balance-tab-btn active" data-btype="saldo">Saldo do mês</button>
-                <button class="balance-tab-btn" data-btype="emergencia">Emergência</button>
-                <button class="balance-tab-btn" data-btype="investimento">Investimento</button>
+                <button class="balance-tab-btn active" data-btype="saldo">Saldo em Conta</button>
+                <button class="balance-tab-btn" data-btype="emergencia">Reserva Liquidez</button>
+                <button class="balance-tab-btn" data-btype="investimento">Investimentos</button>
               </div>
               <div>
                 <div class="balance-hero-value" id="dash-metric-balance" data-val="10000.00">R$ 10.000,00</div>
-                <div class="balance-hero-sub">Esse mês teve -5% de despesas</div>
+                <div class="balance-hero-sub">Saldo disponível para liquidação imediata</div>
               </div>
             </div>
           </div>
@@ -213,19 +213,19 @@
                 <!-- Projeção de Saldo (Bar Chart) -->
                 <div class="mi-card">
                   <div class="chart-card-header">
-                    <span class="chart-card-title">Projeção de Saldo</span>
+                    <span class="chart-card-title">Fluxo Mensal</span>
                     <div class="chart-controls-group">
                       <button class="pill-toggle-btn active" data-proj="anual">Anual</button>
                       <button class="pill-toggle-btn" data-proj="mes">Mês</button>
                       <button class="pill-toggle-btn" data-proj="periodo">Período</button>
                     </div>
                   </div>
-                  <div style="display: flex; align-items: center; gap: 14px; font-size: 11px; margin-bottom: 12px; color: var(--text-muted);">
-                    <span style="display: flex; align-items: center; gap: 6px;">
-                      <span style="width: 8px; height: 8px; border-radius: 50%; background: #2563eb;"></span> Entradas
+                  <div style="display: flex; align-items: center; gap: 12px; font-size: 11px; margin-bottom: 8px; color: var(--text-muted);">
+                    <span style="display: flex; align-items: center; gap: 5px;">
+                      <span style="width: 6px; height: 6px; border-radius: 1px; background: #2563eb;"></span> Entradas
                     </span>
-                    <span style="display: flex; align-items: center; gap: 6px;">
-                      <span style="width: 8px; height: 8px; border-radius: 50%; background: #38bdf8;"></span> Saídas
+                    <span style="display: flex; align-items: center; gap: 5px;">
+                      <span style="width: 6px; height: 6px; border-radius: 1px; background: #64748b;"></span> Saídas
                     </span>
                   </div>
                   <!-- SVG Bar Chart Container -->
@@ -235,20 +235,19 @@
                 <!-- Categoria (Donut Chart) -->
                 <div class="mi-card">
                   <div class="chart-card-header">
-                    <span class="chart-card-title">Categoria</span>
+                    <span class="chart-card-title">Distribuição</span>
                     <div class="chart-controls-group">
                       <button class="pill-toggle-btn active" data-cat="entradas">Entradas</button>
                       <button class="pill-toggle-btn" data-cat="saidas">Saídas</button>
-                      <button class="pill-toggle-btn" data-cat="mes">Mês</button>
                     </div>
                   </div>
                   <div class="donut-chart-container">
                     <div class="donut-svg-wrap" id="dashboard-donut-svg-box"></div>
                     <div class="donut-legend" id="dashboard-donut-legend">
-                      <div class="donut-legend-item"><span class="legend-color-dot" style="background: #2563eb;"></span> Vendas 55%</div>
-                      <div class="donut-legend-item"><span class="legend-color-dot" style="background: #38bdf8;"></span> Finanças 25%</div>
-                      <div class="donut-legend-item"><span class="legend-color-dot" style="background: #7dd3fc;"></span> Marketing 15%</div>
-                      <div class="donut-legend-item"><span class="legend-color-dot" style="background: #0f172a;"></span> RH 5%</div>
+                      <div class="donut-legend-item"><span class="legend-color-dot" style="background: #2563eb;"></span> Vendas (55%)</div>
+                      <div class="donut-legend-item"><span class="legend-color-dot" style="background: #3b82f6;"></span> Operacional (25%)</div>
+                      <div class="donut-legend-item"><span class="legend-color-dot" style="background: #64748b;"></span> Serviços (15%)</div>
+                      <div class="donut-legend-item"><span class="legend-color-dot" style="background: #1e293b;"></span> Administrativo (5%)</div>
                     </div>
                   </div>
                 </div>
@@ -260,12 +259,12 @@
                 <!-- Metas -->
                 <div class="mi-card">
                   <div class="progress-section-header">
-                    <span class="chart-card-title">Metas</span>
+                    <span class="chart-card-title">Metas Estratégicas</span>
                   </div>
                   <div class="progress-group-list">
                     <div class="progress-row-item">
                       <div class="progress-label-row">
-                        <span>Entrada da casa</span>
+                        <span>Aporte Residencial</span>
                         <span class="progress-pct-badge">60%</span>
                       </div>
                       <div class="progress-bar-track">
@@ -274,7 +273,7 @@
                     </div>
                     <div class="progress-row-item">
                       <div class="progress-label-row">
-                        <span>Carro</span>
+                        <span>Fundo de Reserva</span>
                         <span class="progress-pct-badge">60%</span>
                       </div>
                       <div class="progress-bar-track">
@@ -287,12 +286,12 @@
                 <!-- Orçamento -->
                 <div class="mi-card">
                   <div class="progress-section-header">
-                    <span class="chart-card-title">Orçamento</span>
+                    <span class="chart-card-title">Teto Orçamentário</span>
                   </div>
                   <div class="progress-group-list">
                     <div class="progress-row-item">
                       <div class="progress-label-row">
-                        <span>Mercado</span>
+                        <span>Alimentação / Mercado</span>
                         <span class="progress-pct-badge">60%</span>
                       </div>
                       <div class="progress-bar-track">
@@ -301,7 +300,7 @@
                     </div>
                     <div class="progress-row-item">
                       <div class="progress-label-row">
-                        <span>Transporte</span>
+                        <span>Logística & Transporte</span>
                         <span class="progress-pct-badge">60%</span>
                       </div>
                       <div class="progress-bar-track">
@@ -316,7 +315,7 @@
               <div class="mi-card transactions-summary-card">
                 <div class="progress-section-header">
                   <span class="chart-card-title">Últimas Transações</span>
-                  <button class="pill-toggle-btn" onclick="navigateToTab('tab-lancamentos')">Ver transações →</button>
+                  <button class="pill-toggle-btn" onclick="navigateToTab('tab-lancamentos')">Ver extrato completo →</button>
                 </div>
                 <table class="mini-table">
                   <thead>
@@ -340,30 +339,30 @@
               <!-- Pagar Widget -->
               <div class="mi-card">
                 <div class="action-list-header">
-                  <span class="action-list-title">Pagar</span>
+                  <span class="action-list-title">Contas a Pagar</span>
                 </div>
                 <div class="action-items-container" id="dash-pagar-container">
                   <!-- Dynamic items -->
                 </div>
-                <button class="btn-action-text" id="btn-pay-all">Pagar tudo!</button>
+                <button class="btn-action-text" id="btn-pay-all">Liquidar pendências</button>
               </div>
 
               <!-- A Receber Widget -->
               <div class="mi-card">
                 <div class="action-list-header">
-                  <span class="action-list-title">A receber</span>
+                  <span class="action-list-title">Previsão de Recebíveis</span>
                 </div>
                 <div class="action-items-container" id="dash-receber-container">
                   <!-- Dynamic items -->
                 </div>
-                <button class="btn-action-text" id="btn-receive-all">Recebi tudo!</button>
+                <button class="btn-action-text" id="btn-receive-all">Conciliar entradas</button>
               </div>
 
               <!-- Calendário de Vencimento -->
               <div class="mi-card">
                 <div class="calendar-card-header">
-                  <span class="action-list-title">Calendário de vencimento</span>
-                  <span style="font-size: 11px; color: var(--text-muted);">Meses</span>
+                  <span class="action-list-title">Calendário Financeiro</span>
+                  <span style="font-size: 10px; color: var(--text-muted); text-transform: uppercase;">Outubro 2026</span>
                 </div>
                 <div class="calendar-grid" id="dash-calendar-grid">
                   <!-- Rendered via JS -->
@@ -377,14 +376,14 @@
         </div>
 
         <!-- ===============================================================
-             TAB 2: LANÇAMENTOS (Image 6)
+             TAB 2: LANÇAMENTOS
              =============================================================== -->
         <div class="tab-content-pane" id="tab-lancamentos">
           
           <div class="tx-top-actions">
             <div>
-              <h2 style="font-size: 20px; font-weight: 700;">Lançamentos</h2>
-              <p style="font-size: 12px; color: var(--text-muted);">Extrato financeiro com calculadora e cartões</p>
+              <h2 style="font-size: 15px; font-weight: 600;">Extrato de Lançamentos</h2>
+              <p style="font-size: 11px; color: var(--text-muted);">Auditoria completa de entradas, saídas e compromissos</p>
             </div>
             <button class="btn-primary-pill" onclick="openNewTxModal()">
               <span>+</span> Novo Lançamento
@@ -395,15 +394,13 @@
           <div class="filter-pills-bar">
             <div class="pills-group" id="tx-filter-pills-group">
               <button class="filter-pill active" data-filter="todos">Todos</button>
-              <button class="filter-pill" data-filter="pagos">Pagos</button>
+              <button class="filter-pill" data-filter="pagos">Liquidados</button>
               <button class="filter-pill" data-filter="agendados">Agendados</button>
               <button class="filter-pill" data-filter="atrasados">Atrasados</button>
-              <button class="filter-pill" data-filter="faturas">Faturas cartão</button>
-              <button class="filter-pill" data-filter="duplicados">Lançamentos duplicados</button>
-              <button class="filter-pill" data-filter="mes">Mês</button>
-              <button class="filter-pill" data-filter="periodo">Período</button>
+              <button class="filter-pill" data-filter="faturas">Faturas Cartão</button>
+              <button class="filter-pill" data-filter="mes">Mês Vigente</button>
             </div>
-            <input type="text" class="search-box-input" id="tx-search-input" placeholder="Pesquisar..." />
+            <input type="text" class="search-box-input" id="tx-search-input" placeholder="Filtrar por descrição..." />
           </div>
 
           <!-- 2-Column Lançamentos Layout -->
@@ -418,7 +415,7 @@
                     <th>Descrição</th>
                     <th>Conta</th>
                     <th>Valor</th>
-                    <th>Ações</th>
+                    <th style="text-align: right;">Ações</th>
                   </tr>
                 </thead>
                 <tbody id="full-transactions-table-body">
@@ -430,9 +427,9 @@
             <!-- Right: Cards + Calculator -->
             <div>
               <!-- Cartões Header -->
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                <span style="font-size: 14px; font-weight: 700;">Cartões</span>
-                <button class="btn-action-text" style="width: auto; padding: 0;" onclick="navigateToTab('tab-open-finance')">Cadastrar Cartão</button>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span style="font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--text-muted);">Cartões de Crédito</span>
+                <button class="btn-action-text" style="width: auto; padding: 0;" onclick="navigateToTab('tab-open-finance')">Gerenciar</button>
               </div>
 
               <!-- Mini Cards List -->
@@ -440,13 +437,13 @@
                 <!-- Rendered dynamically -->
               </div>
 
-              <!-- Calculadora Integrada (Image 6) -->
+              <!-- Calculadora Integrada -->
               <div class="calculator-card">
-                <div class="calculator-title">Calculadora</div>
+                <div class="calculator-title">Calculadora Financeira</div>
                 <div class="calculator-screen" id="calc-screen">10+4</div>
                 <div class="calculator-keypad-grid">
                   <button class="calc-btn op" data-calc="C">C</button>
-                  <button class="calc-btn op" data-calc="DEL">⌫</button>
+                  <button class="calc-btn op" data-calc="DEL">DEL</button>
                   <button class="calc-btn op" data-calc="%">%</button>
                   <button class="calc-btn op" data-calc="/">÷</button>
 
@@ -478,29 +475,29 @@
         </div>
 
         <!-- ===============================================================
-             TAB 3: PLANEJAMENTO (Image 8)
+             TAB 3: PLANEJAMENTO
              =============================================================== -->
         <div class="tab-content-pane" id="tab-planejamento">
           <div class="tx-top-actions">
             <div>
-              <h2 style="font-size: 20px; font-weight: 700;">Planejamento Financeiro</h2>
-              <p style="font-size: 12px; color: var(--text-muted);">Defina seus tetos de gastos e projete suas conquistas</p>
+              <h2 style="font-size: 15px; font-weight: 600;">Planejamento Financeiro</h2>
+              <p style="font-size: 11px; color: var(--text-muted);">Metas de curto e longo prazo com acompanhamento sistemático</p>
             </div>
-            <div style="display: flex; gap: 10px;">
-              <button class="btn-primary-pill" onclick="openBudgetModal()">+ Novo Orçamento</button>
-              <button class="btn-primary-pill" style="background: #38bdf8;" onclick="openMetaModal()">+ Nova Meta</button>
+            <div style="display: flex; gap: 8px;">
+              <button class="btn-primary-pill" onclick="openBudgetModal()">+ Orçamento</button>
+              <button class="btn-primary-pill" style="background: var(--bg-card-secondary); color: var(--text-main); border: 1px solid var(--border-medium);" onclick="openMetaModal()">+ Meta</button>
             </div>
           </div>
 
           <div class="planejamento-grid">
             <!-- Orçamento Column -->
             <div>
-              <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 14px;">Orçamento</h3>
+              <h3 style="font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 10px;">Orçamentos Ativos</h3>
               
               <div class="budget-card-box">
                 <div class="budget-card-header">
-                  <span>Entrada da casa</span>
-                  <span style="color: var(--color-primary);">80% concluída</span>
+                  <span>Aporte Imobiliário</span>
+                  <span style="color: var(--color-primary-light);">80% concluído</span>
                 </div>
                 <div class="progress-bar-track">
                   <div class="progress-bar-fill" style="width: 80%;"></div>
@@ -513,8 +510,8 @@
 
               <div class="budget-card-box">
                 <div class="budget-card-header">
-                  <span>Carro</span>
-                  <span style="color: var(--color-primary);">80% concluída</span>
+                  <span>Renovação de Veículo</span>
+                  <span style="color: var(--color-primary-light);">80% concluído</span>
                 </div>
                 <div class="progress-bar-track">
                   <div class="progress-bar-fill" style="width: 80%;"></div>
@@ -527,8 +524,8 @@
 
               <div class="budget-card-box">
                 <div class="budget-card-header">
-                  <span>Mercado Mensal</span>
-                  <span style="color: var(--color-primary);">55% concluída</span>
+                  <span>Despesas Operacionais</span>
+                  <span style="color: var(--color-primary-light);">55% concluído</span>
                 </div>
                 <div class="progress-bar-track">
                   <div class="progress-bar-fill" style="width: 55%;"></div>
@@ -542,26 +539,26 @@
 
             <!-- Metas Column with Evolution Graph -->
             <div>
-              <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 14px;">Metas</h3>
+              <h3 style="font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 10px;">Curva de Evolução</h3>
 
               <div class="meta-timeline-card">
-                <div style="display: flex; justify-content: flex-end; gap: 14px; font-size: 11px; margin-bottom: 12px; color: var(--text-muted);">
-                  <span style="display: flex; align-items: center; gap: 6px;">
-                    <span style="width: 8px; height: 8px; border-radius: 50%; background: #2563eb;"></span> Entrada da casa
+                <div style="display: flex; justify-content: flex-end; gap: 12px; font-size: 10px; margin-bottom: 10px; color: var(--text-muted);">
+                  <span style="display: flex; align-items: center; gap: 4px;">
+                    <span style="width: 6px; height: 6px; border-radius: 1px; background: #2563eb;"></span> Imobiliário
                   </span>
-                  <span style="display: flex; align-items: center; gap: 6px;">
-                    <span style="width: 8px; height: 8px; border-radius: 50%; background: #38bdf8;"></span> Carro
+                  <span style="display: flex; align-items: center; gap: 4px;">
+                    <span style="width: 6px; height: 6px; border-radius: 1px; background: #64748b;"></span> Veículo
                   </span>
                 </div>
 
                 <!-- SVG Evolution Chart -->
-                <div style="height: 180px; width: 100%;" id="meta-evolution-svg-box"></div>
+                <div style="height: 150px; width: 100%;" id="meta-evolution-svg-box"></div>
 
-                <div style="margin-top: 24px; display: flex; flex-direction: column; gap: 16px;">
+                <div style="margin-top: 16px; display: flex; flex-direction: column; gap: 12px;">
                   <div class="progress-row-item">
                     <div class="progress-label-row">
-                      <span>Entrada da casa</span>
-                      <span class="progress-pct-badge">80% concluída</span>
+                      <span>Aporte Imobiliário</span>
+                      <span class="progress-pct-badge">80% executado</span>
                     </div>
                     <div class="progress-bar-track">
                       <div class="progress-bar-fill" style="width: 80%;"></div>
@@ -570,13 +567,13 @@
                       <span>R$ 40.500,00</span>
                       <span>R$ 45.500,00</span>
                     </div>
-                    <div class="meta-timeline-phrase">Nesse ritmo, você alcançará sua meta em 14 meses.</div>
+                    <div class="meta-timeline-phrase">Projeção: Liquidação prevista em 14 meses.</div>
                   </div>
 
                   <div class="progress-row-item">
                     <div class="progress-label-row">
-                      <span>Carro</span>
-                      <span class="progress-pct-badge">80% concluída</span>
+                      <span>Renovação de Veículo</span>
+                      <span class="progress-pct-badge">80% executado</span>
                     </div>
                     <div class="progress-bar-track">
                       <div class="progress-bar-fill" style="width: 80%;"></div>
@@ -585,7 +582,7 @@
                       <span>R$ 40.500,00</span>
                       <span>R$ 45.500,00</span>
                     </div>
-                    <div class="meta-timeline-phrase">Nesse ritmo, você alcançará sua meta em 14 meses.</div>
+                    <div class="meta-timeline-phrase">Projeção: Liquidação prevista em 14 meses.</div>
                   </div>
                 </div>
 
@@ -598,51 +595,50 @@
         </div>
 
         <!-- ===============================================================
-             TAB 4: OPEN FINANCE & CARTÕES (Images 5 + Projeção de Faturas)
+             TAB 4: OPEN FINANCE & CARTÕES
              =============================================================== -->
         <div class="tab-content-pane" id="tab-open-finance">
           <div class="tx-top-actions">
             <div>
-              <h2 style="font-size: 20px; font-weight: 700;">Open Finance & Cartões de Crédito</h2>
-              <p style="font-size: 12px; color: var(--text-muted);">Integrações bancárias seguras e projeção de término de faturas</p>
+              <h2 style="font-size: 15px; font-weight: 600;">Open Finance & Cartões Corporativos</h2>
+              <p style="font-size: 11px; color: var(--text-muted);">Sincronização bancária direta e projeção preditiva de limites</p>
             </div>
-            <button class="btn-primary-pill" onclick="window.showToast('Conexão Open Finance em conformidade com o Banco Central!', '🔒')">
-              Nova conexão
+            <button class="btn-primary-pill" onclick="window.showToast('Conexão regulada pelo Banco Central ativa', '✓')">
+              Nova Conexão
             </button>
           </div>
 
-          <!-- Bank Logos Banner (Image 5) -->
-          <div class="mi-card" style="text-align: center; margin-bottom: 24px;">
-            <h3 style="font-size: 18px; font-weight: 800;">Open Finance</h3>
-            <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Seu banco conectado em tempo real!</p>
+          <!-- Bank Logos Banner -->
+          <div class="mi-card" style="text-align: center; margin-bottom: 16px;">
+            <div style="font-size: 12px; font-weight: 600; text-transform: uppercase; color: var(--text-muted);">Bancos Integrados</div>
             <div class="bank-logos-grid">
-              <div class="bank-logo-badge nu" title="Nubank">nu</div>
-              <div class="bank-logo-badge itau" title="Itaú">itaú</div>
-              <div class="bank-logo-badge bradesco" title="Bradesco">bra</div>
-              <div class="bank-logo-badge picpay" title="PicPay">pic</div>
-              <div class="bank-logo-badge inter" title="Banco Inter">inter</div>
-              <div class="bank-logo-badge caixa" title="Caixa">X</div>
+              <div class="bank-logo-badge" title="Nubank">NU</div>
+              <div class="bank-logo-badge" title="Itaú">ITAÚ</div>
+              <div class="bank-logo-badge" title="Bradesco">BRA</div>
+              <div class="bank-logo-badge" title="PicPay">PIC</div>
+              <div class="bank-logo-badge" title="Banco Inter">INTER</div>
+              <div class="bank-logo-badge" title="Caixa">CEF</div>
             </div>
           </div>
 
           <!-- Cards Grid & Predictive Projection -->
-          <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 14px;">Seus Cartões & Limites</h3>
-          <div class="top-summary-grid" id="open-finance-cards-grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
+          <h3 style="font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 10px;">Cartões & Limites</h3>
+          <div class="top-summary-grid" id="open-finance-cards-grid" style="grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));">
             <!-- Dynamic cards -->
           </div>
 
           <!-- Faturas Projection Hero -->
-          <div class="mi-card" style="margin-top: 24px;">
+          <div class="mi-card" style="margin-top: 16px;">
             <div class="chart-card-header">
               <div>
-                <span class="chart-card-title">📉 Projeção de Faturas (Próximos 18 Meses)</span>
-                <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">
-                  Veja exatamente quando os parcelamentos serão quitados e seu limite restabelecido.
+                <span class="chart-card-title">Projeção de Quitação (18 Meses)</span>
+                <p style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">
+                  Declínio gradual das parcelas até restabelecimento integral do limite.
                 </p>
               </div>
               <div class="metric-trend-pill positive" id="open-finance-finish-badge">Calculando...</div>
             </div>
-            <div id="open-finance-bars-container" style="display: flex; align-items: flex-end; gap: 10px; height: 180px; padding: 20px 0; overflow-x: auto;">
+            <div id="open-finance-bars-container" style="display: flex; align-items: flex-end; gap: 8px; height: 150px; padding: 14px 0; overflow-x: auto;">
               <!-- Dynamic bars -->
             </div>
           </div>
@@ -655,8 +651,8 @@
         <div class="tab-content-pane" id="tab-whatsapp">
           <div class="tx-top-actions">
             <div>
-              <h2 style="font-size: 20px; font-weight: 700;">WhatsApp 24/7 & Assistente IA</h2>
-              <p style="font-size: 12px; color: var(--text-muted);">Conecte seu celular para registrar gastos e consultar faturas por mensagem</p>
+              <h2 style="font-size: 15px; font-weight: 600;">Assistente WhatsApp Corporativo</h2>
+              <p style="font-size: 11px; color: var(--text-muted);">Pareamento de sessão para registro instantâneo de transações</p>
             </div>
           </div>
 
@@ -664,51 +660,48 @@
             
             <!-- QR Code Connection Card -->
             <div class="mi-card" style="display: flex; flex-direction: column; align-items: center; text-align: center;">
-              <span id="wa-connection-badge" class="filter-pill active" style="margin-bottom: 12px;">○ Desconectado</span>
-              <h3 style="font-size: 18px; font-weight: 700;">Conectar WhatsApp</h3>
-              <p style="font-size: 12px; color: var(--text-muted); max-width: 320px; margin-top: 4px;">
-                Escaneie o QR Code no seu aplicativo do celular para ativar o assistente 24 horas.
+              <span id="wa-connection-badge" class="filter-pill active" style="margin-bottom: 10px;">Desconectado</span>
+              <h3 style="font-size: 14px; font-weight: 600;">Conectar Instância WhatsApp</h3>
+              <p style="font-size: 11px; color: var(--text-muted); max-width: 280px; margin-top: 3px;">
+                Aponte o aplicativo móvel em Aparelhos Conectados para sincronizar.
               </p>
 
               <!-- QR Code Box -->
-              <div id="wa-qrcode-box" style="margin: 20px 0;">
-                <div style="width: 220px; height: 220px; border: 2px dashed var(--border-medium); border-radius: var(--radius-md); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; color: var(--text-subtle);">
-                  <span style="font-size: 32px;">📷</span>
-                  <span style="font-size: 12px;">Clique abaixo para gerar</span>
+              <div id="wa-qrcode-box" style="margin: 16px 0;">
+                <div style="width: 200px; height: 200px; border: 1px dashed var(--border-medium); border-radius: var(--radius-sm); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; color: var(--text-subtle);">
+                  <span style="font-size: 11px;">Clique abaixo para gerar</span>
                 </div>
               </div>
 
               <!-- Connected Box -->
-              <div id="wa-connected-box" style="display: none; flex-direction: column; align-items: center; gap: 10px; padding: 20px; background: var(--color-success-bg); border-radius: var(--radius-md); border: 1px solid var(--color-success);">
-                <span style="font-size: 36px;">📱✅</span>
-                <div style="font-weight: 700; color: var(--color-success-text);">WhatsApp Conectado!</div>
-                <div style="font-size: 12px; color: var(--text-main);" id="wa-connected-phone-display"></div>
+              <div id="wa-connected-box" style="display: none; flex-direction: column; align-items: center; gap: 6px; padding: 14px; background: var(--color-success-bg); border-radius: var(--radius-sm); border: 1px solid var(--color-success);">
+                <div style="font-weight: 600; color: var(--color-success-text); font-size: 12px;">Instância Conectada</div>
+                <div style="font-size: 11px; color: var(--text-main); font-family: var(--font-mono);" id="wa-connected-phone-display"></div>
               </div>
 
-              <div style="display: flex; gap: 10px; margin-top: 10px;">
-                <button id="btn-whatsapp-connect" class="btn-primary-pill">📲 Gerar QR Code</button>
+              <div style="display: flex; gap: 8px; margin-top: 8px;">
+                <button id="btn-whatsapp-connect" class="btn-primary-pill">Gerar QR Code</button>
                 <button id="btn-whatsapp-logout" class="filter-pill" style="display: none; color: var(--color-danger);">Desconectar</button>
               </div>
             </div>
 
             <!-- Chat Simulator -->
-            <div class="mi-card" style="display: flex; flex-direction: column; height: 500px; padding: 16px;">
-              <div style="display: flex; align-items: center; gap: 10px; padding-bottom: 12px; border-bottom: 1px solid var(--border-subtle);">
-                <div class="user-avatar-circle" style="background: #10b981;">🤖</div>
+            <div class="mi-card" style="display: flex; flex-direction: column; height: 460px; padding: 14px;">
+              <div style="display: flex; align-items: center; justify-content: space-between; padding-bottom: 10px; border-bottom: 1px solid var(--border-subtle);">
                 <div>
-                  <div style="font-size: 13px; font-weight: 700;">Simulador de Conversa</div>
-                  <div style="font-size: 11px; color: var(--color-success);">Online • Respostas em tempo real</div>
+                  <div style="font-size: 12px; font-weight: 600;">Console de Teste</div>
+                  <div style="font-size: 10px; color: var(--color-success-text);">Canal Bidirecional Ativo</div>
                 </div>
               </div>
 
-              <div id="chat-messages-area" style="flex: 1; overflow-y: auto; padding: 14px 4px; display: flex; flex-direction: column; gap: 10px;">
+              <div id="chat-messages-area" style="flex: 1; overflow-y: auto; padding: 10px 2px; display: flex; flex-direction: column; gap: 8px;">
                 <!-- Messages -->
               </div>
 
               <!-- Chat Input -->
-              <div style="display: flex; gap: 8px; padding-top: 10px; border-top: 1px solid var(--border-subtle);">
-                <input type="text" id="chat-input" class="form-input-pill" placeholder="Digite ex: 'almoço 35 no débito' ou 'projeção'..." />
-                <button id="chat-send-btn" class="btn-primary-pill" style="padding: 0 16px;">➤</button>
+              <div style="display: flex; gap: 6px; padding-top: 8px; border-top: 1px solid var(--border-subtle);">
+                <input type="text" id="chat-input" class="form-input-pill" placeholder="Comando ex: 'almoço 35 no débito'..." />
+                <button id="chat-send-btn" class="btn-primary-pill" style="padding: 0 14px;">Enviar</button>
               </div>
             </div>
 
@@ -717,75 +710,64 @@
         </div>
 
         <!-- ===============================================================
-             TAB 6: CONFIGURAÇÕES & PERFIL (Image 5)
+             TAB 6: CONFIGURAÇÕES & PERFIL
              =============================================================== -->
         <div class="tab-content-pane" id="tab-settings">
           <div class="tx-top-actions">
             <div>
-              <h2 style="font-size: 20px; font-weight: 700;">Meu Perfil & Configurações</h2>
-              <p style="font-size: 12px; color: var(--text-muted);">Personalize seus dados, planos e canais de notificação</p>
+              <h2 style="font-size: 15px; font-weight: 600;">Preferências & Segurança</h2>
+              <p style="font-size: 11px; color: var(--text-muted);">Parametrização do sistema e políticas de notificação</p>
             </div>
           </div>
 
           <div class="settings-layout-grid">
             
             <!-- Left: Profile & Password -->
-            <div style="display: flex; flex-direction: column; gap: 20px;">
+            <div style="display: flex; flex-direction: column; gap: 14px;">
               
               <!-- Profile Card -->
               <div class="mi-card" style="text-align: center;">
                 <div class="profile-avatar-large">M</div>
-                <h3 style="font-size: 16px; font-weight: 700;">Marques</h3>
-                <p style="font-size: 12px; color: var(--text-muted);">Membro desde Outubro de 2026</p>
-
-                <!-- Plan info -->
-                <div style="margin: 18px 0; padding: 14px; background-color: var(--bg-card-secondary); border-radius: var(--radius-md); text-align: left;">
-                  <div style="font-size: 13px; font-weight: 700;">Plano Anual Pro</div>
-                  <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Sua assinatura está ativa e conectada ao Supabase</div>
-                  <button class="filter-pill active" style="margin-top: 10px; width: 100%;" onclick="window.showToast('Plano Pro ativo e ilimitado!', '⭐')">Gerenciar assinatura</button>
-                </div>
+                <h3 style="font-size: 13px; font-weight: 600;">Marques</h3>
+                <p style="font-size: 11px; color: var(--text-muted);">Assinatura Corporativa Ativa</p>
 
                 <!-- Personal Info form -->
-                <div style="text-align: left; display: flex; flex-direction: column; gap: 12px;">
-                  <div style="font-size: 13px; font-weight: 700;">Dados Pessoais</div>
-                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div style="text-align: left; display: flex; flex-direction: column; gap: 10px; margin-top: 14px;">
+                  <div style="font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--text-muted);">Credenciais</div>
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
                     <input type="text" class="form-input-pill" value="Marques" placeholder="Nome" />
                     <input type="text" class="form-input-pill" value="Consultoria" placeholder="Sobrenome" />
                   </div>
                   <input type="email" class="form-input-pill" value="marques@exemplo.com" placeholder="E-mail" />
                   <input type="tel" class="form-input-pill" value="+55 (11) 99999-9999" placeholder="Telefone" />
-                  <button class="btn-submit-action" onclick="window.showToast('Dados atualizados com sucesso!', '✓')">Atualizar cadastro</button>
+                  <button class="btn-submit-action" onclick="window.showToast('Parâmetros gravados com sucesso', '✓')">Salvar Alterações</button>
                 </div>
               </div>
 
               <!-- Change Password Card -->
               <div class="mi-card">
-                <h3 style="font-size: 14px; font-weight: 700; margin-bottom: 12px;">Mude sua senha de acesso</h3>
-                <div style="display: flex; flex-direction: column; gap: 10px;">
+                <div style="font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px;">Segurança de Acesso</div>
+                <div style="display: flex; flex-direction: column; gap: 8px;">
                   <input type="password" class="form-input-pill" placeholder="Senha atual" />
-                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
                     <input type="password" class="form-input-pill" placeholder="Nova senha" />
-                    <input type="password" class="form-input-pill" placeholder="Repita a nova senha" />
+                    <input type="password" class="form-input-pill" placeholder="Confirmar nova senha" />
                   </div>
-                  <button class="btn-submit-action" onclick="window.showToast('Senha alterada com sucesso!', '🔒')">Atualizar senha</button>
+                  <button class="btn-submit-action" onclick="window.showToast('Senha atualizada', '✓')">Redefinir Senha</button>
                 </div>
               </div>
 
             </div>
 
-            <!-- Right: Preferences & Alerts (Image 5) -->
+            <!-- Right: Preferences & Alerts -->
             <div class="mi-card">
-              <h3 style="font-size: 15px; font-weight: 700;">Preferências e alertas</h3>
-              <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px; margin-bottom: 16px;">
-                Controle quando e como o Lançei comunica com você.
-              </p>
+              <div style="font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 12px;">Disparos & Monitoramento</div>
 
               <div class="toggle-switch-row">
                 <div class="toggle-switch-info">
-                  <span style="font-size: 18px;">🔔</span>
                   <div>
-                    <div class="toggle-switch-title">Alertas de vencimento</div>
-                    <div class="toggle-switch-desc">Avisos do dia que vai pagar boletos e faturas.</div>
+                    <div class="toggle-switch-title">Vencimentos Programados</div>
+                    <div class="toggle-switch-desc">Notificação prévia de boletos e faturas em D-1.</div>
                   </div>
                 </div>
                 <label class="switch-control">
@@ -796,10 +778,9 @@
 
               <div class="toggle-switch-row">
                 <div class="toggle-switch-info">
-                  <span style="font-size: 18px;">📊</span>
                   <div>
-                    <div class="toggle-switch-title">Limite de orçamento</div>
-                    <div class="toggle-switch-desc">Ser avisado quando atingir 80% do orçamento do mês.</div>
+                    <div class="toggle-switch-title">Alerta de Teto Orçamentário</div>
+                    <div class="toggle-switch-desc">Notificar ao atingir 80% do limite por categoria.</div>
                   </div>
                 </div>
                 <label class="switch-control">
@@ -810,10 +791,9 @@
 
               <div class="toggle-switch-row">
                 <div class="toggle-switch-info">
-                  <span style="font-size: 18px;">✉️</span>
                   <div>
-                    <div class="toggle-switch-title">Resumo semanal</div>
-                    <div class="toggle-switch-desc">Receber relatório das movimentações direto no WhatsApp.</div>
+                    <div class="toggle-switch-title">Relatório Executivo Semanal</div>
+                    <div class="toggle-switch-desc">Sumário consolidado enviado automaticamente.</div>
                   </div>
                 </div>
                 <label class="switch-control">
@@ -824,10 +804,9 @@
 
               <div class="toggle-switch-row">
                 <div class="toggle-switch-info">
-                  <span style="font-size: 18px;">☁️</span>
                   <div>
-                    <div class="toggle-switch-title">Sincronização em Nuvem (Supabase)</div>
-                    <div class="toggle-switch-desc">Manter persistência contínua com seu PostgreSQL.</div>
+                    <div class="toggle-switch-title">Persistência Supabase PostgreSQL</div>
+                    <div class="toggle-switch-desc">Sincronização em nuvem contínua e criptografada.</div>
                   </div>
                 </div>
                 <label class="switch-control">
@@ -847,16 +826,15 @@
 
   </div>
 
-  <!-- FLOATING WHATSAPP BUTTON (Bottom Right) -->
-  <button class="floating-whatsapp-btn" onclick="navigateToTab('tab-whatsapp')" title="Falar no WhatsApp">
-    <div class="whatsapp-pulse"></div>
+  <!-- FLOATING WHATSAPP BUTTON (Discreet Minimalist) -->
+  <button class="floating-whatsapp-btn" onclick="navigateToTab('tab-whatsapp')" title="WhatsApp 24/7">
     <svg viewBox="0 0 24 24">
-      <path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2zm.01 1.67c4.54 0 8.24 3.7 8.24 8.24 0 2.2-.86 4.28-2.42 5.84-1.56 1.56-3.64 2.42-5.83 2.42-1.43 0-2.83-.37-4.07-1.07l-.29-.17-3.12.82.83-3.04-.19-.31a8.163 8.163 0 0 1-1.25-4.49c0-4.54 3.7-8.24 8.24-8.24zm4.52 11.64c-.25-.12-1.47-.72-1.7-.81-.23-.08-.39-.12-.56.12-.17.25-.65.81-.8 1-.15.19-.3.21-.55.08-.25-.12-1.05-.39-2-1.23-.74-.66-1.24-1.47-1.38-1.72-.15-.25-.02-.38.11-.5.11-.11.25-.29.37-.43.12-.15.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.12-.56-1.35-.77-1.85-.2-.48-.41-.42-.56-.43h-.48c-.16 0-.43.06-.66.31-.23.25-.87.85-.87 2.08 0 1.23.89 2.41 1.02 2.58.12.17 1.76 2.68 4.26 3.76.6.26 1.06.41 1.42.53.6.19 1.15.16 1.58.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.08.15-1.18-.06-.1-.22-.16-.47-.28z"/>
+      <path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2zm.01 1.67c4.54 0 8.24 3.7 8.24 8.24 0 2.2-.86 4.28-2.42 5.84-1.56 1.56-3.64 2.42-5.83 2.42-1.43 0-2.83-.37-4.07-1.07l-.29-.17-3.12.82.83-3.04-.19-.31a8.163 8.163 0 0 1-1.25-4.49c0-4.54 3.7-8.24 8.24-8.24z"/>
     </svg>
   </button>
 
   <!-- ===================================================================
-       MODAL: NOVO LANÇAMENTO (Image 7)
+       MODAL: NOVO LANÇAMENTO
        =================================================================== -->
   <div class="modal-overlay" id="modal-novo-lancamento">
     <div class="modal-container">
@@ -869,53 +847,51 @@
       </div>
 
       <form id="form-novo-lancamento" class="modal-body-form">
-        <div style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 12px;">
+        <div style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 8px;">
           <div>
-            <label style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px; display: block;">Valor (R$)</label>
+            <label style="font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 3px; display: block;">Valor (R$)</label>
             <input type="number" step="0.01" class="form-input-pill" id="tx-modal-val" placeholder="0,00" required />
           </div>
           <div>
-            <label style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px; display: block;">Descrição</label>
-            <input type="text" class="form-input-pill" id="tx-modal-desc" placeholder="Ex: Supermercado, Salário" required />
+            <label style="font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 3px; display: block;">Descrição</label>
+            <input type="text" class="form-input-pill" id="tx-modal-desc" placeholder="Ex: Fornecedor, Licença de Software" required />
           </div>
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
           <div>
-            <label style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px; display: block;">Data</label>
+            <label style="font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 3px; display: block;">Data de Competência</label>
             <input type="date" class="form-input-pill" id="tx-modal-date" />
           </div>
           <div>
-            <label style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px; display: block;">Categoria</label>
+            <label style="font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 3px; display: block;">Categoria</label>
             <select class="form-input-pill" id="tx-modal-category">
-              <option value="Alimentação">Alimentação</option>
+              <option value="Operacional">Operacional</option>
               <option value="Mercado">Mercado</option>
-              <option value="Transporte">Transporte</option>
-              <option value="Moradia">Moradia</option>
-              <option value="Saúde">Saúde</option>
-              <option value="Renda">Renda & Salário</option>
-              <option value="Lazer">Lazer</option>
-              <option value="Outros">Outros</option>
+              <option value="Logística">Logística & Transporte</option>
+              <option value="Infraestrutura">Infraestrutura</option>
+              <option value="Receitas">Faturamento & Receita</option>
+              <option value="Geral">Geral</option>
             </select>
           </div>
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;">
           <div>
-            <label style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px; display: block;">Vencimento</label>
+            <label style="font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 3px; display: block;">Vencimento</label>
             <input type="date" class="form-input-pill" id="tx-modal-due" />
           </div>
           <div>
-            <label style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px; display: block;">Conta/Banco</label>
+            <label style="font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 3px; display: block;">Conta de Liquidação</label>
             <select class="form-input-pill" id="tx-modal-account">
+              <option value="Conta Principal">Conta Principal</option>
               <option value="Nubank">Nubank</option>
               <option value="Inter">Inter</option>
               <option value="Itaú">Itaú</option>
-              <option value="Carteira">Carteira / Pix</option>
             </select>
           </div>
           <div>
-            <label style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px; display: block;">Pagamento</label>
+            <label style="font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 3px; display: block;">Meio</label>
             <select class="form-input-pill" id="tx-modal-method">
               <option value="DEBIT">Débito</option>
               <option value="PIX">Pix</option>
@@ -924,46 +900,45 @@
           </div>
         </div>
 
-        <!-- Checkboxes (Image 7) -->
         <div class="form-checkbox-row">
           <label class="form-checkbox-item">
             <input type="checkbox" id="tx-modal-is-paid" checked />
-            <span>já está pago</span>
+            <span>Liquidado</span>
           </label>
           <label class="form-checkbox-item">
             <input type="checkbox" id="tx-modal-is-installment" />
-            <span>Parcelar</span>
+            <span>Parcelado</span>
           </label>
           <label class="form-checkbox-item">
             <input type="checkbox" id="tx-modal-is-repeat" />
-            <span>Repetir pagamento</span>
+            <span>Recorrência</span>
           </label>
         </div>
 
-        <div style="display: flex; gap: 10px; margin-top: 8px;">
+        <div style="display: flex; gap: 8px; margin-top: 6px;">
           <button type="button" class="filter-pill" style="flex: 1;" onclick="closeModal('modal-novo-lancamento')">Cancelar</button>
-          <button type="submit" class="btn-submit-action" style="flex: 2; margin-top: 0;">Lançar</button>
+          <button type="submit" class="btn-submit-action" style="flex: 2; margin-top: 0;">Salvar Lançamento</button>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- MODAL: NOVO ORÇAMENTO (Image 9) -->
+  <!-- MODAL: NOVO ORÇAMENTO -->
   <div class="modal-overlay" id="modal-novo-orcamento">
-    <div class="modal-container" style="max-width: 420px;">
-      <div style="padding: 20px 24px 0 24px; text-align: center;">
-        <h3 style="font-size: 16px; font-weight: 700;">Novo orçamento</h3>
+    <div class="modal-container" style="max-width: 380px;">
+      <div style="padding: 16px 20px 0 20px;">
+        <h3 style="font-size: 13px; font-weight: 600;">Definir Teto Orçamentário</h3>
       </div>
       <form id="form-novo-orcamento" class="modal-body-form">
         <div>
-          <label style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px; display: block;">Categoria alvo</label>
-          <input type="text" class="form-input-pill" id="orc-target" placeholder="Ex: Mercado, Transporte, Lazer" required />
+          <label style="font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 3px; display: block;">Categoria</label>
+          <input type="text" class="form-input-pill" id="orc-target" placeholder="Ex: Logística, Tecnologia" required />
         </div>
         <div>
-          <label style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px; display: block;">Limite mensal (R$)</label>
-          <input type="number" step="0.01" class="form-input-pill" id="orc-limit" placeholder="R$ 1.500,00" required />
+          <label style="font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 3px; display: block;">Teto Mensal (R$)</label>
+          <input type="number" step="0.01" class="form-input-pill" id="orc-limit" placeholder="R$ 5.000,00" required />
         </div>
-        <div style="display: flex; gap: 10px; margin-top: 8px;">
+        <div style="display: flex; gap: 8px; margin-top: 6px;">
           <button type="button" class="filter-pill" style="flex: 1;" onclick="closeModal('modal-novo-orcamento')">Cancelar</button>
           <button type="submit" class="btn-submit-action" style="flex: 2; margin-top: 0;">Salvar</button>
         </div>
@@ -971,39 +946,39 @@
     </div>
   </div>
 
-  <!-- MODAL: NOVA META (Image 9) -->
+  <!-- MODAL: NOVA META -->
   <div class="modal-overlay" id="modal-nova-meta">
-    <div class="modal-container" style="max-width: 440px;">
-      <div style="padding: 20px 24px 0 24px; text-align: center;">
-        <h3 style="font-size: 16px; font-weight: 700;">Nova Meta</h3>
+    <div class="modal-container" style="max-width: 400px;">
+      <div style="padding: 16px 20px 0 20px;">
+        <h3 style="font-size: 13px; font-weight: 600;">Nova Meta Estratégica</h3>
       </div>
       <form id="form-nova-meta" class="modal-body-form">
         <div>
-          <label style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px; display: block;">Nome da Meta</label>
-          <input type="text" class="form-input-pill" id="meta-name" placeholder="Ex: Viagem de Férias, Reserva de Emergência" required />
+          <label style="font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 3px; display: block;">Objetivo</label>
+          <input type="text" class="form-input-pill" id="meta-name" placeholder="Ex: Aporte Imobiliário" required />
         </div>
         <div>
-          <label style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px; display: block;">Valor alvo (R$)</label>
-          <input type="number" step="0.01" class="form-input-pill" id="meta-target" placeholder="R$ 20.000,00" required />
+          <label style="font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 3px; display: block;">Valor Alvo (R$)</label>
+          <input type="number" step="0.01" class="form-input-pill" id="meta-target" placeholder="R$ 50.000,00" required />
         </div>
         <div>
-          <label style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px; display: block;">Quanto já tem (R$)</label>
-          <input type="number" step="0.01" class="form-input-pill" id="meta-current" placeholder="R$ 5.000,00" required />
+          <label style="font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 3px; display: block;">Posição Atual (R$)</label>
+          <input type="number" step="0.01" class="form-input-pill" id="meta-current" placeholder="R$ 15.000,00" required />
         </div>
         <div>
-          <label style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px; display: block;">Até quando quer alcançar</label>
+          <label style="font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 3px; display: block;">Data Limite</label>
           <input type="date" class="form-input-pill" id="meta-deadline" />
         </div>
-        <div style="display: flex; gap: 10px; margin-top: 8px;">
+        <div style="display: flex; gap: 8px; margin-top: 6px;">
           <button type="button" class="filter-pill" style="flex: 1;" onclick="closeModal('modal-nova-meta')">Cancelar</button>
-          <button type="submit" class="btn-submit-action" style="flex: 2; margin-top: 0;">Salvar</button>
+          <button type="submit" class="btn-submit-action" style="flex: 2; margin-top: 0;">Salvar Meta</button>
         </div>
       </form>
     </div>
   </div>
 
   <!-- TOAST NOTIFICATIONS -->
-  <div id="toast-container" style="position: fixed; bottom: 24px; left: 24px; display: flex; flex-direction: column; gap: 8px; z-index: 9999;"></div>
+  <div id="toast-container" style="position: fixed; bottom: 20px; left: 20px; display: flex; flex-direction: column; gap: 6px; z-index: 9999;"></div>
 
   <!-- SCRIPT -->
   <script src="js/dashboard.js"></script>

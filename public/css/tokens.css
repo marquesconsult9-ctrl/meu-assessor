@@ -1,96 +1,94 @@
 /* ==========================================================================
-   LANÇEI • DESIGN SYSTEM & TOKENS
-   Inspired by Lançei UI (Light & Dark Mode)
+   LANÇEI • DESIGN SYSTEM (ENTERPRISE / SOPHISTICATED SUITE)
+   Minimalist, High-Density, Refined Typography, Sharp Borders
    ========================================================================== */
 
 :root {
-  /* Dark Theme (Default) */
-  --bg-app: #0b101d;
-  --bg-sidebar: #090d18;
-  --bg-card: #111928;
-  --bg-card-secondary: #0d1424;
-  --bg-card-elevated: #162038;
-  --bg-card-hover: #17243e;
-  --bg-input: #0a0f1d;
+  /* Dark Theme (Default Executive) */
+  --bg-app: #080a0f;
+  --bg-sidebar: #06070a;
+  --bg-card: #0d1017;
+  --bg-card-secondary: #11141d;
+  --bg-card-elevated: #131722;
+  --bg-card-hover: #151926;
+  --bg-input: #0a0d13;
   
-  --border-subtle: rgba(255, 255, 255, 0.07);
-  --border-medium: rgba(255, 255, 255, 0.12);
-  --border-active: #2b7fff;
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --border-medium: rgba(255, 255, 255, 0.10);
+  --border-active: #3b82f6;
 
-  /* Primary Accent - Vibrant Blue */
-  --color-primary: #2b7fff;
-  --color-primary-hover: #1e6be5;
-  --color-primary-light: #5ba2ff;
-  --color-primary-subtle: rgba(43, 127, 255, 0.15);
-  --color-primary-gradient: linear-gradient(135deg, #2b7fff 0%, #1e52c8 100%);
+  /* Restrained Accents */
+  --color-primary: #2563eb;
+  --color-primary-hover: #1d4ed8;
+  --color-primary-light: #60a5fa;
+  --color-primary-subtle: rgba(37, 99, 235, 0.12);
+  --color-primary-gradient: #2563eb;
 
-  /* Status Colors */
+  /* Status Colors (Subtle & Crisp) */
   --color-success: #10b981;
-  --color-success-bg: rgba(16, 185, 129, 0.12);
+  --color-success-bg: rgba(16, 185, 129, 0.08);
   --color-success-text: #34d399;
   
   --color-danger: #ef4444;
-  --color-danger-bg: rgba(239, 68, 68, 0.12);
+  --color-danger-bg: rgba(239, 68, 68, 0.08);
   --color-danger-text: #f87171;
 
   --color-warning: #f59e0b;
-  --color-warning-bg: rgba(245, 158, 11, 0.12);
+  --color-warning-bg: rgba(245, 158, 11, 0.08);
   --color-warning-text: #fbbf24;
 
-  --color-cyan: #38bdf8;
-  --color-purple: #8b5cf6;
+  --color-cyan: #0ea5e9;
 
-  /* Text Colors */
+  /* Enterprise Monochrome Text */
   --text-main: #f8fafc;
-  --text-muted: #94a3b8;
-  --text-subtle: #64748b;
+  --text-muted: #8492a6;
+  --text-subtle: #475569;
   --text-placeholder: #475569;
 
-  /* Fonts */
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+  /* Typography */
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', Consolas, monospace;
 
-  /* Shadows */
-  --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 6px 18px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.5);
-  --shadow-blue-glow: 0 4px 20px rgba(43, 127, 255, 0.35);
+  /* Shadows (Subtle, Sharp, No Cartoon Glows) */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.6);
 
-  /* Radius */
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 20px;
+  /* Enterprise Sharp Border Radiuses (Less rounded) */
+  --radius-xs: 3px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 10px;
   --radius-full: 9999px;
 
   /* Transitions */
-  --transition-fast: 150ms ease;
-  --transition-normal: 250ms ease;
+  --transition-fast: 120ms ease;
+  --transition-normal: 200ms ease;
 }
 
-/* Light Theme Variables */
+/* Light Theme (Clean Enterprise White / Slate) */
 body.light-theme {
-  --bg-app: #f1f5f9;
+  --bg-app: #f8fafc;
   --bg-sidebar: #ffffff;
   --bg-card: #ffffff;
-  --bg-card-secondary: #f8fafc;
+  --bg-card-secondary: #f1f5f9;
   --bg-card-elevated: #ffffff;
-  --bg-card-hover: #f1f5f9;
-  --bg-input: #f8fafc;
+  --bg-card-hover: #f8fafc;
+  --bg-input: #ffffff;
 
   --border-subtle: #e2e8f0;
   --border-medium: #cbd5e1;
-  --border-active: #2b7fff;
+  --border-active: #2563eb;
 
   --text-main: #0f172a;
   --text-muted: #64748b;
   --text-subtle: #94a3b8;
   --text-placeholder: #94a3b8;
 
-  --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 6px 18px rgba(0, 0, 0, 0.08);
-  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.12);
-  --shadow-blue-glow: 0 4px 20px rgba(43, 127, 255, 0.2);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.08);
 }
 
 /* Base Reset & Typography */
@@ -107,22 +105,26 @@ body {
   height: 100vh;
   width: 100vw;
   overflow: hidden;
+  font-size: 13px;
+  line-height: 1.45;
+  letter-spacing: -0.01em;
   -webkit-font-smoothing: antialiased;
-  transition: background-color var(--transition-normal), color var(--transition-normal);
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color var(--transition-fast), color var(--transition-fast);
 }
 
-/* Scrollbars */
+/* Hairline Scrollbars */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
   background: var(--border-medium);
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-xs);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-primary);
+  background: var(--text-muted);
 }
