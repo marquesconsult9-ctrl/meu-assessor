@@ -211,9 +211,30 @@ async function calculateFinancials() {
 // Natural Language Parser
 async function parseWhatsAppMessage(rawText) {
   const db = await dbAdapter.getData();
-  const text = rawText.trim();
+  const text = (rawText || '').trim();
   const lower = text.toLowerCase();
   const currentYM = getCurrentYearMonth();
+
+  // 0. GUARD: Ignorar anúncios, links, cupons e mensagens promocionais de grupos/lojas
+  if (
+    lower.includes('http://') ||
+    lower.includes('https://') ||
+    lower.includes('meli.la') ||
+    lower.includes('cupom') ||
+    lower.includes('compre aqui') ||
+    lower.includes('anúncio') ||
+    lower.includes('anuncio') ||
+    lower.includes('oferta') ||
+    lower.includes('promodehoje') ||
+    lower.includes('promoção') ||
+    lower.includes('promocao') ||
+    lower.includes('estoque variam')
+  ) {
+    return {
+      reply: '⚠️ Mensagem promocional ou link ignorado para registros financeiros.',
+      action: 'IGNORED_PROMO'
+    };
+  }
 
   // 1. QUERY: Projeção de quando acaba a fatura
   if (
@@ -290,8 +311,8 @@ async function parseWhatsAppMessage(rawText) {
     };
   }
 
-  // 4. TRANSACTION: Compra Parcelada
-  const installmentRegex = /(?:comprei\s+(?:um|uma)?\s*)?(.+?)\s+(?:de\s+|por\s+)?(?:r\$\s*)?(\d+(?:[.,]\d+)?)\s*(?:em\s+|de\s+|parcelado\s+em\s+)?(\d+)\s*x(?:\s*(?:no|pelo|cart[aã]o)?\s*(.*))?/i;
+  // 4. TRANSACTION: Compra Parcelada (ex: "comprei celular 2400 em 10x no nubank")
+  const installmentRegex = /(?:comprei\s+(?:um|uma)?\s*)?([a-zA-ZÀ-ÿ0-9\s'-]+?)\s+(?:de\s+|por\s+)?(?:r\$\s*)?(\d+(?:[.,]\d+)?)\s*(?:em\s+|de\s+|parcelado\s+em\s+)?(\d+)\s*x(?:\s*(?:no|pelo|cart[aã]o)?\s*(.*))?/i;
   const matchInst = text.match(installmentRegex);
 
   if (matchInst && Number(matchInst[3]) > 1) {
@@ -301,7 +322,7 @@ async function parseWhatsAppMessage(rawText) {
     const numInstallments = parseInt(matchInst[3], 10);
     const cardQuery = (matchInst[4] || '').toLowerCase();
 
-    if (!isNaN(totalAmount) && totalAmount > 0 && numInstallments > 1) {
+    if (!isNaN(totalAmount) && totalAmount > 0 && numInstallments > 1 && desc.length >= 2) {
       let selectedCard = db.cards[0] || { id: 'card-default', name: 'Cartão de Crédito', limitTotal: 5000 };
       if (cardQuery && db.cards.length > 0) {
         const found = db.cards.find(c => c.name.toLowerCase().includes(cardQuery) || cardQuery.includes(c.name.toLowerCase()));
@@ -369,8 +390,8 @@ async function parseWhatsAppMessage(rawText) {
     }
   }
 
-  // 5. TRANSACTION: Receita
-  const incomeRegex = /(?:recebi|ganhei|sal[aá]rio|freela|dep[oó]sito|renda|entrada)\s*(?:de\s+|no valor de\s+)?(?:r\$\s*)?(\d+(?:[.,]\d+)?)(?:\s*(?:de|com|do)?\s*(.*))?/i;
+  // 5. TRANSACTION: Receita (ex: "recebi 4200 de salário", "ganhei 350 de freela")
+  const incomeRegex = /^(?:recebi|ganhei|sal[aá]rio|freela|dep[oó]sito|deposito|renda|entrada)\s*(?:de\s+|no valor de\s+)?(?:r\$\s*)?(\d+(?:[.,]\d+)?)(?:\s*(?:de|com|do)?\s*(.*))?$/i;
   const matchIncome = text.match(incomeRegex);
 
   if (matchIncome) {
@@ -407,20 +428,44 @@ async function parseWhatsAppMessage(rawText) {
     }
   }
 
-  // 6. TRANSACTION: Despesa Avulsa
-  let parsedDesc = 'Despesa';
+  // 6. TRANSACTION: Despesa Avulsa (Reconhecimento Estrito com Validação)
+  let parsedDesc = null;
   let parsedAmount = 0;
   let parsedMethod = 'DEBIT';
+  let paymentDetail = '';
   let selectedCardId = null;
 
-  const descThenNum = text.match(/^([a-zA-ZÀ-ÿ\s]+?)\s+(?:de\s+|por\s+)?(?:r\$\s*)?(\d+(?:[.,]\d+)?)(?:\s*(?:no|na|via)?\s*(.*))?$/i);
+  // Padrão A: Verbo + Valor + Descrição (ex: "gastei 50 no mercado", "paguei 80 de luz", "comprei tenis de 200")
+  const matchVerbExpense = text.match(/^(?:gastei|paguei|comprei|despesa|gasto)\s+(?:r\$\s*)?(\d+(?:[.,]\d+)?)\s*(?:com|em|de|no|na)?\s*(.*)$/i);
+  // Padrão B: Item + Valor (ex: "almoço 35", "uber 22 no pix", "mercado 150 no credito", "padaria 18,50")
+  const matchItemAmount = text.match(/^([a-zA-ZÀ-ÿ0-9\s'-]{2,25})\s+(?:de\s+|por\s+)?(?:r\$\s*)?(\d+(?:[.,]\d+)?)(?:\s*(.*))?$/i);
+  // Padrão C: Valor + Item (ex: "50 no uber", "R$ 35 de almoço", "120 no mercado")
+  const matchAmountItem = text.match(/^(?:r\$\s*)?(\d+(?:[.,]\d+)?)\s+(?:no|na|com|em|de|para)\s+([a-zA-ZÀ-ÿ0-9\s'-]{2,25})(?:\s*(.*))?$/i);
 
-  if (descThenNum) {
-    parsedDesc = descThenNum[1].trim();
-    parsedAmount = parseFloat(descThenNum[2].replace('.', '').replace(',', '.'));
-    const paymentDetail = (descThenNum[3] || '').toLowerCase();
-    
-    if (paymentDetail.includes('credito') || paymentDetail.includes('crédito') || paymentDetail.includes('nubank') || paymentDetail.includes('inter')) {
+  if (matchVerbExpense) {
+    parsedAmount = parseFloat(matchVerbExpense[1].replace('.', '').replace(',', '.'));
+    parsedDesc = (matchVerbExpense[2] || 'Despesa').trim();
+    paymentDetail = parsedDesc.toLowerCase();
+  } else if (matchItemAmount) {
+    parsedDesc = matchItemAmount[1].trim();
+    parsedAmount = parseFloat(matchItemAmount[2].replace('.', '').replace(',', '.'));
+    paymentDetail = (matchItemAmount[3] || '').trim().toLowerCase();
+  } else if (matchAmountItem) {
+    parsedAmount = parseFloat(matchAmountItem[1].replace('.', '').replace(',', '.'));
+    parsedDesc = matchAmountItem[2].trim();
+    paymentDetail = (matchAmountItem[3] || '').trim().toLowerCase();
+  }
+
+  // Validação: só cria despesa se houver descrição válida e valor positivo
+  if (parsedDesc && !isNaN(parsedAmount) && parsedAmount > 0) {
+    if (
+      paymentDetail.includes('credito') || 
+      paymentDetail.includes('crédito') || 
+      paymentDetail.includes('nubank') || 
+      paymentDetail.includes('inter') ||
+      paymentDetail.includes('cartao') ||
+      paymentDetail.includes('cartão')
+    ) {
       parsedMethod = 'CREDIT_CARD';
       const card = db.cards.find(c => paymentDetail.includes(c.name.toLowerCase()));
       selectedCardId = card ? card.id : (db.cards[0] ? db.cards[0].id : null);
@@ -428,28 +473,22 @@ async function parseWhatsAppMessage(rawText) {
       parsedMethod = 'PIX';
     } else if (paymentDetail.includes('dinheiro')) {
       parsedMethod = 'CASH';
+    } else {
+      parsedMethod = 'DEBIT';
     }
-  } else {
-    const expenseRegex = /(?:gastei|paguei|comprei|almo[cç]o|uber|mercado|farm[aá]cia|posto|combust[ií]vel)?\s*(?:r\$\s*)?(\d+(?:[.,]\d+)?)\s*(?:em\s+|com\s+|no\s+|na\s+)?(.*)/i;
-    const matchExp = text.match(expenseRegex);
-    if (matchExp) {
-      parsedAmount = parseFloat(matchExp[1].replace('.', '').replace(',', '.'));
-      const rest = (matchExp[2] || '').trim();
-      if (rest) parsedDesc = rest;
-    }
-  }
 
-  if (!isNaN(parsedAmount) && parsedAmount > 0) {
     let category = 'Outros';
     const dLower = parsedDesc.toLowerCase();
-    if (dLower.includes('almoço') || dLower.includes('jantar') || dLower.includes('lanche') || dLower.includes('restaurante')) {
+    if (dLower.includes('almoço') || dLower.includes('almoco') || dLower.includes('jantar') || dLower.includes('lanche') || dLower.includes('restaurante') || dLower.includes('ifood') || dLower.includes('cafe') || dLower.includes('café')) {
       category = 'Alimentação';
-    } else if (dLower.includes('mercado') || dLower.includes('feira')) {
+    } else if (dLower.includes('mercado') || dLower.includes('feira') || dLower.includes('supermercado') || dLower.includes('padaria') || dLower.includes('acougue') || dLower.includes('açougue')) {
       category = 'Mercado';
-    } else if (dLower.includes('uber') || dLower.includes('gasolina') || dLower.includes('combustivel')) {
+    } else if (dLower.includes('uber') || dLower.includes('gasolina') || dLower.includes('combustivel') || dLower.includes('posto') || dLower.includes('99')) {
       category = 'Transporte';
-    } else if (dLower.includes('farmacia') || dLower.includes('remedio')) {
+    } else if (dLower.includes('farmacia') || dLower.includes('farmácia') || dLower.includes('remedio') || dLower.includes('remédio')) {
       category = 'Saúde';
+    } else if (dLower.includes('luz') || dLower.includes('agua') || dLower.includes('água') || dLower.includes('internet') || dLower.includes('energia')) {
+      category = 'Moradia & Contas';
     }
 
     const newTx = {
@@ -488,7 +527,8 @@ async function parseWhatsAppMessage(rawText) {
 
   return {
     reply: `👋 Olá! Sou o seu assessor financeiro. Você pode me mandar:\n\n` +
-           `• *\"Almoço 45 no débito\"*\n` +
+           `• *\"Almoço 35 no débito\"*\n` +
+           `• *\"Uber 25 no pix\"*\n` +
            `• *\"Comprei Celular 2400 em 10x no nubank\"*\n` +
            `• *\"Recebi 4200 de salário\"*\n` +
            `• *\"fatura\"* ou *\"limite\"*\n` +
@@ -543,6 +583,13 @@ const server = http.createServer(async (req, res) => {
   if (req.method === 'OPTIONS') {
     res.writeHead(204);
     res.end();
+    return;
+  }
+
+  // Health check / Keep-Alive route (UptimeRobot / Cron)
+  if (pathname === '/health' || pathname === '/api/health') {
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ status: 'ok', timestamp: new Date().toISOString() }));
     return;
   }
 
@@ -957,6 +1004,7 @@ const server = http.createServer(async (req, res) => {
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({
         success: true,
+        reply: assistantMsg.text,
         userMessage: userMsg,
         assistantMessage: assistantMsg,
         financials: updatedFinancials
@@ -984,38 +1032,7 @@ const server = http.createServer(async (req, res) => {
   }
 
   if (pathname === '/api/whatsapp/connect' && req.method === 'POST') {
-    whatsappService.connectToWhatsApp(
-      async (text, senderJid, isFromMe) => {
-        const userMsg = {
-          id: 'msg-' + Date.now().toString(36) + '-u',
-          sender: 'user',
-          text: text,
-          phone: senderJid,
-          timestamp: new Date().toISOString()
-        };
-        await dbAdapter.addChatMessage(userMsg);
-
-        const parseResult = await parseWhatsAppMessage(text);
-
-        const assistantMsg = {
-          id: 'msg-' + Date.now().toString(36) + '-a',
-          sender: 'assistant',
-          text: parseResult.reply,
-          timestamp: new Date().toISOString()
-        };
-        await dbAdapter.addChatMessage(assistantMsg);
-
-        const updatedFin = await calculateFinancials();
-        broadcastSSE('financial-updated', updatedFin);
-        broadcastSSE('chat-message', { user: userMsg, assistant: assistantMsg });
-
-        return parseResult.reply;
-      },
-      (statusObj) => {
-        broadcastSSE('whatsapp-status-changed', statusObj);
-      }
-    );
-
+    startWhatsAppBot();
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ success: true, message: 'Iniciando conexão com WhatsApp' }));
     return;
@@ -1101,7 +1118,49 @@ const server = http.createServer(async (req, res) => {
   });
 });
 
+function startWhatsAppBot() {
+  whatsappService.connectToWhatsApp(
+    async (text, senderJid, isFromMe) => {
+      const parseResult = await parseWhatsAppMessage(text);
+      if (parseResult.action === 'IGNORED_PROMO') {
+        return null;
+      }
+
+      const userMsg = {
+        id: 'msg-' + Date.now().toString(36) + '-u',
+        sender: 'user',
+        text: text,
+        phone: senderJid,
+        timestamp: new Date().toISOString()
+      };
+      await dbAdapter.addChatMessage(userMsg);
+
+      const assistantMsg = {
+        id: 'msg-' + Date.now().toString(36) + '-a',
+        sender: 'assistant',
+        text: parseResult.reply,
+        timestamp: new Date().toISOString()
+      };
+      await dbAdapter.addChatMessage(assistantMsg);
+
+      const updatedFin = await calculateFinancials();
+      broadcastSSE('financial-updated', updatedFin);
+      broadcastSSE('chat-message', { user: userMsg, assistant: assistantMsg });
+
+      return parseResult.reply;
+    },
+    (statusObj) => {
+      broadcastSSE('whatsapp-status-changed', statusObj);
+    }
+  );
+}
+
 server.listen(PORT, () => {
   console.log(`[Meu Assessor Financeiro] Rodando em: http://localhost:${PORT}`);
   console.log(`[Database] Modo: ${dbAdapter.isSupabaseConfigured() ? 'Supabase Nuvem' : 'Local (JSON)'}`);
+
+  if (whatsappService.hasSavedSession()) {
+    console.log('[WhatsApp Service] Sessão salva detectada. Conectando automaticamente...');
+    startWhatsAppBot();
+  }
 });

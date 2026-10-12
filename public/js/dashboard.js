@@ -1153,9 +1153,19 @@ function initChatInput() {
   }
 }
 
+const renderedMessageIds = new Set();
+
 function appendChatMessage(msg) {
   const box = document.getElementById('chat-messages-area');
-  if (!box) return;
+  if (!box || !msg || !msg.text) return;
+
+  const msgKey = msg.id || (msg.sender + ':' + (msg.text || '').trim());
+  if (renderedMessageIds.has(msgKey)) return;
+  renderedMessageIds.add(msgKey);
+  if (renderedMessageIds.size > 300) {
+    const first = renderedMessageIds.values().next().value;
+    renderedMessageIds.delete(first);
+  }
 
   const isUser = msg.sender === 'user';
   const el = document.createElement('div');
