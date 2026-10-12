@@ -1,75 +1,99 @@
 /* ==========================================================================
-   DESIGN TOKENS & SYSTEM VARIABLES - FINFLOW ENGINE
+   MONEY INSIGHTS • DESIGN SYSTEM & TOKENS
+   Inspired by Money Insights UI (Light & Dark Mode)
    ========================================================================== */
 
 :root {
-  /* Color Palette - Deep Dark Tech Finance */
-  --bg-app: #080a0f;
-  --bg-surface: #0e121b;
-  --bg-surface-elevated: #151a27;
-  --bg-surface-card: rgba(18, 23, 36, 0.75);
-  --bg-surface-glass: rgba(22, 28, 45, 0.65);
+  /* Dark Theme (Default) */
+  --bg-app: #0b101d;
+  --bg-sidebar: #090d18;
+  --bg-card: #111928;
+  --bg-card-secondary: #0d1424;
+  --bg-card-elevated: #162038;
+  --bg-card-hover: #17243e;
+  --bg-input: #0a0f1d;
   
   --border-subtle: rgba(255, 255, 255, 0.07);
   --border-medium: rgba(255, 255, 255, 0.12);
-  --border-focus: rgba(139, 92, 246, 0.6);
-  --border-node: rgba(147, 197, 253, 0.15);
+  --border-active: #2b7fff;
 
-  /* Primary Accent - Trigger / Webhook Violet */
-  --color-trigger-h: 265;
-  --color-trigger: #8b5cf6;
-  --color-trigger-glow: rgba(139, 92, 246, 0.35);
-  --color-trigger-gradient: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
-  --color-trigger-light: #c084fc;
-  --color-trigger-badge: rgba(139, 92, 246, 0.18);
+  /* Primary Accent - Vibrant Blue */
+  --color-primary: #2b7fff;
+  --color-primary-hover: #1e6be5;
+  --color-primary-light: #5ba2ff;
+  --color-primary-subtle: rgba(43, 127, 255, 0.15);
+  --color-primary-gradient: linear-gradient(135deg, #2b7fff 0%, #1e52c8 100%);
 
-  /* Secondary Accents */
-  --color-condition: #f59e0b;
-  --color-condition-glow: rgba(245, 158, 11, 0.3);
-  --color-condition-gradient: linear-gradient(135deg, #d97706 0%, #fbbf24 100%);
-
-  --color-action-finance: #10b981;
-  --color-action-finance-glow: rgba(16, 185, 129, 0.3);
-  --color-action-finance-gradient: linear-gradient(135deg, #059669 0%, #34d399 100%);
-
-  --color-notification: #3b82f6;
-  --color-notification-glow: rgba(59, 130, 246, 0.3);
-  --color-notification-gradient: linear-gradient(135deg, #2563eb 0%, #60a5fa 100%);
-
+  /* Status Colors */
+  --color-success: #10b981;
+  --color-success-bg: rgba(16, 185, 129, 0.12);
+  --color-success-text: #34d399;
+  
   --color-danger: #ef4444;
-  --color-danger-glow: rgba(239, 68, 68, 0.3);
+  --color-danger-bg: rgba(239, 68, 68, 0.12);
+  --color-danger-text: #f87171;
 
-  /* Text & Content */
-  --text-main: #f1f5f9;
+  --color-warning: #f59e0b;
+  --color-warning-bg: rgba(245, 158, 11, 0.12);
+  --color-warning-text: #fbbf24;
+
+  --color-cyan: #38bdf8;
+  --color-purple: #8b5cf6;
+
+  /* Text Colors */
+  --text-main: #f8fafc;
   --text-muted: #94a3b8;
   --text-subtle: #64748b;
-  --text-code: #38bdf8;
+  --text-placeholder: #475569;
 
-  /* Typography */
+  /* Fonts */
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
 
-  /* Elevation & Shadows */
-  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.4);
-  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.5);
-  --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 1px rgba(255, 255, 255, 0.1);
-  --shadow-trigger: 0 0 25px rgba(139, 92, 246, 0.3), 0 8px 24px rgba(0, 0, 0, 0.6);
-  --shadow-active: 0 0 35px rgba(16, 185, 129, 0.4);
+  /* Shadows */
+  --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 6px 18px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.5);
+  --shadow-blue-glow: 0 4px 20px rgba(43, 127, 255, 0.35);
 
-  /* Glassmorphism & Radii */
-  --blur-glass: blur(16px);
-  --radius-sm: 6px;
-  --radius-md: 10px;
+  /* Radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
   --radius-lg: 16px;
+  --radius-xl: 20px;
   --radius-full: 9999px;
 
-  /* Animation Timings */
-  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-smooth: 350ms cubic-bezier(0.16, 1, 0.3, 1);
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-normal: 250ms ease;
 }
 
-/* Base Reset & Scrollbar */
+/* Light Theme Variables */
+body.light-theme {
+  --bg-app: #f1f5f9;
+  --bg-sidebar: #ffffff;
+  --bg-card: #ffffff;
+  --bg-card-secondary: #f8fafc;
+  --bg-card-elevated: #ffffff;
+  --bg-card-hover: #f1f5f9;
+  --bg-input: #f8fafc;
+
+  --border-subtle: #e2e8f0;
+  --border-medium: #cbd5e1;
+  --border-active: #2b7fff;
+
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --text-subtle: #94a3b8;
+  --text-placeholder: #94a3b8;
+
+  --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 6px 18px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.12);
+  --shadow-blue-glow: 0 4px 20px rgba(43, 127, 255, 0.2);
+}
+
+/* Base Reset & Typography */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -80,25 +104,25 @@ body {
   font-family: var(--font-sans);
   background-color: var(--bg-app);
   color: var(--text-main);
-  overflow: hidden;
   height: 100vh;
   width: 100vw;
-  user-select: none;
+  overflow: hidden;
   -webkit-font-smoothing: antialiased;
+  transition: background-color var(--transition-normal), color var(--transition-normal);
 }
 
-/* Custom Scrollbars */
+/* Scrollbars */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.2);
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 4px;
+  background: var(--border-medium);
+  border-radius: var(--radius-full);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.25);
+  background: var(--color-primary);
 }

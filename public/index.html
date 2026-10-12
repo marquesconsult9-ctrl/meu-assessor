@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Meu Assessor • Gestão Financeira, Cartões & WhatsApp</title>
-  <meta name="description" content="Sistema financeiro inteligente estilo Meu Assessor com registro via WhatsApp, controle de limites e cartões, e projeção de término de faturas.">
+  <title>Money Insights • Gestão Financeira Inteligente & WhatsApp 24h</title>
+  <meta name="description" content="Money Insights - Sistema financeiro inteligente com registro via WhatsApp, projeção preditiva de faturas, orçamentos e open finance.">
 
   <!-- Google Fonts: Inter & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -18,464 +18,994 @@
 </head>
 <body>
 
-  <div id="app-container" style="display: flex; flex-direction: column; height: 100vh; overflow: hidden;">
-    <!-- TOP NAVBAR -->
-    <header class="app-header">
-      <div class="brand-wrapper">
-        <div class="brand-avatar">🤖</div>
-        <div class="brand-texts">
-          <h1>Meu Assessor <span>•</span> Finanças</h1>
-          <p>Assistente WhatsApp & Gestão de Cartões</p>
-        </div>
-      </div>
+  <div id="app-root">
 
-      <!-- NAVIGATION TABS -->
-      <nav class="nav-tabs">
-        <button class="nav-tab-btn active" data-tab="tab-overview">
-          <span>📊</span> Visão Geral
-        </button>
-        <button class="nav-tab-btn" data-tab="tab-cards">
-          <span>💳</span> Cartões & Faturas
-        </button>
-        <button class="nav-tab-btn" data-tab="tab-connect-whatsapp">
-          <span>📲</span> Conectar WhatsApp
-        </button>
-        <button class="nav-tab-btn" data-tab="tab-chat">
-          <span>💬</span> Chat Simulador
-        </button>
-        <button class="nav-tab-btn" data-tab="tab-transactions">
-          <span>📜</span> Extrato
-        </button>
-        <button class="nav-tab-btn" data-tab="tab-cloud">
-          <span>☁️</span> Nuvem 24/7
-        </button>
-      </nav>
-
-      <!-- HEADER ACTIONS -->
-      <div style="display: flex; align-items: center; gap: 12px;">
-        <div class="status-badge" id="header-status-badge">
-          <span class="status-pulse-dot"></span>
-          <span>Pronto</span>
-        </div>
-        <button id="btn-open-new-tx-modal" class="btn btn-primary">
-          <span>+</span> Novo Lançamento
-        </button>
-      </div>
-    </header>
-
-    <!-- MAIN SCROLLABLE CONTENT -->
-    <main class="main-scroll-view">
-      
-      <!-- ===================================================================
-           TAB 1: VISÃO GERAL (DASHBOARD GERAL)
-           =================================================================== -->
-      <div class="tab-pane active" id="tab-overview">
-        <!-- METRICS ROW -->
-        <div class="metrics-grid">
-          <div class="metric-card">
-            <div class="metric-card-top">
-              <span class="metric-title">Saldo Disponível</span>
-              <div class="metric-icon-box" style="background: rgba(16, 185, 129, 0.15); color: #34d399;">💵</div>
-            </div>
-            <div class="metric-val positive" id="metric-balance">R$ 0,00</div>
-            <div class="metric-sub">Conta corrente & investimentos líquidos</div>
-          </div>
-
-          <div class="metric-card">
-            <div class="metric-card-top">
-              <span class="metric-title">Receitas no Mês</span>
-              <div class="metric-icon-box" style="background: rgba(16, 185, 129, 0.15); color: #34d399;">📈</div>
-            </div>
-            <div class="metric-val positive" id="metric-income">R$ 0,00</div>
-            <div class="metric-sub">Entradas via Pix, salário e freelas</div>
-          </div>
-
-          <div class="metric-card">
-            <div class="metric-card-top">
-              <span class="metric-title">Despesas no Mês</span>
-              <div class="metric-icon-box" style="background: rgba(239, 68, 68, 0.15); color: #f87171;">📉</div>
-            </div>
-            <div class="metric-val negative" id="metric-expense">R$ 0,00</div>
-            <div class="metric-sub">Gastos avulsos em conta e débito</div>
-          </div>
-
-          <div class="metric-card">
-            <div class="metric-card-top">
-              <span class="metric-title">Faturas Atuais (Cartões)</span>
-              <div class="metric-icon-box" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24;">💳</div>
-            </div>
-            <div class="metric-val warning" id="metric-invoices">R$ 0,00</div>
-            <div class="metric-sub">Soma das faturas abertas deste mês</div>
-          </div>
+    <!-- ===================================================================
+         SIDEBAR (MONEY INSIGHTS)
+         =================================================================== -->
+    <aside class="app-sidebar">
+      <div>
+        <!-- Brand Logo -->
+        <div class="sidebar-brand" onclick="navigateToTab('tab-dashboard')">
+          <svg class="brand-icon-svg" viewBox="0 0 100 100" fill="none">
+            <circle cx="50" cy="50" r="46" stroke="#2b7fff" stroke-width="8" stroke-dasharray="140 160" />
+            <path d="M50 10 A40 40 0 0 1 90 50 L50 50 Z" fill="#38bdf8" />
+            <path d="M50 50 L50 90 A40 40 0 0 1 10 50 Z" fill="#1d4ed8" />
+            <path d="M10 50 A40 40 0 0 1 50 10 L50 50 Z" fill="#2b7fff" />
+          </svg>
+          <div class="brand-title">Money <span>Insights</span></div>
         </div>
 
-        <!-- QUICK PROJECTION HIGHLIGHT -->
-        <div class="projection-hero-banner">
-          <div class="projection-banner-left">
-            <span class="projection-pill">🏁 Projeção dos seus Parcelamentos</span>
-            <h2 class="projection-banner-title">
-              Faturas totalmente quitadas em: <span id="overview-proj-finish">Calculando...</span>
-            </h2>
-            <p class="projection-banner-desc">
-              Você possui compras parceladas nos cartões de crédito. Acesse a aba <strong>Cartões & Faturas</strong> para ver a previsão mês a mês de como sua fatura irá reduzir até zerar.
-            </p>
-          </div>
-          <div class="projection-banner-stats">
-            <div class="projection-stat-badge">
-              <span>Status dos Parcelamentos</span>
-              <span id="overview-proj-months" style="color: #a855f7;">--</span>
-            </div>
-            <button class="btn btn-secondary" onclick="document.querySelector('[data-tab=\'tab-cards\']').click()">
-              Ver Projeção Detalhada →
+        <!-- Navigation Links -->
+        <ul class="sidebar-nav">
+          <li class="nav-item">
+            <button class="nav-link active" data-tab="tab-dashboard">
+              <span class="nav-icon">📊</span>
+              <span>Dashboard</span>
             </button>
-          </div>
-        </div>
-
-        <!-- RECENT TRANSACTIONS PREVIEW -->
-        <div class="chart-card">
-          <div class="chart-header">
-            <div>
-              <h3>Últimas Movimentações</h3>
-              <p>Transações registradas diretamente pelo WhatsApp ou painel</p>
-            </div>
-            <button class="btn-ghost" onclick="document.querySelector('[data-tab=\'tab-transactions\']').click()">Ver Extrato Completo</button>
-          </div>
-          <div id="overview-recent-transactions" style="display: flex; flex-direction: column;"></div>
-        </div>
-      </div>
-
-      <!-- ===================================================================
-           TAB 2: CARTÕES & PROJEÇÃO DE FATURAS
-           =================================================================== -->
-      <div class="tab-pane" id="tab-cards">
-        <div class="projection-hero-banner" id="projection-hero-box"></div>
-
-        <div>
-          <h3 style="font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 14px; display: flex; align-items: center; gap: 8px;">
-            <span>💳</span> Seus Cartões de Crédito & Limites
-          </h3>
-          <div class="credit-cards-grid" id="credit-cards-grid"></div>
-        </div>
-
-        <div class="chart-card">
-          <div class="chart-header">
-            <div>
-              <h3>📉 Projeção de Faturas Futuras (Próximos 18 Meses)</h3>
-              <p>Observe a redução gradual da sua fatura à medida que os parcelamentos são quitados. Clique em uma barra para ver os itens de cada mês.</p>
-            </div>
-            <span class="table-finish-badge">Clique no mês para ver itens</span>
-          </div>
-
-          <div class="projection-bars-container" id="projection-bars-container"></div>
-        </div>
-
-        <div class="installments-table-card">
-          <div class="table-header-box">
-            <div>
-              <h3>🛍️ Compras Parceladas Ativas</h3>
-              <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">
-                Estas compras compõem a sua fatura atual e as projeções futuras até a data final de quitação.
-              </p>
-            </div>
-          </div>
-          <div style="overflow-x: auto;">
-            <table class="custom-table">
-              <thead>
-                <tr>
-                  <th>Compra / Descrição</th>
-                  <th>Cartão</th>
-                  <th>Valor da Parcela</th>
-                  <th>Progresso (Atual/Total)</th>
-                  <th>Valor Total</th>
-                  <th>Previsão de Término</th>
-                </tr>
-              </thead>
-              <tbody id="installments-table-body"></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <!-- ===================================================================
-           TAB 3: CONECTAR WHATSAPP (QR CODE DIRETO NO CELULAR)
-           =================================================================== -->
-      <div class="tab-pane" id="tab-connect-whatsapp">
-        <div class="chart-card" style="align-items: center; text-align: center; max-width: 800px; margin: 0 auto; width: 100%;">
-          <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
-            <span id="wa-connection-badge" class="table-finish-badge" style="background: rgba(255,255,255,0.1); color: var(--text-muted); font-size: 13px; padding: 6px 14px;">
-              ○ Desconectado
-            </span>
-            <h2 id="wa-status-title" style="font-size: 22px; font-weight: 800; color: #fff; margin-top: 6px;">
-              Conecte seu WhatsApp com QR Code
-            </h2>
-            <p style="font-size: 13px; color: var(--text-muted); max-width: 500px;">
-              Vincule seu WhatsApp pessoal ou um número secundário para registrar gastos e consultar faturas conversando direto pelo aplicativo no celular.
-            </p>
-          </div>
-
-          <!-- QR CODE CONTAINER -->
-          <div id="wa-qrcode-box" style="margin: 24px 0; display: flex; flex-direction: column; align-items: center;">
-            <div style="width: 260px; height: 260px; border: 2px dashed var(--border-medium); border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: var(--text-subtle);">
-              <span style="font-size: 38px;">📷</span>
-              <span style="font-size: 13px;">Clique abaixo para gerar o QR Code</span>
-            </div>
-          </div>
-
-          <!-- CONNECTED BOX (SHOWN WHEN CONNECTED) -->
-          <div id="wa-connected-box" style="display: none; flex-direction: column; align-items: center; gap: 12px; margin: 24px 0; background: rgba(16, 185, 129, 0.1); border: 1.5px solid rgba(16, 185, 129, 0.4); padding: 24px 32px; border-radius: 16px;">
-            <span style="font-size: 42px;">📱✅</span>
-            <h3 style="font-size: 18px; font-weight: 800; color: #34d399;">WhatsApp Vinculado com Sucesso!</h3>
-            <p style="font-size: 13px; color: #cbd5e1;">Número Conectado: <strong id="wa-connected-phone-display" style="color: #fff; font-family: var(--font-mono);"></strong></p>
-            <p style="font-size: 12px; color: var(--text-muted); max-width: 440px;">
-              Agora abra seu WhatsApp no celular e envie uma mensagem como <em>"Almoço 35 no débito"</em> ou <em>"quando acabo a fatura?"</em> para si mesmo ou para o número!
-            </p>
-          </div>
-
-          <!-- ACTION BUTTONS -->
-          <div style="display: flex; gap: 12px;">
-            <button id="btn-whatsapp-connect" class="btn btn-primary" style="padding: 12px 24px; font-size: 14px;">
-              📲 Conectar com QR Code
+          </li>
+          <li class="nav-item">
+            <button class="nav-link" data-tab="tab-lancamentos">
+              <span class="nav-icon">📋</span>
+              <span>Lançamentos</span>
             </button>
-            <button id="btn-whatsapp-logout" class="btn btn-ghost" style="display: none; padding: 12px 20px; font-size: 14px; color: var(--color-danger); border-color: rgba(239, 68, 68, 0.3);">
-              Desconectar WhatsApp
+          </li>
+          <li class="nav-item">
+            <button class="nav-link" data-tab="tab-planejamento">
+              <span class="nav-icon">🎯</span>
+              <span>Planejamento</span>
             </button>
-          </div>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link" data-tab="tab-open-finance">
+              <span class="nav-icon">💳</span>
+              <span>Open Finance</span>
+            </button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link" data-tab="tab-whatsapp">
+              <span class="nav-icon">📲</span>
+              <span>WhatsApp 24/7</span>
+            </button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link" data-tab="tab-settings">
+              <span class="nav-icon">⚙️</span>
+              <span>Configurações</span>
+            </button>
+          </li>
+        </ul>
 
-          <!-- INSTRUCTIONS ACCORDION -->
-          <div style="margin-top: 32px; text-align: left; background: rgba(0,0,0,0.3); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 20px; width: 100%;">
-            <h4 style="font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
-              <span>📖</span> Como Conectar pelo Celular Passo a Passo:
-            </h4>
-            <ol style="margin-left: 20px; font-size: 12px; color: #cbd5e1; display: flex; flex-direction: column; gap: 8px; line-height: 1.5;">
-              <li>Abra o <strong>WhatsApp</strong> no seu smartphone.</li>
-              <li>Toque nos <strong>três pontinhos ⋮</strong> (no Android) ou em <strong>Ajustes ⚙️</strong> (no iPhone).</li>
-              <li>Toque na opção <strong>Aparelhos Conectados</strong>.</li>
-              <li>Toque em <strong>Conectar um Aparelho</strong>.</li>
-              <li>Aponte a câmera do seu celular para o <strong>QR Code</strong> exibido nesta tela.</li>
-              <li>Pronto! O robô do Meu Assessor estará ativo e responderá às suas mensagens no WhatsApp.</li>
-            </ol>
+        <!-- Primeiros Passos Card (From Images 3, 4, 5, 6, 8) -->
+        <div class="sidebar-checklist-card">
+          <div class="checklist-title">
+            <span>Primeiros Passos</span>
+            <span style="font-size: 11px; opacity: 0.8;">2/4</span>
           </div>
+          <ul class="checklist-items">
+            <li class="checklist-item done" onclick="this.classList.toggle('done')">
+              <div class="checklist-circle"></div>
+              <span>Preencha as informações iniciais.</span>
+            </li>
+            <li class="checklist-item done" onclick="this.classList.toggle('done')">
+              <div class="checklist-circle"></div>
+              <span>Cadastre uma conta bancária.</span>
+            </li>
+            <li class="checklist-item" onclick="this.classList.toggle('done')">
+              <div class="checklist-circle"></div>
+              <span>Cadastre um cartão de Crédito.</span>
+            </li>
+            <li class="checklist-item" onclick="this.classList.toggle('done')">
+              <div class="checklist-circle"></div>
+              <span>Complete seu cadastro.</span>
+            </li>
+          </ul>
         </div>
       </div>
 
-      <!-- ===================================================================
-           TAB 4: CHAT SIMULADOR DO WHATSAPP (TESTES NA WEB)
-           =================================================================== -->
-      <div class="tab-pane" id="tab-chat">
-        <div class="whatsapp-chat-container">
-          <div class="chat-sidebar">
-            <div class="chat-sidebar-header">
-              <div class="contact-avatar">🤖</div>
-              <div style="font-size: 14px; font-weight: 700; color: #e9edef;">Conversas</div>
+      <!-- Sidebar Footer -->
+      <div class="sidebar-footer">
+        <button class="nav-link" style="padding: 8px 10px; font-size: 13px;" onclick="navigateToTab('tab-settings')">
+          <span class="nav-icon">⚙️</span>
+          <span>Configurações</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- ===================================================================
+         MAIN CONTAINER
+         =================================================================== -->
+    <main class="app-main">
+
+      <!-- TOPBAR -->
+      <header class="app-topbar">
+        <div class="topbar-left">
+          <h1 id="topbar-title" class="topbar-title">Dashboard</h1>
+        </div>
+
+        <div class="topbar-right">
+          <!-- Notification Bell -->
+          <button id="btn-toggle-notifs" class="icon-btn" title="Notificações">
+            <span class="badge-dot"></span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+            </svg>
+          </button>
+
+          <!-- Privacy Eye (Hide / Show balances) -->
+          <button id="btn-toggle-privacy" class="icon-btn" title="Ocultar valores">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+          </button>
+
+          <!-- Theme Switcher (Light / Dark) -->
+          <button id="btn-toggle-theme" class="icon-btn" title="Alternar Modo Claro / Escuro">
+            <span id="theme-icon">🌙</span>
+          </button>
+
+          <!-- User Badge -->
+          <div class="user-profile-badge" onclick="navigateToTab('tab-settings')" title="Meu Perfil">
+            <div class="user-avatar-circle">M</div>
+            <span class="user-name">Marques</span>
+          </div>
+
+          <!-- New Transaction Button -->
+          <button id="btn-open-tx-modal" class="btn-primary-pill">
+            <span>+</span> Novo Lançamento
+          </button>
+        </div>
+      </header>
+
+      <!-- SCROLLABLE VIEWS -->
+      <div class="app-content-scroll">
+
+        <!-- ===============================================================
+             TAB 1: DASHBOARD (Images 3 & 4)
+             =============================================================== -->
+        <div class="tab-content-pane active" id="tab-dashboard">
+          
+          <!-- TOP 3 METRICS ROW -->
+          <div class="top-summary-grid">
+            <!-- Entradas -->
+            <div class="mi-card summary-card-metric">
+              <div class="metric-label-small">Entradas</div>
+              <div class="metric-value-huge primary" id="dash-metric-income" data-val="100000000.00">R$ 100.000.000,00</div>
+              <div class="metric-trend-pill positive">
+                <span>↗ Esse mês teve +5% de entradas</span>
+              </div>
             </div>
-            <div class="chat-contact-item">
-              <div class="contact-avatar">🤖</div>
-              <div class="contact-info">
-                <div class="contact-name-row">
-                  <span class="contact-name">Meu Assessor IA</span>
-                  <span style="font-size: 10px; color: #8696a0;">Agora</span>
-                </div>
-                <span class="contact-last-msg">Assistente Financeiro Pessoal</span>
+
+            <!-- Saídas -->
+            <div class="mi-card summary-card-metric">
+              <div class="metric-label-small">Saídas</div>
+              <div class="metric-value-huge" id="dash-metric-expense" data-val="10000.00">R$ 10.000,00</div>
+              <div class="metric-trend-pill negative">
+                <span>↘ Esse mês teve -5% de despesas</span>
+              </div>
+            </div>
+
+            <!-- Saldo do Mês (Blue Card with Tabs) -->
+            <div class="mi-card balance-hero-card">
+              <div class="balance-card-tabs">
+                <button class="balance-tab-btn active" data-btype="saldo">Saldo do mês</button>
+                <button class="balance-tab-btn" data-btype="emergencia">Emergência</button>
+                <button class="balance-tab-btn" data-btype="investimento">Investimento</button>
+              </div>
+              <div>
+                <div class="balance-hero-value" id="dash-metric-balance" data-val="10000.00">R$ 10.000,00</div>
+                <div class="balance-hero-sub">Esse mês teve -5% de despesas</div>
               </div>
             </div>
           </div>
 
-          <div class="chat-main-window">
-            <div class="chat-topbar">
-              <div class="chat-partner-info">
-                <div class="contact-avatar" style="width: 38px; height: 38px; font-size: 18px;">🤖</div>
+          <!-- 2-COLUMN MAIN DASHBOARD GRID -->
+          <div class="dashboard-main-grid">
+            
+            <!-- LEFT COLUMN -->
+            <div class="dashboard-left-col">
+              
+              <!-- CHARTS ROW: Projeção de Saldo + Categoria -->
+              <div class="charts-split-row">
+                
+                <!-- Projeção de Saldo (Bar Chart) -->
+                <div class="mi-card">
+                  <div class="chart-card-header">
+                    <span class="chart-card-title">Projeção de Saldo</span>
+                    <div class="chart-controls-group">
+                      <button class="pill-toggle-btn active" data-proj="anual">Anual</button>
+                      <button class="pill-toggle-btn" data-proj="mes">Mês</button>
+                      <button class="pill-toggle-btn" data-proj="periodo">Período</button>
+                    </div>
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 14px; font-size: 11px; margin-bottom: 12px; color: var(--text-muted);">
+                    <span style="display: flex; align-items: center; gap: 6px;">
+                      <span style="width: 8px; height: 8px; border-radius: 50%; background: #2563eb;"></span> Entradas
+                    </span>
+                    <span style="display: flex; align-items: center; gap: 6px;">
+                      <span style="width: 8px; height: 8px; border-radius: 50%; background: #38bdf8;"></span> Saídas
+                    </span>
+                  </div>
+                  <!-- SVG Bar Chart Container -->
+                  <div class="svg-chart-box" id="dashboard-bars-svg-box"></div>
+                </div>
+
+                <!-- Categoria (Donut Chart) -->
+                <div class="mi-card">
+                  <div class="chart-card-header">
+                    <span class="chart-card-title">Categoria</span>
+                    <div class="chart-controls-group">
+                      <button class="pill-toggle-btn active" data-cat="entradas">Entradas</button>
+                      <button class="pill-toggle-btn" data-cat="saidas">Saídas</button>
+                      <button class="pill-toggle-btn" data-cat="mes">Mês</button>
+                    </div>
+                  </div>
+                  <div class="donut-chart-container">
+                    <div class="donut-svg-wrap" id="dashboard-donut-svg-box"></div>
+                    <div class="donut-legend" id="dashboard-donut-legend">
+                      <div class="donut-legend-item"><span class="legend-color-dot" style="background: #2563eb;"></span> Vendas 55%</div>
+                      <div class="donut-legend-item"><span class="legend-color-dot" style="background: #38bdf8;"></span> Finanças 25%</div>
+                      <div class="donut-legend-item"><span class="legend-color-dot" style="background: #7dd3fc;"></span> Marketing 15%</div>
+                      <div class="donut-legend-item"><span class="legend-color-dot" style="background: #0f172a;"></span> RH 5%</div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- METAS & ORÇAMENTO ROW -->
+              <div class="metas-orcamento-grid">
+                <!-- Metas -->
+                <div class="mi-card">
+                  <div class="progress-section-header">
+                    <span class="chart-card-title">Metas</span>
+                  </div>
+                  <div class="progress-group-list">
+                    <div class="progress-row-item">
+                      <div class="progress-label-row">
+                        <span>Entrada da casa</span>
+                        <span class="progress-pct-badge">60%</span>
+                      </div>
+                      <div class="progress-bar-track">
+                        <div class="progress-bar-fill" style="width: 60%;"></div>
+                      </div>
+                    </div>
+                    <div class="progress-row-item">
+                      <div class="progress-label-row">
+                        <span>Carro</span>
+                        <span class="progress-pct-badge">60%</span>
+                      </div>
+                      <div class="progress-bar-track">
+                        <div class="progress-bar-fill" style="width: 60%;"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Orçamento -->
+                <div class="mi-card">
+                  <div class="progress-section-header">
+                    <span class="chart-card-title">Orçamento</span>
+                  </div>
+                  <div class="progress-group-list">
+                    <div class="progress-row-item">
+                      <div class="progress-label-row">
+                        <span>Mercado</span>
+                        <span class="progress-pct-badge">60%</span>
+                      </div>
+                      <div class="progress-bar-track">
+                        <div class="progress-bar-fill" style="width: 60%;"></div>
+                      </div>
+                    </div>
+                    <div class="progress-row-item">
+                      <div class="progress-label-row">
+                        <span>Transporte</span>
+                        <span class="progress-pct-badge">60%</span>
+                      </div>
+                      <div class="progress-bar-track">
+                        <div class="progress-bar-fill" style="width: 60%;"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- ÚLTIMAS TRANSAÇÕES TABLE -->
+              <div class="mi-card transactions-summary-card">
+                <div class="progress-section-header">
+                  <span class="chart-card-title">Últimas Transações</span>
+                  <button class="pill-toggle-btn" onclick="navigateToTab('tab-lancamentos')">Ver transações →</button>
+                </div>
+                <table class="mini-table">
+                  <thead>
+                    <tr>
+                      <th>Data</th>
+                      <th>Descrição</th>
+                      <th>Valor</th>
+                    </tr>
+                  </thead>
+                  <tbody id="dash-recent-tx-body">
+                    <!-- Populated dynamically via JS -->
+                  </tbody>
+                </table>
+              </div>
+
+            </div>
+
+            <!-- RIGHT COLUMN (Pagar, A Receber, Calendário) -->
+            <div class="dashboard-right-col">
+              
+              <!-- Pagar Widget -->
+              <div class="mi-card">
+                <div class="action-list-header">
+                  <span class="action-list-title">Pagar</span>
+                </div>
+                <div class="action-items-container" id="dash-pagar-container">
+                  <!-- Dynamic items -->
+                </div>
+                <button class="btn-action-text" id="btn-pay-all">Pagar tudo!</button>
+              </div>
+
+              <!-- A Receber Widget -->
+              <div class="mi-card">
+                <div class="action-list-header">
+                  <span class="action-list-title">A receber</span>
+                </div>
+                <div class="action-items-container" id="dash-receber-container">
+                  <!-- Dynamic items -->
+                </div>
+                <button class="btn-action-text" id="btn-receive-all">Recebi tudo!</button>
+              </div>
+
+              <!-- Calendário de Vencimento -->
+              <div class="mi-card">
+                <div class="calendar-card-header">
+                  <span class="action-list-title">Calendário de vencimento</span>
+                  <span style="font-size: 11px; color: var(--text-muted);">Meses</span>
+                </div>
+                <div class="calendar-grid" id="dash-calendar-grid">
+                  <!-- Rendered via JS -->
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- ===============================================================
+             TAB 2: LANÇAMENTOS (Image 6)
+             =============================================================== -->
+        <div class="tab-content-pane" id="tab-lancamentos">
+          
+          <div class="tx-top-actions">
+            <div>
+              <h2 style="font-size: 20px; font-weight: 700;">Lançamentos</h2>
+              <p style="font-size: 12px; color: var(--text-muted);">Extrato financeiro com calculadora e cartões</p>
+            </div>
+            <button class="btn-primary-pill" onclick="openNewTxModal()">
+              <span>+</span> Novo Lançamento
+            </button>
+          </div>
+
+          <!-- Filter Pills Row -->
+          <div class="filter-pills-bar">
+            <div class="pills-group" id="tx-filter-pills-group">
+              <button class="filter-pill active" data-filter="todos">Todos</button>
+              <button class="filter-pill" data-filter="pagos">Pagos</button>
+              <button class="filter-pill" data-filter="agendados">Agendados</button>
+              <button class="filter-pill" data-filter="atrasados">Atrasados</button>
+              <button class="filter-pill" data-filter="faturas">Faturas cartão</button>
+              <button class="filter-pill" data-filter="duplicados">Lançamentos duplicados</button>
+              <button class="filter-pill" data-filter="mes">Mês</button>
+              <button class="filter-pill" data-filter="periodo">Período</button>
+            </div>
+            <input type="text" class="search-box-input" id="tx-search-input" placeholder="Pesquisar..." />
+          </div>
+
+          <!-- 2-Column Lançamentos Layout -->
+          <div class="lancamentos-layout-grid">
+            
+            <!-- Left: Table -->
+            <div>
+              <table class="tx-full-table">
+                <thead>
+                  <tr>
+                    <th>Data</th>
+                    <th>Descrição</th>
+                    <th>Conta</th>
+                    <th>Valor</th>
+                    <th>Ações</th>
+                  </tr>
+                </thead>
+                <tbody id="full-transactions-table-body">
+                  <!-- Dynamic rows -->
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Right: Cards + Calculator -->
+            <div>
+              <!-- Cartões Header -->
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <span style="font-size: 14px; font-weight: 700;">Cartões</span>
+                <button class="btn-action-text" style="width: auto; padding: 0;" onclick="navigateToTab('tab-open-finance')">Cadastrar Cartão</button>
+              </div>
+
+              <!-- Mini Cards List -->
+              <div class="sidebar-cards-list" id="sidebar-mini-cards-list">
+                <!-- Rendered dynamically -->
+              </div>
+
+              <!-- Calculadora Integrada (Image 6) -->
+              <div class="calculator-card">
+                <div class="calculator-title">Calculadora</div>
+                <div class="calculator-screen" id="calc-screen">10+4</div>
+                <div class="calculator-keypad-grid">
+                  <button class="calc-btn op" data-calc="C">C</button>
+                  <button class="calc-btn op" data-calc="DEL">⌫</button>
+                  <button class="calc-btn op" data-calc="%">%</button>
+                  <button class="calc-btn op" data-calc="/">÷</button>
+
+                  <button class="calc-btn" data-calc="7">7</button>
+                  <button class="calc-btn" data-calc="8">8</button>
+                  <button class="calc-btn" data-calc="9">9</button>
+                  <button class="calc-btn op" data-calc="*">×</button>
+
+                  <button class="calc-btn" data-calc="4">4</button>
+                  <button class="calc-btn" data-calc="5">5</button>
+                  <button class="calc-btn" data-calc="6">6</button>
+                  <button class="calc-btn op" data-calc="-">-</button>
+
+                  <button class="calc-btn" data-calc="1">1</button>
+                  <button class="calc-btn" data-calc="2">2</button>
+                  <button class="calc-btn" data-calc="3">3</button>
+                  <button class="calc-btn op" data-calc="+">+</button>
+
+                  <button class="calc-btn" data-calc="0" style="grid-column: span 2;">0</button>
+                  <button class="calc-btn" data-calc=",">,</button>
+                  <button class="calc-btn equals" data-calc="=">=</button>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- ===============================================================
+             TAB 3: PLANEJAMENTO (Image 8)
+             =============================================================== -->
+        <div class="tab-content-pane" id="tab-planejamento">
+          <div class="tx-top-actions">
+            <div>
+              <h2 style="font-size: 20px; font-weight: 700;">Planejamento Financeiro</h2>
+              <p style="font-size: 12px; color: var(--text-muted);">Defina seus tetos de gastos e projete suas conquistas</p>
+            </div>
+            <div style="display: flex; gap: 10px;">
+              <button class="btn-primary-pill" onclick="openBudgetModal()">+ Novo Orçamento</button>
+              <button class="btn-primary-pill" style="background: #38bdf8;" onclick="openMetaModal()">+ Nova Meta</button>
+            </div>
+          </div>
+
+          <div class="planejamento-grid">
+            <!-- Orçamento Column -->
+            <div>
+              <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 14px;">Orçamento</h3>
+              
+              <div class="budget-card-box">
+                <div class="budget-card-header">
+                  <span>Entrada da casa</span>
+                  <span style="color: var(--color-primary);">80% concluída</span>
+                </div>
+                <div class="progress-bar-track">
+                  <div class="progress-bar-fill" style="width: 80%;"></div>
+                </div>
+                <div class="budget-card-values">
+                  <span>R$ 40.500,00</span>
+                  <span>R$ 45.500,00</span>
+                </div>
+              </div>
+
+              <div class="budget-card-box">
+                <div class="budget-card-header">
+                  <span>Carro</span>
+                  <span style="color: var(--color-primary);">80% concluída</span>
+                </div>
+                <div class="progress-bar-track">
+                  <div class="progress-bar-fill" style="width: 80%;"></div>
+                </div>
+                <div class="budget-card-values">
+                  <span>R$ 40.500,00</span>
+                  <span>R$ 45.500,00</span>
+                </div>
+              </div>
+
+              <div class="budget-card-box">
+                <div class="budget-card-header">
+                  <span>Mercado Mensal</span>
+                  <span style="color: var(--color-primary);">55% concluída</span>
+                </div>
+                <div class="progress-bar-track">
+                  <div class="progress-bar-fill" style="width: 55%;"></div>
+                </div>
+                <div class="budget-card-values">
+                  <span>R$ 1.650,00</span>
+                  <span>R$ 3.000,00</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Metas Column with Evolution Graph -->
+            <div>
+              <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 14px;">Metas</h3>
+
+              <div class="meta-timeline-card">
+                <div style="display: flex; justify-content: flex-end; gap: 14px; font-size: 11px; margin-bottom: 12px; color: var(--text-muted);">
+                  <span style="display: flex; align-items: center; gap: 6px;">
+                    <span style="width: 8px; height: 8px; border-radius: 50%; background: #2563eb;"></span> Entrada da casa
+                  </span>
+                  <span style="display: flex; align-items: center; gap: 6px;">
+                    <span style="width: 8px; height: 8px; border-radius: 50%; background: #38bdf8;"></span> Carro
+                  </span>
+                </div>
+
+                <!-- SVG Evolution Chart -->
+                <div style="height: 180px; width: 100%;" id="meta-evolution-svg-box"></div>
+
+                <div style="margin-top: 24px; display: flex; flex-direction: column; gap: 16px;">
+                  <div class="progress-row-item">
+                    <div class="progress-label-row">
+                      <span>Entrada da casa</span>
+                      <span class="progress-pct-badge">80% concluída</span>
+                    </div>
+                    <div class="progress-bar-track">
+                      <div class="progress-bar-fill" style="width: 80%;"></div>
+                    </div>
+                    <div class="budget-card-values">
+                      <span>R$ 40.500,00</span>
+                      <span>R$ 45.500,00</span>
+                    </div>
+                    <div class="meta-timeline-phrase">Nesse ritmo, você alcançará sua meta em 14 meses.</div>
+                  </div>
+
+                  <div class="progress-row-item">
+                    <div class="progress-label-row">
+                      <span>Carro</span>
+                      <span class="progress-pct-badge">80% concluída</span>
+                    </div>
+                    <div class="progress-bar-track">
+                      <div class="progress-bar-fill" style="width: 80%;"></div>
+                    </div>
+                    <div class="budget-card-values">
+                      <span>R$ 40.500,00</span>
+                      <span>R$ 45.500,00</span>
+                    </div>
+                    <div class="meta-timeline-phrase">Nesse ritmo, você alcançará sua meta em 14 meses.</div>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- ===============================================================
+             TAB 4: OPEN FINANCE & CARTÕES (Images 5 + Projeção de Faturas)
+             =============================================================== -->
+        <div class="tab-content-pane" id="tab-open-finance">
+          <div class="tx-top-actions">
+            <div>
+              <h2 style="font-size: 20px; font-weight: 700;">Open Finance & Cartões de Crédito</h2>
+              <p style="font-size: 12px; color: var(--text-muted);">Integrações bancárias seguras e projeção de término de faturas</p>
+            </div>
+            <button class="btn-primary-pill" onclick="window.showToast('Conexão Open Finance em conformidade com o Banco Central!', '🔒')">
+              Nova conexão
+            </button>
+          </div>
+
+          <!-- Bank Logos Banner (Image 5) -->
+          <div class="mi-card" style="text-align: center; margin-bottom: 24px;">
+            <h3 style="font-size: 18px; font-weight: 800;">Open Finance</h3>
+            <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Seu banco conectado em tempo real!</p>
+            <div class="bank-logos-grid">
+              <div class="bank-logo-badge nu" title="Nubank">nu</div>
+              <div class="bank-logo-badge itau" title="Itaú">itaú</div>
+              <div class="bank-logo-badge bradesco" title="Bradesco">bra</div>
+              <div class="bank-logo-badge picpay" title="PicPay">pic</div>
+              <div class="bank-logo-badge inter" title="Banco Inter">inter</div>
+              <div class="bank-logo-badge caixa" title="Caixa">X</div>
+            </div>
+          </div>
+
+          <!-- Cards Grid & Predictive Projection -->
+          <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 14px;">Seus Cartões & Limites</h3>
+          <div class="top-summary-grid" id="open-finance-cards-grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
+            <!-- Dynamic cards -->
+          </div>
+
+          <!-- Faturas Projection Hero -->
+          <div class="mi-card" style="margin-top: 24px;">
+            <div class="chart-card-header">
+              <div>
+                <span class="chart-card-title">📉 Projeção de Faturas (Próximos 18 Meses)</span>
+                <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">
+                  Veja exatamente quando os parcelamentos serão quitados e seu limite restabelecido.
+                </p>
+              </div>
+              <div class="metric-trend-pill positive" id="open-finance-finish-badge">Calculando...</div>
+            </div>
+            <div id="open-finance-bars-container" style="display: flex; align-items: flex-end; gap: 10px; height: 180px; padding: 20px 0; overflow-x: auto;">
+              <!-- Dynamic bars -->
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ===============================================================
+             TAB 5: WHATSAPP 24/7 & CHAT SIMULADOR
+             =============================================================== -->
+        <div class="tab-content-pane" id="tab-whatsapp">
+          <div class="tx-top-actions">
+            <div>
+              <h2 style="font-size: 20px; font-weight: 700;">WhatsApp 24/7 & Assistente IA</h2>
+              <p style="font-size: 12px; color: var(--text-muted);">Conecte seu celular para registrar gastos e consultar faturas por mensagem</p>
+            </div>
+          </div>
+
+          <div class="metas-orcamento-grid" style="grid-template-columns: 1fr 1.3fr;">
+            
+            <!-- QR Code Connection Card -->
+            <div class="mi-card" style="display: flex; flex-direction: column; align-items: center; text-align: center;">
+              <span id="wa-connection-badge" class="filter-pill active" style="margin-bottom: 12px;">○ Desconectado</span>
+              <h3 style="font-size: 18px; font-weight: 700;">Conectar WhatsApp</h3>
+              <p style="font-size: 12px; color: var(--text-muted); max-width: 320px; margin-top: 4px;">
+                Escaneie o QR Code no seu aplicativo do celular para ativar o assistente 24 horas.
+              </p>
+
+              <!-- QR Code Box -->
+              <div id="wa-qrcode-box" style="margin: 20px 0;">
+                <div style="width: 220px; height: 220px; border: 2px dashed var(--border-medium); border-radius: var(--radius-md); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; color: var(--text-subtle);">
+                  <span style="font-size: 32px;">📷</span>
+                  <span style="font-size: 12px;">Clique abaixo para gerar</span>
+                </div>
+              </div>
+
+              <!-- Connected Box -->
+              <div id="wa-connected-box" style="display: none; flex-direction: column; align-items: center; gap: 10px; padding: 20px; background: var(--color-success-bg); border-radius: var(--radius-md); border: 1px solid var(--color-success);">
+                <span style="font-size: 36px;">📱✅</span>
+                <div style="font-weight: 700; color: var(--color-success-text);">WhatsApp Conectado!</div>
+                <div style="font-size: 12px; color: var(--text-main);" id="wa-connected-phone-display"></div>
+              </div>
+
+              <div style="display: flex; gap: 10px; margin-top: 10px;">
+                <button id="btn-whatsapp-connect" class="btn-primary-pill">📲 Gerar QR Code</button>
+                <button id="btn-whatsapp-logout" class="filter-pill" style="display: none; color: var(--color-danger);">Desconectar</button>
+              </div>
+            </div>
+
+            <!-- Chat Simulator -->
+            <div class="mi-card" style="display: flex; flex-direction: column; height: 500px; padding: 16px;">
+              <div style="display: flex; align-items: center; gap: 10px; padding-bottom: 12px; border-bottom: 1px solid var(--border-subtle);">
+                <div class="user-avatar-circle" style="background: #10b981;">🤖</div>
                 <div>
-                  <div style="font-size: 14px; font-weight: 700; color: #e9edef;">Meu Assessor IA</div>
-                  <div class="chat-status-text">● Online • Simulador Web</div>
+                  <div style="font-size: 13px; font-weight: 700;">Simulador de Conversa</div>
+                  <div style="font-size: 11px; color: var(--color-success);">Online • Respostas em tempo real</div>
                 </div>
               </div>
-              <span style="font-size: 11px; color: #8696a0;">WhatsApp Simulado</span>
-            </div>
 
-            <div class="chat-messages-area" id="chat-messages-area"></div>
-
-            <div class="chat-suggestions-bar">
-              <span style="font-size: 11px; color: #8696a0; white-space: nowrap;">Atalhos rápidos:</span>
-              <button class="chat-suggestion-chip" data-msg="Almoço 45 no débito">🍔 Almoço 45</button>
-              <button class="chat-suggestion-chip" data-msg="Comprei TV 2400 em 10x no nubank">📺 TV 2400 em 10x Nubank</button>
-              <button class="chat-suggestion-chip" data-msg="Recebi 3500 de salário">💵 Recebi 3500 salário</button>
-              <button class="chat-suggestion-chip" data-msg="quando acabo de pagar a fatura?">🏁 Quando acabo a fatura?</button>
-              <button class="chat-suggestion-chip" data-msg="fatura">💳 Ver Faturas e Limites</button>
-              <button class="chat-suggestion-chip" data-msg="saldo">💰 Saldo e Resumo</button>
-            </div>
-
-            <div class="chat-input-bar">
-              <input type="text" id="chat-input" class="chat-text-input" placeholder="Digite uma mensagem... Ex: 'Comprei tênis 300 em 3x no inter' ou 'quando acabo a fatura?'" />
-              <button id="chat-send-btn" class="chat-send-btn" title="Enviar Mensagem">➤</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ===================================================================
-           TAB 5: EXTRATO COMPLETO DE TRANSAÇÕES
-           =================================================================== -->
-      <div class="tab-pane" id="tab-transactions">
-        <div class="installments-table-card">
-          <div class="table-header-box">
-            <div>
-              <h3>Extrato Geral de Movimentações</h3>
-              <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">
-                Histórico detalhado de receitas, despesas em conta corrente e compras nos cartões.
-              </p>
-            </div>
-            <button class="btn btn-secondary" onclick="document.getElementById('btn-open-new-tx-modal').click()">+ Lançar Movimentação</button>
-          </div>
-          <div style="overflow-x: auto;">
-            <table class="custom-table">
-              <thead>
-                <tr>
-                  <th>Descrição / Data</th>
-                  <th>Tipo</th>
-                  <th>Categoria</th>
-                  <th>Forma de Pagamento</th>
-                  <th>Valor</th>
-                  <th>Ações</th>
-                </tr>
-              </thead>
-              <tbody id="transactions-table-body"></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <!-- ===================================================================
-           TAB 6: SUBIR PARA NUVEM 24/7 (RENDER, RAILWAY OU TÚNEL)
-           =================================================================== -->
-      <div class="tab-pane" id="tab-cloud">
-        <div class="chart-card">
-          <div class="chart-header">
-            <div>
-              <h3>☁️ Hospedagem na Nuvem 24/7 (Acesso de Qualquer Lugar)</h3>
-              <p>Coloque o seu sistema online para funcionar mesmo com o seu computador desligado.</p>
-            </div>
-          </div>
-
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 18px; margin-top: 10px;">
-            <!-- OPÇÃO 1: RENDER.COM (GRÁTIS) -->
-            <div style="background: rgba(0,0,0,0.3); border: 1.5px solid rgba(139, 92, 246, 0.4); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 12px;">
-              <span class="table-finish-badge" style="background: rgba(139, 92, 246, 0.2); color: #c084fc;">🚀 1-Click Deploy Gratuito</span>
-              <h4 style="font-size: 16px; font-weight: 800; color: #fff;">Hospedar no Render.com</h4>
-              <p style="font-size: 12px; color: var(--text-muted); line-height: 1.5;">
-                O Render oferece hospedagem Node.js gratuita e nós já geramos o arquivo <code>render.yaml</code> e <code>Dockerfile</code> prontos no seu projeto.
-              </p>
-              <ol style="margin-left: 18px; font-size: 12px; color: #cbd5e1; line-height: 1.6;">
-                <li>Crie uma conta gratuita em <a href="https://render.com" target="_blank" style="color: #38bdf8;">render.com</a>.</li>
-                <li>Clique em <strong>New +</strong> ➡️ <strong>Web Service</strong>.</li>
-                <li>Conecte seu repositório GitHub desta pasta.</li>
-                <li>Pronto! Ele iniciará automaticamente com URL pública HTTPS (ex: <code>https://meu-assessor.onrender.com</code>).</li>
-              </ol>
-            </div>
-
-            <!-- OPÇÃO 2: RAILWAY.APP -->
-            <div style="background: rgba(0,0,0,0.3); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 12px;">
-              <span class="table-finish-badge" style="background: rgba(16, 185, 129, 0.2); color: #34d399;">⚡ Super Rápido</span>
-              <h4 style="font-size: 16px; font-weight: 800; color: #fff;">Hospedar no Railway.app</h4>
-              <p style="font-size: 12px; color: var(--text-muted); line-height: 1.5;">
-                O Railway detecta o <code>Dockerfile</code> automaticamente e sobe em menos de 1 minuto com persistência.
-              </p>
-              <ol style="margin-left: 18px; font-size: 12px; color: #cbd5e1; line-height: 1.6;">
-                <li>Acesse <a href="https://railway.app" target="_blank" style="color: #38bdf8;">railway.app</a>.</li>
-                <li>Selecione <strong>Deploy from GitHub repo</strong>.</li>
-                <li>Gera domínio público com SSL automático na hora.</li>
-              </ol>
-            </div>
-
-            <!-- OPÇÃO 3: TÚNEL IMEDIATO DO COMPUTADOR -->
-            <div style="background: rgba(0,0,0,0.3); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 12px;">
-              <span class="table-finish-badge" style="background: rgba(245, 158, 11, 0.2); color: #fbbf24;">⚡ Imediato sem conta</span>
-              <h4 style="font-size: 16px; font-weight: 800; color: #fff;">Túnel Público pelo Terminal</h4>
-              <p style="font-size: 12px; color: var(--text-muted); line-height: 1.5;">
-                Você também pode rodar um túnel instantâneo pelo terminal agora mesmo usando:
-              </p>
-              <div class="snippet-box" style="margin-top: 4px;">
-                <pre>npx localtunnel --port 3000</pre>
+              <div id="chat-messages-area" style="flex: 1; overflow-y: auto; padding: 14px 4px; display: flex; flex-direction: column; gap: 10px;">
+                <!-- Messages -->
               </div>
-              <p style="font-size: 11px; color: var(--text-subtle);">
-                Gera na hora uma URL pública segura HTTPS para você acessar no celular enquanto o computador estiver ligado.
-              </p>
+
+              <!-- Chat Input -->
+              <div style="display: flex; gap: 8px; padding-top: 10px; border-top: 1px solid var(--border-subtle);">
+                <input type="text" id="chat-input" class="form-input-pill" placeholder="Digite ex: 'almoço 35 no débito' ou 'projeção'..." />
+                <button id="chat-send-btn" class="btn-primary-pill" style="padding: 0 16px;">➤</button>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- ===============================================================
+             TAB 6: CONFIGURAÇÕES & PERFIL (Image 5)
+             =============================================================== -->
+        <div class="tab-content-pane" id="tab-settings">
+          <div class="tx-top-actions">
+            <div>
+              <h2 style="font-size: 20px; font-weight: 700;">Meu Perfil & Configurações</h2>
+              <p style="font-size: 12px; color: var(--text-muted);">Personalize seus dados, planos e canais de notificação</p>
             </div>
           </div>
-        </div>
-      </div>
 
+          <div class="settings-layout-grid">
+            
+            <!-- Left: Profile & Password -->
+            <div style="display: flex; flex-direction: column; gap: 20px;">
+              
+              <!-- Profile Card -->
+              <div class="mi-card" style="text-align: center;">
+                <div class="profile-avatar-large">M</div>
+                <h3 style="font-size: 16px; font-weight: 700;">Marques</h3>
+                <p style="font-size: 12px; color: var(--text-muted);">Membro desde Outubro de 2026</p>
+
+                <!-- Plan info -->
+                <div style="margin: 18px 0; padding: 14px; background-color: var(--bg-card-secondary); border-radius: var(--radius-md); text-align: left;">
+                  <div style="font-size: 13px; font-weight: 700;">Plano Anual Pro</div>
+                  <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Sua assinatura está ativa e conectada ao Supabase</div>
+                  <button class="filter-pill active" style="margin-top: 10px; width: 100%;" onclick="window.showToast('Plano Pro ativo e ilimitado!', '⭐')">Gerenciar assinatura</button>
+                </div>
+
+                <!-- Personal Info form -->
+                <div style="text-align: left; display: flex; flex-direction: column; gap: 12px;">
+                  <div style="font-size: 13px; font-weight: 700;">Dados Pessoais</div>
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <input type="text" class="form-input-pill" value="Marques" placeholder="Nome" />
+                    <input type="text" class="form-input-pill" value="Consultoria" placeholder="Sobrenome" />
+                  </div>
+                  <input type="email" class="form-input-pill" value="marques@exemplo.com" placeholder="E-mail" />
+                  <input type="tel" class="form-input-pill" value="+55 (11) 99999-9999" placeholder="Telefone" />
+                  <button class="btn-submit-action" onclick="window.showToast('Dados atualizados com sucesso!', '✓')">Atualizar cadastro</button>
+                </div>
+              </div>
+
+              <!-- Change Password Card -->
+              <div class="mi-card">
+                <h3 style="font-size: 14px; font-weight: 700; margin-bottom: 12px;">Mude sua senha de acesso</h3>
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                  <input type="password" class="form-input-pill" placeholder="Senha atual" />
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <input type="password" class="form-input-pill" placeholder="Nova senha" />
+                    <input type="password" class="form-input-pill" placeholder="Repita a nova senha" />
+                  </div>
+                  <button class="btn-submit-action" onclick="window.showToast('Senha alterada com sucesso!', '🔒')">Atualizar senha</button>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Right: Preferences & Alerts (Image 5) -->
+            <div class="mi-card">
+              <h3 style="font-size: 15px; font-weight: 700;">Preferências e alertas</h3>
+              <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px; margin-bottom: 16px;">
+                Controle quando e como o Money Insights comunica com você.
+              </p>
+
+              <div class="toggle-switch-row">
+                <div class="toggle-switch-info">
+                  <span style="font-size: 18px;">🔔</span>
+                  <div>
+                    <div class="toggle-switch-title">Alertas de vencimento</div>
+                    <div class="toggle-switch-desc">Avisos do dia que vai pagar boletos e faturas.</div>
+                  </div>
+                </div>
+                <label class="switch-control">
+                  <input type="checkbox" checked />
+                  <span class="switch-slider"></span>
+                </label>
+              </div>
+
+              <div class="toggle-switch-row">
+                <div class="toggle-switch-info">
+                  <span style="font-size: 18px;">📊</span>
+                  <div>
+                    <div class="toggle-switch-title">Limite de orçamento</div>
+                    <div class="toggle-switch-desc">Ser avisado quando atingir 80% do orçamento do mês.</div>
+                  </div>
+                </div>
+                <label class="switch-control">
+                  <input type="checkbox" checked />
+                  <span class="switch-slider"></span>
+                </label>
+              </div>
+
+              <div class="toggle-switch-row">
+                <div class="toggle-switch-info">
+                  <span style="font-size: 18px;">✉️</span>
+                  <div>
+                    <div class="toggle-switch-title">Resumo semanal</div>
+                    <div class="toggle-switch-desc">Receber relatório das movimentações direto no WhatsApp.</div>
+                  </div>
+                </div>
+                <label class="switch-control">
+                  <input type="checkbox" checked />
+                  <span class="switch-slider"></span>
+                </label>
+              </div>
+
+              <div class="toggle-switch-row">
+                <div class="toggle-switch-info">
+                  <span style="font-size: 18px;">☁️</span>
+                  <div>
+                    <div class="toggle-switch-title">Sincronização em Nuvem (Supabase)</div>
+                    <div class="toggle-switch-desc">Manter persistência contínua com seu PostgreSQL.</div>
+                  </div>
+                </div>
+                <label class="switch-control">
+                  <input type="checkbox" checked />
+                  <span class="switch-slider"></span>
+                </label>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
     </main>
+
   </div>
 
-  <!-- MODAL: NOVO LANÇAMENTO MANUAL -->
-  <div class="modal-overlay" id="new-tx-modal">
-    <div class="modal-card">
-      <div class="modal-header">
-        <h3>Novo Lançamento Financeiro</h3>
-        <button class="btn-ghost" id="close-new-tx-modal" style="border: none; font-size: 18px;">✕</button>
+  <!-- FLOATING WHATSAPP BUTTON (Bottom Right) -->
+  <button class="floating-whatsapp-btn" onclick="navigateToTab('tab-whatsapp')" title="Falar no WhatsApp">
+    <div class="whatsapp-pulse"></div>
+    <svg viewBox="0 0 24 24">
+      <path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2zm.01 1.67c4.54 0 8.24 3.7 8.24 8.24 0 2.2-.86 4.28-2.42 5.84-1.56 1.56-3.64 2.42-5.83 2.42-1.43 0-2.83-.37-4.07-1.07l-.29-.17-3.12.82.83-3.04-.19-.31a8.163 8.163 0 0 1-1.25-4.49c0-4.54 3.7-8.24 8.24-8.24zm4.52 11.64c-.25-.12-1.47-.72-1.7-.81-.23-.08-.39-.12-.56.12-.17.25-.65.81-.8 1-.15.19-.3.21-.55.08-.25-.12-1.05-.39-2-1.23-.74-.66-1.24-1.47-1.38-1.72-.15-.25-.02-.38.11-.5.11-.11.25-.29.37-.43.12-.15.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.12-.56-1.35-.77-1.85-.2-.48-.41-.42-.56-.43h-.48c-.16 0-.43.06-.66.31-.23.25-.87.85-.87 2.08 0 1.23.89 2.41 1.02 2.58.12.17 1.76 2.68 4.26 3.76.6.26 1.06.41 1.42.53.6.19 1.15.16 1.58.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.08.15-1.18-.06-.1-.22-.16-.47-.28z"/>
+    </svg>
+  </button>
+
+  <!-- ===================================================================
+       MODAL: NOVO LANÇAMENTO (Image 7)
+       =================================================================== -->
+  <div class="modal-overlay" id="modal-novo-lancamento">
+    <div class="modal-container">
+      <div class="modal-header-nav">
+        <div class="modal-type-tabs">
+          <button class="modal-tab-pill active" data-txtype="EXPENSE">Despesa</button>
+          <button class="modal-tab-pill" data-txtype="INCOME">Receita</button>
+          <button class="modal-tab-pill" data-txtype="TRANSFER">Transferência</button>
+        </div>
       </div>
-      <form id="new-tx-form" class="modal-body">
-        <div class="form-group">
-          <label class="form-label">Descrição</label>
-          <input class="form-input" id="tx-in-desc" placeholder="Ex: Almoço restaurante, Farmácia, Salário" required />
-        </div>
-        <div class="form-grid-2">
-          <div class="form-group">
-            <label class="form-label">Tipo</label>
-            <select class="form-select" id="tx-in-type">
-              <option value="EXPENSE">Despesa (-)</option>
-              <option value="INCOME">Receita (+)</option>
-            </select>
+
+      <form id="form-novo-lancamento" class="modal-body-form">
+        <div style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 12px;">
+          <div>
+            <label style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px; display: block;">Valor (R$)</label>
+            <input type="number" step="0.01" class="form-input-pill" id="tx-modal-val" placeholder="0,00" required />
           </div>
-          <div class="form-group">
-            <label class="form-label">Valor (R$)</label>
-            <input class="form-input" id="tx-in-amount" type="number" step="0.01" placeholder="0.00" required />
+          <div>
+            <label style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px; display: block;">Descrição</label>
+            <input type="text" class="form-input-pill" id="tx-modal-desc" placeholder="Ex: Supermercado, Salário" required />
           </div>
         </div>
-        <div class="form-grid-2">
-          <div class="form-group">
-            <label class="form-label">Categoria</label>
-            <select class="form-select" id="tx-in-category">
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div>
+            <label style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px; display: block;">Data</label>
+            <input type="date" class="form-input-pill" id="tx-modal-date" />
+          </div>
+          <div>
+            <label style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px; display: block;">Categoria</label>
+            <select class="form-input-pill" id="tx-modal-category">
               <option value="Alimentação">Alimentação</option>
               <option value="Mercado">Mercado</option>
               <option value="Transporte">Transporte</option>
+              <option value="Moradia">Moradia</option>
               <option value="Saúde">Saúde</option>
-              <option value="Moradia & Contas">Moradia & Contas</option>
-              <option value="Renda & Salário">Renda & Salário</option>
+              <option value="Renda">Renda & Salário</option>
               <option value="Lazer">Lazer</option>
               <option value="Outros">Outros</option>
             </select>
           </div>
-          <div class="form-group">
-            <label class="form-label">Forma de Pagamento</label>
-            <select class="form-select" id="tx-in-method">
-              <option value="DEBIT">Débito em Conta</option>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+          <div>
+            <label style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px; display: block;">Vencimento</label>
+            <input type="date" class="form-input-pill" id="tx-modal-due" />
+          </div>
+          <div>
+            <label style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px; display: block;">Conta/Banco</label>
+            <select class="form-input-pill" id="tx-modal-account">
+              <option value="Nubank">Nubank</option>
+              <option value="Inter">Inter</option>
+              <option value="Itaú">Itaú</option>
+              <option value="Carteira">Carteira / Pix</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px; display: block;">Pagamento</label>
+            <select class="form-input-pill" id="tx-modal-method">
+              <option value="DEBIT">Débito</option>
               <option value="PIX">Pix</option>
-              <option value="CREDIT_CARD">Cartão de Crédito</option>
-              <option value="CASH">Dinheiro</option>
+              <option value="CREDIT_CARD">Cartão Crédito</option>
             </select>
           </div>
         </div>
-        <button type="submit" class="btn btn-primary" style="margin-top: 10px;">Salvar Lançamento</button>
+
+        <!-- Checkboxes (Image 7) -->
+        <div class="form-checkbox-row">
+          <label class="form-checkbox-item">
+            <input type="checkbox" id="tx-modal-is-paid" checked />
+            <span>já está pago</span>
+          </label>
+          <label class="form-checkbox-item">
+            <input type="checkbox" id="tx-modal-is-installment" />
+            <span>Parcelar</span>
+          </label>
+          <label class="form-checkbox-item">
+            <input type="checkbox" id="tx-modal-is-repeat" />
+            <span>Repetir pagamento</span>
+          </label>
+        </div>
+
+        <div style="display: flex; gap: 10px; margin-top: 8px;">
+          <button type="button" class="filter-pill" style="flex: 1;" onclick="closeModal('modal-novo-lancamento')">Cancelar</button>
+          <button type="submit" class="btn-submit-action" style="flex: 2; margin-top: 0;">Lançar</button>
+        </div>
       </form>
     </div>
   </div>
 
-  <!-- MODAL: DETALHES DOS ITENS DA FATURA PROJETADA DE UM MÊS -->
-  <div class="modal-overlay" id="details-modal">
-    <div class="modal-card">
-      <div class="modal-header">
-        <h3 id="details-modal-title">Itens da Fatura</h3>
-        <button class="btn-ghost" id="close-details-modal" style="border: none; font-size: 18px;">✕</button>
+  <!-- MODAL: NOVO ORÇAMENTO (Image 9) -->
+  <div class="modal-overlay" id="modal-novo-orcamento">
+    <div class="modal-container" style="max-width: 420px;">
+      <div style="padding: 20px 24px 0 24px; text-align: center;">
+        <h3 style="font-size: 16px; font-weight: 700;">Novo orçamento</h3>
       </div>
-      <div class="modal-body" id="details-modal-body"></div>
+      <form id="form-novo-orcamento" class="modal-body-form">
+        <div>
+          <label style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px; display: block;">Categoria alvo</label>
+          <input type="text" class="form-input-pill" id="orc-target" placeholder="Ex: Mercado, Transporte, Lazer" required />
+        </div>
+        <div>
+          <label style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px; display: block;">Limite mensal (R$)</label>
+          <input type="number" step="0.01" class="form-input-pill" id="orc-limit" placeholder="R$ 1.500,00" required />
+        </div>
+        <div style="display: flex; gap: 10px; margin-top: 8px;">
+          <button type="button" class="filter-pill" style="flex: 1;" onclick="closeModal('modal-novo-orcamento')">Cancelar</button>
+          <button type="submit" class="btn-submit-action" style="flex: 2; margin-top: 0;">Salvar</button>
+        </div>
+      </form>
     </div>
   </div>
 
-  <!-- TOAST CONTAINER -->
-  <div class="toast-container" id="toast-container"></div>
+  <!-- MODAL: NOVA META (Image 9) -->
+  <div class="modal-overlay" id="modal-nova-meta">
+    <div class="modal-container" style="max-width: 440px;">
+      <div style="padding: 20px 24px 0 24px; text-align: center;">
+        <h3 style="font-size: 16px; font-weight: 700;">Nova Meta</h3>
+      </div>
+      <form id="form-nova-meta" class="modal-body-form">
+        <div>
+          <label style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px; display: block;">Nome da Meta</label>
+          <input type="text" class="form-input-pill" id="meta-name" placeholder="Ex: Viagem de Férias, Reserva de Emergência" required />
+        </div>
+        <div>
+          <label style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px; display: block;">Valor alvo (R$)</label>
+          <input type="number" step="0.01" class="form-input-pill" id="meta-target" placeholder="R$ 20.000,00" required />
+        </div>
+        <div>
+          <label style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px; display: block;">Quanto já tem (R$)</label>
+          <input type="number" step="0.01" class="form-input-pill" id="meta-current" placeholder="R$ 5.000,00" required />
+        </div>
+        <div>
+          <label style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px; display: block;">Até quando quer alcançar</label>
+          <input type="date" class="form-input-pill" id="meta-deadline" />
+        </div>
+        <div style="display: flex; gap: 10px; margin-top: 8px;">
+          <button type="button" class="filter-pill" style="flex: 1;" onclick="closeModal('modal-nova-meta')">Cancelar</button>
+          <button type="submit" class="btn-submit-action" style="flex: 2; margin-top: 0;">Salvar</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
-  <!-- SCRIPTS -->
+  <!-- TOAST NOTIFICATIONS -->
+  <div id="toast-container" style="position: fixed; bottom: 24px; left: 24px; display: flex; flex-direction: column; gap: 8px; z-index: 9999;"></div>
+
+  <!-- SCRIPT -->
   <script src="js/dashboard.js"></script>
 </body>
 </html>
