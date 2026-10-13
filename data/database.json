@@ -1,7 +1,7 @@
 {
-  "accountBalance": 0,
-  "emergencyReserve": 0,
-  "investmentsBalance": 0,
+  "accountBalance": null,
+  "emergencyReserve": null,
+  "investmentsBalance": null,
   "alertDueDates": true,
   "alertBudgetLimit": true,
   "alertWeeklyReport": true,
@@ -33,5 +33,14 @@
   "budgets": [],
   "goals": [],
   "bills": [],
-  "loginPassword": "123456"
+  "loginPassword": "123456",
+  "userProfile": {
+    "name": "Marques",
+    "email": "admin@lancei.com.br",
+    "username": "admin",
+    "phone": "",
+    "role": "Gestor Financeiro",
+    "plan": "Assinatura Corporativa Enterprise"
+  },
+  "loginUsername": "admin"
 }

@@ -593,13 +593,15 @@ const server = http.createServer(async (req, res) => {
       const { username, password } = body;
       const isValid = await dbAdapter.verifyAuth(username, password);
       if (isValid) {
+        const profile = await dbAdapter.getUserProfile();
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({
           success: true,
           user: {
-            name: 'Marques',
-            username: username || 'admin',
-            role: 'Administrador'
+            name: profile.name || 'Marques',
+            username: username || profile.username || 'admin',
+            role: profile.role || 'Administrador',
+            email: profile.email || 'admin@lancei.com.br'
           },
           token: 'auth-' + Date.now().toString(36)
         }));
@@ -622,6 +624,32 @@ const server = http.createServer(async (req, res) => {
       await dbAdapter.changePassword(currentPassword, newPassword);
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ success: true, message: 'Senha atualizada com sucesso!' }));
+    } catch (err) {
+      res.writeHead(400, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ success: false, error: err.message }));
+    }
+    return;
+  }
+
+  // User Profile API: GET & POST
+  if (pathname === '/api/user/profile' && req.method === 'GET') {
+    try {
+      const profile = await dbAdapter.getUserProfile();
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ success: true, profile }));
+    } catch (err) {
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ success: false, error: err.message }));
+    }
+    return;
+  }
+
+  if (pathname === '/api/user/profile' && req.method === 'POST') {
+    try {
+      const body = await parseBody(req);
+      const updated = await dbAdapter.updateUserProfile(body);
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ success: true, profile: updated, message: 'Perfil atualizado com sucesso!' }));
     } catch (err) {
       res.writeHead(400, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ success: false, error: err.message }));

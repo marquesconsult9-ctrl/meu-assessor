@@ -667,30 +667,52 @@
             <!-- Left: Profile & Password -->
             <div style="display: flex; flex-direction: column; gap: 14px;">
               
-              <!-- Profile Card -->
-              <div class="mi-card" style="text-align: center;">
-                <div class="profile-avatar-large">M</div>
-                <h3 style="font-size: 13px; font-weight: 600;">Marques</h3>
-                <p style="font-size: 11px; color: var(--text-muted);">Assinatura Corporativa Ativa</p>
+              <!-- Informações do Usuário Card -->
+              <div class="mi-card">
+                <div style="text-align: center; margin-bottom: 14px;">
+                  <div class="profile-avatar-large" id="profile-avatar-large">M</div>
+                  <h3 style="font-size: 14px; font-weight: 600; color: #fff;" id="profile-display-name">Marques</h3>
+                  <p style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">
+                    <span style="color: #10b981; font-weight: 600; margin-right: 2px;">●</span> Assinatura Corporativa Ativa
+                  </p>
+                </div>
 
-                <!-- Personal & Financial Balances form -->
-                <form id="form-settings-balances" style="text-align: left; display: flex; flex-direction: column; gap: 10px; margin-top: 14px;">
-                  <div style="font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--text-muted);">Parametrização de Saldos</div>
+                <div style="font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px; border-top: 1px solid var(--border-subtle); padding-top: 12px; margin-bottom: 10px;">
+                  Informações do Usuário
+                </div>
+
+                <!-- Personal Information form -->
+                <form id="form-user-profile" style="display: flex; flex-direction: column; gap: 10px;">
                   <div>
-                    <label style="font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 2px; display: block;">Saldo Conta Corrente (R$)</label>
-                    <input type="number" step="0.01" class="form-input-pill" id="settings-balance" placeholder="4580.50" />
+                    <label style="font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 2px; display: block;">Nome Completo</label>
+                    <input type="text" class="form-input-pill" id="user-info-name" placeholder="Ex: Marques" value="Marques" required />
                   </div>
+
                   <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
                     <div>
-                      <label style="font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 2px; display: block;">Reserva Emergência (R$)</label>
-                      <input type="number" step="0.01" class="form-input-pill" id="settings-reserve" placeholder="1832.20" />
+                      <label style="font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 2px; display: block;">E-mail de Contato</label>
+                      <input type="email" class="form-input-pill" id="user-info-email" placeholder="admin@lancei.com.br" value="admin@lancei.com.br" required />
                     </div>
                     <div>
-                      <label style="font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 2px; display: block;">Investimentos (R$)</label>
-                      <input type="number" step="0.01" class="form-input-pill" id="settings-investments" placeholder="1603.17" />
+                      <label style="font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 2px; display: block;">Usuário (Login)</label>
+                      <input type="text" class="form-input-pill" id="user-info-username" placeholder="admin" value="admin" required />
                     </div>
                   </div>
-                  <button type="submit" class="btn-submit-action">Atualizar Saldos no Supabase</button>
+
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                    <div>
+                      <label style="font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 2px; display: block;">Telefone / WhatsApp</label>
+                      <input type="tel" class="form-input-pill" id="user-info-phone" placeholder="(11) 99999-9999" value="" />
+                    </div>
+                    <div>
+                      <label style="font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 2px; display: block;">Cargo / Função</label>
+                      <input type="text" class="form-input-pill" id="user-info-role" placeholder="Ex: Gestor Financeiro" value="Gestor Financeiro" />
+                    </div>
+                  </div>
+
+                  <button type="submit" id="btn-save-user-profile" class="btn-submit-action" style="margin-top: 4px;">
+                    Salvar Informações do Usuário
+                  </button>
                 </form>
               </div>
 

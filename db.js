@@ -588,6 +588,62 @@ async function changePassword(currentPassword, newPassword) {
   return true;
 }
 
+async function getUserProfile() {
+  if (supabase) {
+    try {
+      const { data } = await supabase.from('financial_settings').select('*').eq('id', 'main').single();
+      if (data) {
+        return {
+          name: localDb.userProfile?.name || 'Marques',
+          email: localDb.userProfile?.email || 'admin@lancei.com.br',
+          username: data.auth_username || localDb.userProfile?.username || 'admin',
+          phone: localDb.userProfile?.phone || '',
+          role: localDb.userProfile?.role || 'Gestor Financeiro',
+          plan: 'Assinatura Corporativa Enterprise'
+        };
+      }
+    } catch (e) {}
+  }
+  return localDb.userProfile || {
+    name: 'Marques',
+    email: 'admin@lancei.com.br',
+    username: localDb.loginUsername || 'admin',
+    phone: '',
+    role: 'Gestor Financeiro',
+    plan: 'Assinatura Corporativa Enterprise'
+  };
+}
+
+async function updateUserProfile(profile = {}) {
+  const current = await getUserProfile();
+  const updated = {
+    name: (profile.name || current.name || 'Marques').trim(),
+    email: (profile.email || current.email || 'admin@lancei.com.br').trim(),
+    username: (profile.username || current.username || 'admin').trim(),
+    phone: (profile.phone || '').trim(),
+    role: (profile.role || current.role || 'Gestor Financeiro').trim(),
+    plan: 'Assinatura Corporativa Enterprise'
+  };
+
+  localDb.userProfile = updated;
+  localDb.loginUsername = updated.username;
+  writeLocalDb();
+
+  if (supabase) {
+    try {
+      await supabase.from('financial_settings').upsert({
+        id: 'main',
+        auth_username: updated.username,
+        updated_at: new Date().toISOString()
+      });
+    } catch (e) {
+      console.error('Supabase profile update error:', e);
+    }
+  }
+
+  return updated;
+}
+
 module.exports = {
   isSupabaseConfigured: () => Boolean(supabase),
   getData,
@@ -610,5 +666,7 @@ module.exports = {
   receiveAllBills,
   deleteBill,
   verifyAuth,
-  changePassword
+  changePassword,
+  getUserProfile,
+  updateUserProfile
 };

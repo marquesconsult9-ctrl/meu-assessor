@@ -62,8 +62,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (icon) icon.textContent = '☀️';
   }
 
-  // Load financial data from API
+  // Load financial data & user profile from API
   await refreshAllData();
+  await loadUserProfile();
   await checkWhatsAppStatus();
 
   renderBillsLists();
@@ -1227,13 +1228,46 @@ function getStoredAuthSession() {
 
 function updateAuthUserProfile(user) {
   if (!user) return;
+  const displayName = user.name || 'Marques';
+  const initial = displayName.charAt(0).toUpperCase();
+
+  // Topbar
   const nameEl = document.getElementById('user-display-name');
   const avatarEl = document.getElementById('user-avatar-circle');
-  if (nameEl && user.name) {
-    nameEl.textContent = user.name;
-  }
-  if (avatarEl && user.name) {
-    avatarEl.textContent = user.name.charAt(0).toUpperCase();
+  if (nameEl) nameEl.textContent = displayName;
+  if (avatarEl) avatarEl.textContent = initial;
+
+  // Preferences Card Header
+  const profName = document.getElementById('profile-display-name');
+  const profAvatar = document.getElementById('profile-avatar-large');
+  if (profName) profName.textContent = displayName;
+  if (profAvatar) profAvatar.textContent = initial;
+
+  // Preferences Form Fields
+  const inputName = document.getElementById('user-info-name');
+  const inputEmail = document.getElementById('user-info-email');
+  const inputUser = document.getElementById('user-info-username');
+  const inputPhone = document.getElementById('user-info-phone');
+  const inputRole = document.getElementById('user-info-role');
+
+  if (inputName && user.name && document.activeElement !== inputName) inputName.value = user.name;
+  if (inputEmail && user.email && document.activeElement !== inputEmail) inputEmail.value = user.email;
+  if (inputUser && user.username && document.activeElement !== inputUser) inputUser.value = user.username;
+  if (inputPhone && user.phone !== undefined && document.activeElement !== inputPhone) inputPhone.value = user.phone;
+  if (inputRole && user.role && document.activeElement !== inputRole) inputRole.value = user.role;
+}
+
+async function loadUserProfile() {
+  try {
+    const res = await fetch('/api/user/profile');
+    if (res.ok) {
+      const data = await res.json();
+      if (data.success && data.profile) {
+        updateAuthUserProfile(data.profile);
+      }
+    }
+  } catch (err) {
+    console.error('Failed to load user profile:', err);
   }
 }
 
@@ -1419,6 +1453,64 @@ function initAuthSystem() {
         if (btnSave) {
           btnSave.disabled = false;
           btnSave.textContent = 'Redefinir Senha';
+        }
+      }
+    });
+  }
+
+  // Handle Preferences Save User Profile
+  const formUserProfile = document.getElementById('form-user-profile');
+  if (formUserProfile) {
+    formUserProfile.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = document.getElementById('user-info-name')?.value;
+      const email = document.getElementById('user-info-email')?.value;
+      const username = document.getElementById('user-info-username')?.value;
+      const phone = document.getElementById('user-info-phone')?.value;
+      const role = document.getElementById('user-info-role')?.value;
+      const btnSave = document.getElementById('btn-save-user-profile');
+
+      if (!name || !email || !username) {
+        window.showToast('Preencha os campos obrigatórios (Nome, E-mail e Usuário).', '⚠️');
+        return;
+      }
+
+      if (btnSave) {
+        btnSave.disabled = true;
+        btnSave.textContent = 'Salvando...';
+      }
+
+      try {
+        const res = await fetch('/api/user/profile', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, username, phone, role })
+        });
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+          updateAuthUserProfile(data.profile);
+
+          // Sync session storage
+          const session = getStoredAuthSession() || {};
+          const newSession = { ...session, ...data.profile };
+          if (localStorage.getItem('lancei_auth_session')) {
+            localStorage.setItem('lancei_auth_session', JSON.stringify(newSession));
+          } else {
+            sessionStorage.setItem('lancei_auth_session', JSON.stringify(newSession));
+          }
+
+          window.showToast('Informações do usuário salvas com sucesso!', '✓');
+        } else {
+          window.showToast(data.error || 'Erro ao salvar informações.', '✕');
+        }
+      } catch (err) {
+        console.error('Error saving profile:', err);
+        window.showToast('Erro de comunicação com o servidor.', '✕');
+      } finally {
+        if (btnSave) {
+          btnSave.disabled = false;
+          btnSave.textContent = 'Salvar Informações do Usuário';
         }
       }
     });
