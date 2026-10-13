@@ -45,6 +45,7 @@ window.showToast = function(msg, icon = '•') {
 // Document Init
 document.addEventListener('DOMContentLoaded', async () => {
   initTabsNavigation();
+  initMobileNavigation();
   initHeaderTools();
   initCalculator();
   initCalendar();
@@ -87,6 +88,62 @@ function initTabsNavigation() {
   });
 }
 
+function openMobileSidebar() {
+  const sidebar = document.getElementById('app-sidebar');
+  const backdrop = document.getElementById('sidebar-backdrop');
+  if (sidebar) sidebar.classList.add('mobile-open');
+  if (backdrop) backdrop.classList.add('active');
+}
+
+function closeMobileSidebar() {
+  const sidebar = document.getElementById('app-sidebar');
+  const backdrop = document.getElementById('sidebar-backdrop');
+  if (sidebar) sidebar.classList.remove('mobile-open');
+  if (backdrop) backdrop.classList.remove('active');
+}
+
+function initMobileNavigation() {
+  const btnToggle = document.getElementById('btn-mobile-menu-toggle');
+  const btnClose = document.getElementById('btn-close-sidebar');
+  const backdrop = document.getElementById('sidebar-backdrop');
+  const btnMobileAdd = document.getElementById('btn-mobile-open-tx');
+
+  if (btnToggle) {
+    btnToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      openMobileSidebar();
+    });
+  }
+
+  if (btnClose) {
+    btnClose.addEventListener('click', () => {
+      closeMobileSidebar();
+    });
+  }
+
+  if (backdrop) {
+    backdrop.addEventListener('click', () => {
+      closeMobileSidebar();
+    });
+  }
+
+  if (btnMobileAdd) {
+    btnMobileAdd.addEventListener('click', (e) => {
+      e.preventDefault();
+      openModal('modal-novo-lancamento');
+    });
+  }
+
+  // Mobile bottom nav buttons
+  document.querySelectorAll('.mobile-bottom-nav .mobile-nav-btn[data-tab]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const tabId = btn.getAttribute('data-tab');
+      navigateToTab(tabId);
+    });
+  });
+}
+
 window.navigateToTab = function(tabId) {
   if (tabId === 'tab-whatsapp') {
     tabId = 'tab-settings';
@@ -97,6 +154,11 @@ window.navigateToTab = function(tabId) {
     l.classList.toggle('active', l.getAttribute('data-tab') === tabId);
   });
 
+  // Update mobile bottom nav active state
+  document.querySelectorAll('.mobile-bottom-nav .mobile-nav-btn[data-tab]').forEach(btn => {
+    btn.classList.toggle('active', btn.getAttribute('data-tab') === tabId);
+  });
+
   // Switch content panes
   document.querySelectorAll('.tab-content-pane').forEach(pane => {
     pane.classList.remove('active');
@@ -104,6 +166,13 @@ window.navigateToTab = function(tabId) {
 
   const activePane = document.getElementById(tabId);
   if (activePane) activePane.classList.add('active');
+
+  // Close mobile sidebar drawer if open
+  closeMobileSidebar();
+
+  // Scroll to top of content on mobile
+  const scrollContainer = document.querySelector('.app-content-scroll');
+  if (scrollContainer) scrollContainer.scrollTop = 0;
 
   // Update topbar title
   const titles = {

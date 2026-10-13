@@ -1350,3 +1350,168 @@ input:checked + .switch-slider:before {
   font-size: 10px;
   color: var(--text-muted);
 }
+
+/* ==========================================================================
+   MOBILE & TABLET RESPONSIVE COMPONENTS OVERRIDES
+   ========================================================================== */
+
+@media (max-width: 900px) {
+  .dashboard-main-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .lancamentos-layout-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Dashboard Summary Rows */
+  .top-summary-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .summary-card-metric {
+    padding: 14px 16px;
+  }
+
+  .metric-value-huge {
+    font-size: 19px;
+  }
+
+  .balance-hero-value {
+    font-size: 20px;
+  }
+
+  /* Charts */
+  .charts-split-row {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .svg-chart-box {
+    height: 150px;
+  }
+
+  .donut-chart-container {
+    flex-direction: column;
+    min-height: auto;
+    padding: 10px 0;
+  }
+
+  .donut-legend {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    width: 100%;
+  }
+
+  /* Metas & Orçamentos */
+  .metas-orcamento-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  /* Extrato / Lançamentos */
+  .filter-pills-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .pills-group {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    padding-bottom: 4px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .pills-group::-webkit-scrollbar {
+    display: none;
+  }
+
+  .search-box-input {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .mini-table, .tx-full-table {
+    min-width: 500px;
+  }
+
+  .mini-table th, .mini-table td,
+  .tx-full-table th, .tx-full-table td {
+    padding: 8px 6px;
+    font-size: 11px;
+  }
+
+  /* Planejamento & Metas */
+  .planejamento-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  /* Cartões Grid */
+  #open-finance-cards-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Preferências */
+  .settings-layout-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  /* Login Card */
+  .login-card {
+    padding: 24px 18px;
+    border-radius: 16px;
+  }
+
+  .login-title {
+    font-size: 18px;
+  }
+
+  .login-subtitle {
+    font-size: 11px;
+  }
+
+  .login-btn-submit {
+    padding: 11px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .mi-card {
+    padding: 12px 14px;
+  }
+
+  .action-bill-row {
+    font-size: 10px;
+    padding: 6px;
+  }
+
+  .bill-val {
+    font-size: 10px;
+    margin-right: 4px;
+  }
+
+  .calculator-screen {
+    font-size: 16px;
+    padding: 8px 10px;
+  }
+
+  .calc-btn {
+    height: 32px;
+    font-size: 11px;
+  }
+
+  .donut-legend {
+    grid-template-columns: 1fr;
+  }
+}
+

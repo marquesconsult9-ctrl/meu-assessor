@@ -2,7 +2,11 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#080a0f">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Lançei • Terminal Financeiro & WhatsApp</title>
   <meta name="description" content="Lançei - Sistema de gestão financeira corporativa e pessoal de alta performance.">
 
@@ -103,17 +107,20 @@
     <!-- ===================================================================
          SIDEBAR (LANÇEI ENTERPRISE)
          =================================================================== -->
-    <aside class="app-sidebar">
+    <aside class="app-sidebar" id="app-sidebar">
       <div>
-        <!-- Brand Logo -->
-        <div class="sidebar-brand" onclick="navigateToTab('tab-dashboard')">
-          <svg class="brand-icon-svg" viewBox="0 0 24 24" fill="none">
-            <rect x="3" y="3" width="8" height="8" rx="1.5" fill="#2563eb" />
-            <rect x="13" y="3" width="8" height="8" rx="1.5" fill="#3b82f6" opacity="0.6" />
-            <rect x="3" y="13" width="8" height="8" rx="1.5" fill="#3b82f6" opacity="0.3" />
-            <rect x="13" y="13" width="8" height="8" rx="1.5" stroke="#2563eb" stroke-width="1.5" />
-          </svg>
-          <div class="brand-title">Lanç<span>ei</span></div>
+        <!-- Brand Logo & Mobile Close -->
+        <div class="sidebar-brand-wrapper">
+          <div class="sidebar-brand" onclick="navigateToTab('tab-dashboard')">
+            <svg class="brand-icon-svg" viewBox="0 0 24 24" fill="none">
+              <rect x="3" y="3" width="8" height="8" rx="1.5" fill="#2563eb" />
+              <rect x="13" y="3" width="8" height="8" rx="1.5" fill="#3b82f6" opacity="0.6" />
+              <rect x="3" y="13" width="8" height="8" rx="1.5" fill="#3b82f6" opacity="0.3" />
+              <rect x="13" y="13" width="8" height="8" rx="1.5" stroke="#2563eb" stroke-width="1.5" />
+            </svg>
+            <div class="brand-title">Lanç<span>ei</span></div>
+          </div>
+          <button id="btn-close-sidebar" class="sidebar-close-btn" title="Fechar Menu">✕</button>
         </div>
 
         <!-- Navigation Links (Monochrome Vector Icons) -->
@@ -167,6 +174,13 @@
       <!-- TOPBAR -->
       <header class="app-topbar">
         <div class="topbar-left">
+          <button id="btn-mobile-menu-toggle" class="icon-btn mobile-menu-btn" title="Menu Principal">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+          </button>
           <h1 id="topbar-title" class="topbar-title">Dashboard</h1>
         </div>
 
@@ -364,18 +378,20 @@
                   <span class="chart-card-title">Últimas Transações</span>
                   <button class="pill-toggle-btn" onclick="navigateToTab('tab-lancamentos')">Ver extrato completo →</button>
                 </div>
-                <table class="mini-table">
-                  <thead>
-                    <tr>
-                      <th>Data</th>
-                      <th>Descrição</th>
-                      <th>Valor</th>
-                    </tr>
-                  </thead>
-                  <tbody id="dash-recent-tx-body">
-                    <!-- Populated dynamically via JS -->
-                  </tbody>
-                </table>
+                <div class="table-responsive-container">
+                  <table class="mini-table">
+                    <thead>
+                      <tr>
+                        <th>Data</th>
+                        <th>Descrição</th>
+                        <th>Valor</th>
+                      </tr>
+                    </thead>
+                    <tbody id="dash-recent-tx-body">
+                      <!-- Populated dynamically via JS -->
+                    </tbody>
+                  </table>
+                </div>
               </div>
 
             </div>
@@ -455,20 +471,22 @@
             
             <!-- Left: Table -->
             <div>
-              <table class="tx-full-table">
-                <thead>
-                  <tr>
-                    <th>Data</th>
-                    <th>Descrição</th>
-                    <th>Conta</th>
-                    <th>Valor</th>
-                    <th style="text-align: right;">Ações</th>
-                  </tr>
-                </thead>
-                <tbody id="full-transactions-table-body">
-                  <!-- Dynamic rows -->
-                </tbody>
-              </table>
+              <div class="table-responsive-container">
+                <table class="tx-full-table">
+                  <thead>
+                    <tr>
+                      <th>Data</th>
+                      <th>Descrição</th>
+                      <th>Conta</th>
+                      <th>Valor</th>
+                      <th style="text-align: right;">Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody id="full-transactions-table-body">
+                    <!-- Dynamic rows -->
+                  </tbody>
+                </table>
+              </div>
             </div>
 
             <!-- Right: Cards + Calculator -->
@@ -797,6 +815,32 @@
     </main>
 
   </div>
+
+  <!-- SIDEBAR MOBILE BACKDROP -->
+  <div id="sidebar-backdrop" class="sidebar-backdrop"></div>
+
+  <!-- MOBILE BOTTOM NAVIGATION (Executive Native Dock) -->
+  <nav class="mobile-bottom-nav" id="mobile-bottom-nav">
+    <button class="mobile-nav-btn active" data-tab="tab-dashboard" title="Dashboard">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
+      <span>Início</span>
+    </button>
+    <button class="mobile-nav-btn" data-tab="tab-lancamentos" title="Extrato">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+      <span>Extrato</span>
+    </button>
+    <button class="mobile-nav-btn mobile-nav-btn-action" id="btn-mobile-open-tx" title="Novo Lançamento">
+      <div class="mobile-nav-plus-circle">+</div>
+    </button>
+    <button class="mobile-nav-btn" data-tab="tab-open-finance" title="Cartões">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+      <span>Cartões</span>
+    </button>
+    <button class="mobile-nav-btn" data-tab="tab-settings" title="Preferências">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      <span>Ajustes</span>
+    </button>
+  </nav>
 
   <!-- FLOATING WHATSAPP BUTTON (Discreet Minimalist) -->
   <button class="floating-whatsapp-btn" onclick="navigateToTab('tab-settings')" title="WhatsApp & Configurações">
