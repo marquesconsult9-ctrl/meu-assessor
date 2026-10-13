@@ -131,6 +131,8 @@ async function getData() {
         isInstallment: t.is_installment,
         installmentId: t.installment_id,
         date: t.date,
+        created_at: t.created_at || t.date,
+        account: t.account || (t.description && t.description.includes('Grazy') ? 'Grazy' : 'Marcos'),
         source: t.source
       }));
 

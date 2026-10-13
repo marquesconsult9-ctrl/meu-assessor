@@ -350,7 +350,7 @@ function renderRecentTxTable() {
 
   tbody.innerHTML = list.map(tx => `
     <tr>
-      <td style="color: var(--text-muted);">${formatDate(tx.created_at)}</td>
+      <td style="color: var(--text-muted);">${formatDate(tx.date || tx.created_at)}</td>
       <td style="font-weight: 500;">${tx.description || 'Sem descrição'}</td>
       <td class="tx-amount ${tx.type === 'INCOME' ? 'positive' : 'negative'}">
         ${tx.type === 'INCOME' ? '+' : '-'} ${formatCurrency(tx.amount)}
@@ -378,7 +378,7 @@ function renderFullTransactionsTable() {
 
   tbody.innerHTML = filtered.map(tx => `
     <tr class="tx-table-row">
-      <td style="color: var(--text-muted);">${formatDate(tx.created_at)}</td>
+      <td style="color: var(--text-muted);">${formatDate(tx.date || tx.created_at)}</td>
       <td>
         <div class="tx-desc-title">${tx.description}</div>
         <div class="tx-desc-sub">${tx.category || 'Geral'}</div>
