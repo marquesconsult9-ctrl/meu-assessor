@@ -108,7 +108,7 @@ window.navigateToTab = function(tabId) {
     'tab-dashboard': 'Dashboard',
     'tab-lancamentos': 'Lançamentos',
     'tab-planejamento': 'Planejamento',
-    'tab-open-finance': 'Open Finance & Cartões',
+    'tab-open-finance': 'Cartões & Faturas',
     'tab-settings': 'Configurações & Integrações'
   };
   const titleEl = document.getElementById('topbar-title');
