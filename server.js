@@ -63,7 +63,7 @@ async function calculateFinancials() {
       .filter(tx => tx.cardId === card.id && tx.type === 'EXPENSE' && !tx.isInstallment && tx.date.startsWith(currentYM))
       .reduce((sum, tx) => sum + (Number(tx.amount) || 0), 0);
 
-    const activeInstForCard = (db.installments || []).filter(inst => inst.cardId === card.id);
+    const activeInstForCard = (db.installments || []).filter(inst => inst.cardId === card.id && inst.endMonth >= currentYM);
     
     const instThisMonth = activeInstForCard
       .filter(inst => currentYM >= inst.startMonth && currentYM <= inst.endMonth)
@@ -165,7 +165,7 @@ async function calculateFinancials() {
     .filter(tx => tx.type === 'INCOME')
     .reduce((sum, tx) => sum + (Number(tx.amount) || 0), 0);
   const currentMonthExpenses = currentMonthTransactions
-    .filter(tx => tx.type === 'EXPENSE')
+    .filter(tx => tx.type === 'EXPENSE' && !tx.isInstallment && (!tx.cardId || tx.paymentMethod !== 'CREDIT_CARD'))
     .reduce((sum, tx) => sum + (Number(tx.amount) || 0), 0);
 
   // Dynamic budget spent amounts calculation
@@ -257,7 +257,7 @@ async function parseWhatsAppMessage(rawText) {
     }
 
     let itemsList = '';
-    (db.installments || []).forEach(inst => {
+    (db.installments || []).filter(inst => inst.endMonth >= currentYM).forEach(inst => {
       const card = db.cards.find(c => c.id === inst.cardId);
       const [curY, curM] = currentYM.split('-').map(Number);
       const [endY, endM] = inst.endMonth.split('-').map(Number);
