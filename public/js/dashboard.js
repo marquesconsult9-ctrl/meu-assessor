@@ -52,6 +52,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   initChatInput();
   initWhatsAppQRControls();
   initRealtimeSSE();
+  initAuthSystem();
 
   // Load initial theme from localStorage
   const savedTheme = localStorage.getItem('mi-theme');
@@ -1207,3 +1208,220 @@ function escapeHtml(text) {
   div.textContent = text;
   return div.innerHTML;
 }
+
+// ==========================================================================
+// AUTHENTICATION SYSTEM (LOGIN, LOGOUT, CHANGE PASSWORD)
+// ==========================================================================
+
+function getStoredAuthSession() {
+  try {
+    const rawLocal = localStorage.getItem('lancei_auth_session');
+    if (rawLocal) return JSON.parse(rawLocal);
+    const rawSession = sessionStorage.getItem('lancei_auth_session');
+    if (rawSession) return JSON.parse(rawSession);
+  } catch (e) {
+    console.error('Error reading auth session:', e);
+  }
+  return null;
+}
+
+function updateAuthUserProfile(user) {
+  if (!user) return;
+  const nameEl = document.getElementById('user-display-name');
+  const avatarEl = document.getElementById('user-avatar-circle');
+  if (nameEl && user.name) {
+    nameEl.textContent = user.name;
+  }
+  if (avatarEl && user.name) {
+    avatarEl.textContent = user.name.charAt(0).toUpperCase();
+  }
+}
+
+function initAuthSystem() {
+  const overlay = document.getElementById('login-screen-overlay');
+  const formLogin = document.getElementById('form-login');
+  const errorAlert = document.getElementById('login-error-alert');
+  const btnTogglePass = document.getElementById('btn-toggle-login-pass');
+  const passInput = document.getElementById('login-password');
+  const usernameInput = document.getElementById('login-username');
+  const rememberCheckbox = document.getElementById('login-remember');
+  const btnSubmit = document.getElementById('btn-submit-login');
+  const btnLogout = document.getElementById('btn-sidebar-logout');
+  const formChangePass = document.getElementById('form-settings-password');
+
+  // Check existing session
+  const currentSession = getStoredAuthSession();
+  if (currentSession && overlay) {
+    overlay.classList.add('hidden');
+    updateAuthUserProfile(currentSession);
+  } else if (overlay) {
+    overlay.classList.remove('hidden');
+    if (usernameInput) {
+      setTimeout(() => usernameInput.focus(), 100);
+    }
+  }
+
+  // Toggle Password Visibility
+  if (btnTogglePass && passInput) {
+    btnTogglePass.addEventListener('click', (e) => {
+      e.preventDefault();
+      const isPassword = passInput.type === 'password';
+      passInput.type = isPassword ? 'text' : 'password';
+      btnTogglePass.innerHTML = isPassword
+        ? `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>`
+        : `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
+    });
+  }
+
+  // Handle Login Form Submit
+  if (formLogin) {
+    formLogin.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const username = usernameInput ? usernameInput.value.trim() : '';
+      const password = passInput ? passInput.value : '';
+
+      if (!username || !password) {
+        if (errorAlert) {
+          errorAlert.textContent = 'Por favor, informe o usuário e a senha.';
+          errorAlert.style.display = 'block';
+        }
+        return;
+      }
+
+      // Loading state
+      if (btnSubmit) {
+        btnSubmit.disabled = true;
+        btnSubmit.innerHTML = `<span>Autenticando...</span>`;
+      }
+      if (errorAlert) {
+        errorAlert.style.display = 'none';
+      }
+
+      try {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+          const userSession = data.user || { username, name: 'Marques' };
+          
+          if (rememberCheckbox && rememberCheckbox.checked) {
+            localStorage.setItem('lancei_auth_session', JSON.stringify(userSession));
+          } else {
+            sessionStorage.setItem('lancei_auth_session', JSON.stringify(userSession));
+          }
+
+          updateAuthUserProfile(userSession);
+
+          if (overlay) {
+            overlay.classList.add('hidden');
+          }
+
+          if (passInput) passInput.value = '';
+
+          // Refresh data on fresh login
+          refreshAllData();
+          checkWhatsAppStatus();
+
+          window.showToast(`Bem-vindo, ${userSession.name || 'Marques'}!`, '✓');
+        } else {
+          if (errorAlert) {
+            errorAlert.textContent = data.message || data.error || 'Credenciais inválidas. Verifique seu login e senha.';
+            errorAlert.style.display = 'block';
+            errorAlert.style.animation = 'none';
+            errorAlert.offsetHeight; // force reflow
+            errorAlert.style.animation = 'shake 0.4s ease';
+          }
+        }
+      } catch (err) {
+        console.error('Login error:', err);
+        if (errorAlert) {
+          errorAlert.textContent = 'Erro ao conectar ao servidor. Verifique a conexão.';
+          errorAlert.style.display = 'block';
+        }
+      } finally {
+        if (btnSubmit) {
+          btnSubmit.disabled = false;
+          btnSubmit.innerHTML = `<span>Entrar no Sistema</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>`;
+        }
+      }
+    });
+  }
+
+  // Handle Logout
+  if (btnLogout) {
+    btnLogout.addEventListener('click', (e) => {
+      e.preventDefault();
+      localStorage.removeItem('lancei_auth_session');
+      sessionStorage.removeItem('lancei_auth_session');
+      if (passInput) passInput.value = '';
+      if (errorAlert) errorAlert.style.display = 'none';
+      if (overlay) {
+        overlay.classList.remove('hidden');
+        if (usernameInput) {
+          setTimeout(() => usernameInput.focus(), 150);
+        }
+      }
+      window.showToast('Sessão encerrada com sucesso.', '🔒');
+    });
+  }
+
+  // Handle Preferences Change Password
+  if (formChangePass) {
+    formChangePass.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const oldPass = document.getElementById('settings-old-pass')?.value;
+      const newPass = document.getElementById('settings-new-pass')?.value;
+      const confirmPass = document.getElementById('settings-confirm-pass')?.value;
+      const btnSave = document.getElementById('btn-save-new-password');
+
+      if (!oldPass || !newPass || !confirmPass) {
+        window.showToast('Preencha todos os campos de senha.', '⚠️');
+        return;
+      }
+
+      if (newPass !== confirmPass) {
+        window.showToast('A nova senha e a confirmação não coincidem.', '⚠️');
+        return;
+      }
+
+      if (newPass.length < 4) {
+        window.showToast('A nova senha deve possuir pelo menos 4 caracteres.', '⚠️');
+        return;
+      }
+
+      if (btnSave) {
+        btnSave.disabled = true;
+        btnSave.textContent = 'Atualizando...';
+      }
+
+      try {
+        const res = await fetch('/api/auth/change-password', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ currentPassword: oldPass, newPassword: newPass })
+        });
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+          window.showToast('Senha atualizada com sucesso!', '✓');
+          formChangePass.reset();
+        } else {
+          window.showToast(data.message || data.error || 'Erro ao atualizar senha.', '✕');
+        }
+      } catch (err) {
+        console.error('Change password error:', err);
+        window.showToast('Erro de comunicação com o servidor.', '✕');
+      } finally {
+        if (btnSave) {
+          btnSave.disabled = false;
+          btnSave.textContent = 'Redefinir Senha';
+        }
+      }
+    });
+  }
+}
+

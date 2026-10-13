@@ -586,6 +586,49 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  // Auth API: Login
+  if (pathname === '/api/auth/login' && req.method === 'POST') {
+    try {
+      const body = await parseBody(req);
+      const { username, password } = body;
+      const isValid = await dbAdapter.verifyAuth(username, password);
+      if (isValid) {
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({
+          success: true,
+          user: {
+            name: 'Marques',
+            username: username || 'admin',
+            role: 'Administrador'
+          },
+          token: 'auth-' + Date.now().toString(36)
+        }));
+      } else {
+        res.writeHead(401, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: false, error: 'Credenciais inválidas. Verifique seu usuário e senha.' }));
+      }
+    } catch (err) {
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: err.message }));
+    }
+    return;
+  }
+
+  // Auth API: Change Password
+  if (pathname === '/api/auth/change-password' && req.method === 'POST') {
+    try {
+      const body = await parseBody(req);
+      const { currentPassword, newPassword } = body;
+      await dbAdapter.changePassword(currentPassword, newPassword);
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ success: true, message: 'Senha atualizada com sucesso!' }));
+    } catch (err) {
+      res.writeHead(400, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ success: false, error: err.message }));
+    }
+    return;
+  }
+
   // Health check / Keep-Alive route (UptimeRobot / Cron)
   if (pathname === '/health' || pathname === '/api/health') {
     res.writeHead(200, { 'Content-Type': 'application/json' });

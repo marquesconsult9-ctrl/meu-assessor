@@ -32,5 +32,6 @@
   "chatHistory": [],
   "budgets": [],
   "goals": [],
-  "bills": []
+  "bills": [],
+  "loginPassword": "123456"
 }

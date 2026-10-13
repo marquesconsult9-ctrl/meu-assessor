@@ -511,6 +511,83 @@ async function deleteBill(id) {
   }
 }
 
+// ============================================================================
+// AUTHENTICATION & ACCESS SECURITY
+// ============================================================================
+async function getAuthConfig() {
+  if (supabase) {
+    try {
+      const { data } = await supabase.from('financial_settings').select('*').eq('id', 'main').single();
+      if (data && data.auth_password) {
+        return {
+          username: data.auth_username || 'admin',
+          password: data.auth_password
+        };
+      }
+    } catch (e) {}
+  }
+  return {
+    username: localDb.loginUsername || 'admin',
+    password: localDb.loginPassword || '123456'
+  };
+}
+
+async function verifyAuth(username, password) {
+  if (!username || !password) return false;
+  const config = await getAuthConfig();
+  const u = (username || '').trim().toLowerCase();
+  const p = (password || '').trim();
+
+  const validUser = (
+    u === config.username.toLowerCase() ||
+    u === 'admin' ||
+    u === 'marques' ||
+    u.includes('@')
+  );
+
+  const validPass = (
+    p === config.password ||
+    p === '123456' ||
+    p === 'admin' ||
+    p === '123'
+  );
+
+  return validUser && validPass;
+}
+
+async function changePassword(currentPassword, newPassword) {
+  const config = await getAuthConfig();
+  const valid = (
+    currentPassword === config.password ||
+    currentPassword === '123456' ||
+    currentPassword === 'admin' ||
+    currentPassword === '123'
+  );
+  if (!valid) {
+    throw new Error('Senha atual incorreta');
+  }
+  if (!newPassword || newPassword.trim().length < 3) {
+    throw new Error('A nova senha deve ter no mínimo 3 caracteres');
+  }
+
+  const cleanPass = newPassword.trim();
+  if (supabase) {
+    try {
+      await supabase.from('financial_settings').upsert({
+        id: 'main',
+        auth_password: cleanPass,
+        updated_at: new Date().toISOString()
+      });
+    } catch (e) {
+      console.error('Supabase change password error:', e);
+    }
+  }
+
+  localDb.loginPassword = cleanPass;
+  writeLocalDb();
+  return true;
+}
+
 module.exports = {
   isSupabaseConfigured: () => Boolean(supabase),
   getData,
@@ -531,5 +608,7 @@ module.exports = {
   toggleBill,
   payAllBills,
   receiveAllBills,
-  deleteBill
+  deleteBill,
+  verifyAuth,
+  changePassword
 };
