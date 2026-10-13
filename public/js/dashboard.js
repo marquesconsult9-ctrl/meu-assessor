@@ -109,7 +109,7 @@ window.navigateToTab = function(tabId) {
     'tab-lancamentos': 'Lançamentos',
     'tab-planejamento': 'Planejamento',
     'tab-open-finance': 'Cartões & Faturas',
-    'tab-settings': 'Configurações & Integrações'
+    'tab-settings': 'Preferências'
   };
   const titleEl = document.getElementById('topbar-title');
   if (titleEl && titles[tabId]) titleEl.textContent = titles[tabId];
