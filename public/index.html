@@ -566,59 +566,46 @@
             </div>
           </div>
 
-          <!-- Seção WhatsApp 24/7 Integrada -->
+          <!-- Seção WhatsApp 24/7 -->
           <div style="margin-bottom: 24px;">
             <div style="margin-bottom: 12px;">
               <h3 style="font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-main);">Assistente WhatsApp 24/7</h3>
-              <p style="font-size: 11px; color: var(--text-muted);">Sincronização de instância Baileys e console de testes bidirecional</p>
+              <p style="font-size: 11px; color: var(--text-muted);">Pareamento de sessão para registro automático de despesas e consultas via WhatsApp</p>
             </div>
 
-            <div class="metas-orcamento-grid" style="grid-template-columns: 1fr 1.3fr;">
-              <!-- QR Code Connection Card -->
-              <div class="mi-card" style="display: flex; flex-direction: column; align-items: center; text-align: center;">
-                <span id="wa-connection-badge" class="filter-pill active" style="margin-bottom: 10px;">Desconectado</span>
-                <h3 style="font-size: 14px; font-weight: 600;">Conectar Instância WhatsApp</h3>
-                <p style="font-size: 11px; color: var(--text-muted); max-width: 280px; margin-top: 3px;">
-                  Aponte o aplicativo móvel em Aparelhos Conectados para sincronizar.
-                </p>
+            <div class="mi-card" style="display: flex; flex-direction: column; align-items: center; text-align: center; max-width: 540px; margin: 0 auto; padding: 24px;">
+              <span id="wa-connection-badge" class="filter-pill active" style="margin-bottom: 10px;">Desconectado</span>
+              <h3 style="font-size: 15px; font-weight: 600;">Conectar Instância WhatsApp</h3>
+              <p style="font-size: 11px; color: var(--text-muted); max-width: 360px; margin-top: 4px;">
+                Aponte o WhatsApp do seu celular em <b>Aparelhos Conectados</b> para sincronizar.
+              </p>
 
-                <!-- QR Code Box -->
-                <div id="wa-qrcode-box" style="margin: 16px 0;">
-                  <div style="width: 200px; height: 200px; border: 1px dashed var(--border-medium); border-radius: var(--radius-sm); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; color: var(--text-subtle);">
-                    <span style="font-size: 11px;">Clique abaixo para gerar</span>
-                  </div>
-                </div>
-
-                <!-- Connected Box -->
-                <div id="wa-connected-box" style="display: none; flex-direction: column; align-items: center; gap: 6px; padding: 14px; background: var(--color-success-bg); border-radius: var(--radius-sm); border: 1px solid var(--color-success);">
-                  <div style="font-weight: 600; color: var(--color-success-text); font-size: 12px;">Instância Conectada</div>
-                  <div style="font-size: 11px; color: var(--text-main); font-family: var(--font-mono);" id="wa-connected-phone-display"></div>
-                </div>
-
-                <div style="display: flex; gap: 8px; margin-top: 8px;">
-                  <button id="btn-whatsapp-connect" class="btn-primary-pill">Gerar QR Code</button>
-                  <button id="btn-whatsapp-logout" class="filter-pill" style="display: none; color: var(--color-danger);">Desconectar</button>
+              <!-- QR Code Box -->
+              <div id="wa-qrcode-box" style="margin: 16px 0;">
+                <div style="width: 200px; height: 200px; border: 1px dashed var(--border-medium); border-radius: var(--radius-sm); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; color: var(--text-subtle);">
+                  <span style="font-size: 11px;">Clique abaixo para gerar</span>
                 </div>
               </div>
 
-              <!-- Chat Simulator -->
-              <div class="mi-card" style="display: flex; flex-direction: column; height: 460px; padding: 14px;">
-                <div style="display: flex; align-items: center; justify-content: space-between; padding-bottom: 10px; border-bottom: 1px solid var(--border-subtle);">
-                  <div>
-                    <div style="font-size: 12px; font-weight: 600;">Console de Teste</div>
-                    <div style="font-size: 10px; color: var(--color-success-text);">Canal Bidirecional Ativo</div>
-                  </div>
-                </div>
+              <!-- Connected Box -->
+              <div id="wa-connected-box" style="display: none; flex-direction: column; align-items: center; gap: 6px; padding: 14px 24px; background: var(--color-success-bg); border-radius: var(--radius-sm); border: 1px solid var(--color-success); margin: 12px 0;">
+                <div style="font-weight: 600; color: var(--color-success-text); font-size: 13px;">✓ Instância Conectada</div>
+                <div style="font-size: 12px; color: var(--text-main); font-family: var(--font-mono);" id="wa-connected-phone-display"></div>
+              </div>
 
-                <div id="chat-messages-area" style="flex: 1; overflow-y: auto; padding: 10px 2px; display: flex; flex-direction: column; gap: 8px;">
-                  <!-- Messages -->
-                </div>
+              <div style="display: flex; gap: 8px; margin-top: 8px;">
+                <button id="btn-whatsapp-connect" class="btn-primary-pill">Gerar QR Code</button>
+                <button id="btn-whatsapp-logout" class="filter-pill" style="display: none; color: var(--color-danger);">Desconectar</button>
+              </div>
 
-                <!-- Chat Input -->
-                <div style="display: flex; gap: 6px; padding-top: 8px; border-top: 1px solid var(--border-subtle);">
-                  <input type="text" id="chat-input" class="form-input-pill" placeholder="Comando ex: 'almoço 35 no débito'..." />
-                  <button id="chat-send-btn" class="btn-primary-pill" style="padding: 0 14px;">Enviar</button>
-                </div>
+              <div style="margin-top: 20px; padding-top: 14px; border-top: 1px solid var(--border-subtle); width: 100%; text-align: left;">
+                <span style="font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 6px;">Exemplos de Comandos direto no WhatsApp:</span>
+                <ul style="font-size: 11px; color: var(--text-muted); line-height: 1.7; padding-left: 16px; margin: 0;">
+                  <li><code>"Almoço 35 no débito"</code> ou <code>"Uber 22 no pix"</code></li>
+                  <li><code>"Comprei Celular 2400 em 10x no nubank"</code></li>
+                  <li><code>"Recebi 4200 de salário"</code></li>
+                  <li><code>"saldo"</code>, <code>"fatura"</code> ou <code>"quando acabo a fatura"</code></li>
+                </ul>
               </div>
             </div>
           </div>
