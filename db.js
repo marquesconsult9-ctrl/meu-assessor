@@ -132,7 +132,10 @@ async function getData() {
         installmentId: t.installment_id,
         date: t.date,
         created_at: t.created_at || t.date,
-        account: t.account || (t.description && t.description.includes('Grazy') ? 'Grazy' : 'Marcos'),
+        account: t.account || (() => {
+          const m = t.description && t.description.match(/\(([^)]+)\)$/);
+          return m ? m[1] : (t.description && t.description.includes('Grazy') ? 'Grazy' : 'Marcos');
+        })(),
         source: t.source
       }));
 
@@ -233,7 +236,7 @@ async function updateSettings(updates) {
 async function addTransaction(tx) {
   if (supabase) {
     try {
-      await supabase.from('transactions').insert({
+      await supabase.from('transactions').upsert({
         id: tx.id,
         description: tx.description,
         type: tx.type,
@@ -247,10 +250,12 @@ async function addTransaction(tx) {
         source: tx.source || 'WHATSAPP'
       });
     } catch (e) {
-      console.error('Supabase insert transaction error:', e);
+      console.error('Supabase upsert transaction error:', e);
     }
   }
-  localDb.transactions.unshift(tx);
+  const idx = localDb.transactions.findIndex(t => t.id === tx.id);
+  if (idx >= 0) localDb.transactions[idx] = tx;
+  else localDb.transactions.unshift(tx);
   writeLocalDb();
 }
 
@@ -269,7 +274,7 @@ async function deleteTransaction(id) {
 async function addInstallment(inst) {
   if (supabase) {
     try {
-      await supabase.from('installments').insert({
+      await supabase.from('installments').upsert({
         id: inst.id,
         card_id: inst.cardId,
         description: inst.description,
@@ -282,10 +287,12 @@ async function addInstallment(inst) {
         end_month: inst.endMonth
       });
     } catch (e) {
-      console.error('Supabase insert installment error:', e);
+      console.error('Supabase upsert installment error:', e);
     }
   }
-  localDb.installments.push(inst);
+  const idx = localDb.installments.findIndex(i => i.id === inst.id);
+  if (idx >= 0) localDb.installments[idx] = inst;
+  else localDb.installments.push(inst);
   writeLocalDb();
 }
 
@@ -304,7 +311,7 @@ async function deleteInstallment(id) {
 async function addCard(card) {
   if (supabase) {
     try {
-      await supabase.from('cards').insert({
+      await supabase.from('cards').upsert({
         id: card.id,
         name: card.name,
         brand: card.brand,
@@ -315,10 +322,12 @@ async function addCard(card) {
         due_day: card.dueDay
       });
     } catch (e) {
-      console.error('Supabase insert card error:', e);
+      console.error('Supabase upsert card error:', e);
     }
   }
-  localDb.cards.push(card);
+  const idx = localDb.cards.findIndex(c => c.id === card.id);
+  if (idx >= 0) localDb.cards[idx] = card;
+  else localDb.cards.push(card);
   writeLocalDb();
 }
 
@@ -438,7 +447,7 @@ async function deleteGoal(id) {
 async function addBill(bill) {
   if (supabase) {
     try {
-      await supabase.from('bills').insert({
+      await supabase.from('bills').upsert({
         id: bill.id,
         description: bill.description,
         amount: bill.amount,
@@ -447,11 +456,13 @@ async function addBill(bill) {
         is_paid: Boolean(bill.isPaid)
       });
     } catch (e) {
-      console.error('Supabase insert bill error:', e);
+      console.error('Supabase upsert bill error:', e);
     }
   }
   if (!localDb.bills) localDb.bills = [];
-  localDb.bills.push(bill);
+  const idx = localDb.bills.findIndex(b => b.id === bill.id);
+  if (idx >= 0) localDb.bills[idx] = bill;
+  else localDb.bills.push(bill);
   writeLocalDb();
   return bill;
 }

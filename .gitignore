@@ -3,3 +3,4 @@ data/auth_info_baileys/
 .env
 .DS_Store
 *.log
+backups/

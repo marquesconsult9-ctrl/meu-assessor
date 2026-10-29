@@ -48,15 +48,16 @@ function formatYearMonthPT(yearMonthStr) {
   return `${monthName} de ${y}`;
 }
 
-function getCurrentYearMonth() {
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+function getCurrentYearMonth(overrideYM) {
+  if (overrideYM && /^\d{4}-\d{2}$/.test(overrideYM)) return overrideYM;
+  if (process.env.ACTIVE_COMPETENCY) return process.env.ACTIVE_COMPETENCY;
+  return '2026-11';
 }
 
 // Financial calculations using database adapter
-async function calculateFinancials() {
+async function calculateFinancials(customYM) {
   const db = await dbAdapter.getData();
-  const currentYM = getCurrentYearMonth();
+  const currentYM = getCurrentYearMonth(customYM);
 
   const cardsSummary = (db.cards || []).map(card => {
     const singleCardTxThisMonth = (db.transactions || [])
@@ -689,7 +690,8 @@ const server = http.createServer(async (req, res) => {
 
   // 2. Financial Summary API: /api/financial/summary
   if (pathname === '/api/financial/summary' && req.method === 'GET') {
-    const fin = await calculateFinancials();
+    const targetMonth = reqUrl.searchParams.get('month') || null;
+    const fin = await calculateFinancials(targetMonth);
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ success: true, data: fin }));
     return;
@@ -697,7 +699,8 @@ const server = http.createServer(async (req, res) => {
 
   // 3. Invoice Projection API: /api/invoices/projection
   if (pathname === '/api/invoices/projection' && req.method === 'GET') {
-    const fin = await calculateFinancials();
+    const targetMonth = reqUrl.searchParams.get('month') || null;
+    const fin = await calculateFinancials(targetMonth);
     const db = await dbAdapter.getData();
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({
@@ -712,7 +715,8 @@ const server = http.createServer(async (req, res) => {
   // 4. Cards API: /api/cards
   if (pathname === '/api/cards') {
     if (req.method === 'GET') {
-      const fin = await calculateFinancials();
+      const targetMonth = reqUrl.searchParams.get('month') || null;
+      const fin = await calculateFinancials(targetMonth);
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ success: true, cards: fin.cards }));
       return;

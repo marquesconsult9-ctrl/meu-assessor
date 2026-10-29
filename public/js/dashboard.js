@@ -320,6 +320,11 @@ function renderAllViews() {
   if (expenseEl) expenseEl.textContent = formatCurrency(totalExp);
   if (balanceEl) balanceEl.textContent = formatCurrency(currentFinancialData.accountBalance || 0);
 
+  const expenseSub = document.querySelector('.summary-card-metric:nth-child(2) .metric-trend-pill span');
+  if (expenseSub && currentFinancialData) {
+    expenseSub.textContent = `${formatCurrency(currentFinancialData.currentMonthExpenses)} fixas + ${formatCurrency(currentFinancialData.totalInvoicesCurrent)} faturas`;
+  }
+
   // Render recent mini table
   renderRecentTxTable();
   // Render full table in Lançamentos
