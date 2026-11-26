@@ -54,17 +54,64 @@ function getCurrentYearMonth(overrideYM) {
   return '2026-11';
 }
 
+function normalizeResponsibleFilter(filter) {
+  if (!filter) return [];
+  let arr = [];
+  if (Array.isArray(filter)) {
+    arr = filter;
+  } else if (typeof filter === 'string') {
+    arr = filter.split(',');
+  }
+  return arr
+    .map(s => String(s || '').trim().toLowerCase())
+    .filter(s => s && s !== 'todos' && s !== 'all');
+}
+
+function getResponsibleFromQuery(reqUrl) {
+  const all = reqUrl.searchParams.getAll('responsible');
+  if (!all || all.length === 0) return [];
+  const list = [];
+  for (const item of all) {
+    if (item.includes(',')) {
+      list.push(...item.split(','));
+    } else {
+      list.push(item);
+    }
+  }
+  return list;
+}
+
 // Financial calculations using database adapter
-async function calculateFinancials(customYM) {
+async function calculateFinancials(customYM, filterResponsible) {
   const db = await dbAdapter.getData();
   const currentYM = getCurrentYearMonth(customYM);
 
+  const selectedResps = normalizeResponsibleFilter(filterResponsible);
+  const isFiltered = selectedResps.length > 0;
+
+  // Extract all unique responsibles across transactions and installments
+  const responsiblesSet = new Set();
+  (db.transactions || []).forEach(t => { if (t.responsible) responsiblesSet.add(t.responsible); });
+  (db.installments || []).forEach(i => { if (i.responsible) responsiblesSet.add(i.responsible); });
+  const allResponsibles = Array.from(responsiblesSet).filter(Boolean).sort();
+
+  // Filter transactions and installments if specific responsible(s) are chosen
+  const activeTransactions = (db.transactions || []).filter(tx => {
+    if (!isFiltered) return true;
+    return selectedResps.includes((tx.responsible || '').toLowerCase());
+  });
+
+  const activeInstallments = (db.installments || []).filter(inst => {
+    if (!isFiltered) return true;
+    return selectedResps.includes((inst.responsible || '').toLowerCase());
+  });
+
   const cardsSummary = (db.cards || []).map(card => {
-    const singleCardTxThisMonth = (db.transactions || [])
+    const singleCardTxThisMonth = activeTransactions
       .filter(tx => tx.cardId === card.id && tx.type === 'EXPENSE' && !tx.isInstallment && tx.date.startsWith(currentYM))
       .reduce((sum, tx) => sum + (Number(tx.amount) || 0), 0);
 
-    const activeInstForCard = (db.installments || []).filter(inst => inst.cardId === card.id && inst.endMonth >= currentYM);
+    const activeInstForCard = activeInstallments.filter(inst => inst.cardId === card.id && inst.endMonth >= currentYM);
     
     const instThisMonth = activeInstForCard
       .filter(inst => currentYM >= inst.startMonth && currentYM <= inst.endMonth)
@@ -105,7 +152,7 @@ async function calculateFinancials(customYM) {
     let monthTotal = 0;
 
     if (i === 0) {
-      const singlePurchasesTotal = (db.transactions || [])
+      const singlePurchasesTotal = activeTransactions
         .filter(tx => tx.cardId && tx.type === 'EXPENSE' && !tx.isInstallment && tx.date.startsWith(currentYM))
         .reduce((sum, tx) => sum + (Number(tx.amount) || 0), 0);
 
@@ -119,9 +166,10 @@ async function calculateFinancials(customYM) {
       }
     }
 
-    (db.installments || []).forEach(inst => {
+    activeInstallments.forEach(inst => {
       if (targetYM >= inst.startMonth && targetYM <= inst.endMonth) {
         const card = db.cards.find(c => c.id === inst.cardId);
+        if (!card) return;
         const [sY, sM] = inst.startMonth.split('-').map(Number);
         const [tY, tM] = targetYM.split('-').map(Number);
         const installmentNum = (tY * 12 + tM) - (sY * 12 + sM) + 1;
@@ -133,7 +181,8 @@ async function calculateFinancials(customYM) {
           totalInstallments: inst.totalInstallments,
           amount: inst.installmentAmount,
           cardName: card ? card.name : 'Cartão',
-          cardId: inst.cardId
+          cardId: inst.cardId,
+          responsible: inst.responsible
         });
         monthTotal += inst.installmentAmount;
 
@@ -161,10 +210,14 @@ async function calculateFinancials(customYM) {
   const totalLimitUsed = cardsSummary.reduce((sum, c) => sum + c.limitUsed, 0);
   const totalLimitAvailable = Math.max(0, totalCardsLimit - totalLimitUsed);
 
-  const currentMonthTransactions = (db.transactions || []).filter(tx => tx.date.startsWith(currentYM));
-  const currentMonthIncome = currentMonthTransactions
+  const currentMonthTransactions = activeTransactions.filter(tx => tx.date.startsWith(currentYM));
+  const currentMonthIncomeTxs = currentMonthTransactions
     .filter(tx => tx.type === 'INCOME')
     .reduce((sum, tx) => sum + (Number(tx.amount) || 0), 0);
+  const currentMonthReceiveBills = (db.bills || [])
+    .filter(b => b.type === 'RECEIVE' && (!b.dueDate || b.dueDate.startsWith(currentYM)) && (!isFiltered || selectedResps.includes((b.responsible || '').toLowerCase())))
+    .reduce((sum, b) => sum + (Number(b.amount) || 0), 0);
+  const currentMonthIncome = currentMonthIncomeTxs + currentMonthReceiveBills;
   const currentMonthExpenses = currentMonthTransactions
     .filter(tx => tx.type === 'EXPENSE' && !tx.isInstallment && (!tx.cardId || tx.paymentMethod !== 'CREDIT_CARD'))
     .reduce((sum, tx) => sum + (Number(tx.amount) || 0), 0);
@@ -183,6 +236,31 @@ async function calculateFinancials(customYM) {
     };
   });
 
+  // Calculate stats for each individual responsible for current month
+  const responsibleStats = {};
+  allResponsibles.forEach(r => {
+    const rTxs = (db.transactions || []).filter(tx => (tx.responsible || '').toLowerCase() === r.toLowerCase() && tx.date.startsWith(currentYM));
+    const rExpenses = rTxs.filter(tx => tx.type === 'EXPENSE' && !tx.isInstallment && (!tx.cardId || tx.paymentMethod !== 'CREDIT_CARD'))
+      .reduce((sum, tx) => sum + (Number(tx.amount) || 0), 0);
+    const rInvoices = (db.installments || [])
+      .filter(inst => (inst.responsible || '').toLowerCase() === r.toLowerCase() && currentYM >= inst.startMonth && currentYM <= inst.endMonth)
+      .reduce((sum, inst) => sum + (Number(inst.installmentAmount) || 0), 0);
+    const rIncomeTxs = rTxs.filter(tx => tx.type === 'INCOME')
+      .reduce((sum, tx) => sum + (Number(tx.amount) || 0), 0);
+    const rReceiveBills = (db.bills || [])
+      .filter(b => b.type === 'RECEIVE' && (!b.dueDate || b.dueDate.startsWith(currentYM)) && (b.responsible || '').toLowerCase() === r.toLowerCase())
+      .reduce((sum, b) => sum + (Number(b.amount) || 0), 0);
+    const rIncome = rIncomeTxs + rReceiveBills;
+    responsibleStats[r] = {
+      name: r,
+      expenses: rExpenses,
+      invoices: rInvoices,
+      totalCommitted: rExpenses + rInvoices,
+      income: rIncome,
+      txCount: (db.transactions || []).filter(tx => (tx.responsible || '').toLowerCase() === r.toLowerCase()).length
+    };
+  });
+
   return {
     accountBalance: Number(db.accountBalance || 0),
     emergencyReserve: Number(db.emergencyReserve != null ? db.emergencyReserve : 0),
@@ -197,14 +275,19 @@ async function calculateFinancials(customYM) {
     cards: cardsSummary,
     budgets: budgetsWithSpent,
     goals: db.goals || [],
-    bills: db.bills || [],
+    bills: (db.bills || []).filter(b => !isFiltered || selectedResps.includes((b.responsible || '').toLowerCase())),
     isUsingSupabase: dbAdapter.isSupabaseConfigured(),
+    currentCompetency: currentYM,
+    currentCompetencyLabel: formatYearMonthPT(currentYM),
+    responsibles: allResponsibles,
+    responsibleStats,
+    selectedResponsible: isFiltered ? selectedResps.join(',') : 'todos',
     projection: {
       months: projectionMonths,
       finishMonth: latestEndMonth,
       finishMonthFormatted: formatYearMonthPT(latestEndMonth),
       monthsUntilFree,
-      hasActiveInstallments: (db.installments || []).length > 0
+      hasActiveInstallments: activeInstallments.length > 0
     }
   };
 }
@@ -369,7 +452,7 @@ async function parseWhatsAppMessage(rawText) {
         cardId: selectedCard.id,
         isInstallment: true,
         installmentId: newInstallment.id,
-        date: new Date().toISOString(),
+        date: new Date().toISOString().startsWith(currentYM) ? new Date().toISOString() : `${currentYM}-05T12:00:00.000Z`,
         source: 'WHATSAPP'
       };
       await dbAdapter.addTransaction(newTx);
@@ -414,7 +497,7 @@ async function parseWhatsAppMessage(rawText) {
         category: 'Renda & Salário',
         paymentMethod: 'PIX',
         cardId: null,
-        date: new Date().toISOString(),
+        date: new Date().toISOString().startsWith(currentYM) ? new Date().toISOString() : `${currentYM}-05T12:00:00.000Z`,
         source: 'WHATSAPP'
       };
 
@@ -691,23 +774,47 @@ const server = http.createServer(async (req, res) => {
   // 2. Financial Summary API: /api/financial/summary
   if (pathname === '/api/financial/summary' && req.method === 'GET') {
     const targetMonth = reqUrl.searchParams.get('month') || null;
-    const fin = await calculateFinancials(targetMonth);
+    const responsible = getResponsibleFromQuery(reqUrl);
+    const fin = await calculateFinancials(targetMonth, responsible);
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ success: true, data: fin }));
+    return;
+  }
+
+  // 2.1 Update Balance API: /api/financial/balance
+  if (pathname === '/api/financial/balance' && req.method === 'POST') {
+    try {
+      const body = await parseBody(req);
+      const newBal = parseFloat(body.balance) || 0;
+      await dbAdapter.updateBalance(newBal);
+      const updatedFin = await calculateFinancials();
+      broadcastSSE('financial-updated', updatedFin);
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ success: true, balance: newBal }));
+    } catch (err) {
+      res.writeHead(400, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: err.message }));
+    }
     return;
   }
 
   // 3. Invoice Projection API: /api/invoices/projection
   if (pathname === '/api/invoices/projection' && req.method === 'GET') {
     const targetMonth = reqUrl.searchParams.get('month') || null;
-    const fin = await calculateFinancials(targetMonth);
+    const responsible = getResponsibleFromQuery(reqUrl);
+    const fin = await calculateFinancials(targetMonth, responsible);
     const db = await dbAdapter.getData();
+    let installments = db.installments || [];
+    const resps = normalizeResponsibleFilter(responsible);
+    if (resps.length > 0) {
+      installments = installments.filter(i => resps.includes((i.responsible || '').toLowerCase()));
+    }
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({
       success: true,
       projection: fin.projection,
       cards: fin.cards,
-      installments: db.installments || []
+      installments: installments
     }));
     return;
   }
@@ -716,7 +823,8 @@ const server = http.createServer(async (req, res) => {
   if (pathname === '/api/cards') {
     if (req.method === 'GET') {
       const targetMonth = reqUrl.searchParams.get('month') || null;
-      const fin = await calculateFinancials(targetMonth);
+      const responsible = getResponsibleFromQuery(reqUrl);
+      const fin = await calculateFinancials(targetMonth, responsible);
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ success: true, cards: fin.cards }));
       return;
@@ -747,11 +855,66 @@ const server = http.createServer(async (req, res) => {
     }
   }
 
+  // 4.1 Card Item Operations: /api/cards/:id
+  if (pathname.startsWith('/api/cards/') && !pathname.endsWith('/pay-invoice')) {
+    const cardId = pathname.replace('/api/cards/', '');
+    if (req.method === 'GET') {
+      const db = await dbAdapter.getData();
+      const card = (db.cards || []).find(c => c.id === cardId);
+      if (!card) {
+        res.writeHead(404, { 'Content-Type': 'application/json' });
+        return res.end(JSON.stringify({ error: 'Cartão não encontrado' }));
+      }
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      return res.end(JSON.stringify({ success: true, card }));
+    }
+    if (req.method === 'PUT' || req.method === 'PATCH') {
+      try {
+        const body = await parseBody(req);
+        const updates = {};
+        if (body.name !== undefined) updates.name = body.name;
+        if (body.brand !== undefined) updates.brand = body.brand;
+        if (body.last4 !== undefined) updates.last4 = body.last4;
+        if (body.color !== undefined) updates.color = body.color;
+        if (body.limitTotal !== undefined) updates.limitTotal = parseFloat(body.limitTotal) || 0;
+        if (body.closingDay !== undefined) updates.closingDay = parseInt(body.closingDay, 10) || 1;
+        if (body.dueDay !== undefined) updates.dueDay = parseInt(body.dueDay, 10) || 1;
+
+        const updatedCard = await dbAdapter.updateCard(cardId, updates);
+        const updatedFin = await calculateFinancials();
+        broadcastSSE('financial-updated', updatedFin);
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        return res.end(JSON.stringify({ success: true, card: updatedCard }));
+      } catch (err) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        return res.end(JSON.stringify({ error: err.message }));
+      }
+    }
+    if (req.method === 'DELETE') {
+      try {
+        await dbAdapter.deleteCard(cardId);
+        const updatedFin = await calculateFinancials();
+        broadcastSSE('financial-updated', updatedFin);
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        return res.end(JSON.stringify({ success: true }));
+      } catch (err) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        return res.end(JSON.stringify({ error: err.message }));
+      }
+    }
+  }
+
   // 5. Installments API: /api/installments
   if (pathname === '/api/installments' && req.method === 'GET') {
     const db = await dbAdapter.getData();
+    const responsible = getResponsibleFromQuery(reqUrl);
+    const resps = normalizeResponsibleFilter(responsible);
+    let installments = db.installments || [];
+    if (resps.length > 0) {
+      installments = installments.filter(i => resps.includes((i.responsible || '').toLowerCase()));
+    }
     res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ success: true, installments: db.installments || [] }));
+    res.end(JSON.stringify({ success: true, installments: installments }));
     return;
   }
 
@@ -759,32 +922,145 @@ const server = http.createServer(async (req, res) => {
   if (pathname === '/api/transactions') {
     if (req.method === 'GET') {
       const db = await dbAdapter.getData();
+      const responsible = getResponsibleFromQuery(reqUrl);
+      const resps = normalizeResponsibleFilter(responsible);
+      let txs = db.transactions || [];
+      if (resps.length > 0) {
+        txs = txs.filter(t => resps.includes((t.responsible || '').toLowerCase()));
+      }
       res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ success: true, transactions: db.transactions || [] }));
+      res.end(JSON.stringify({ success: true, transactions: txs }));
       return;
     }
     if (req.method === 'POST') {
       try {
         const body = await parseBody(req);
         const amount = parseFloat(body.amount) || 0;
+        const resp = (body.responsible || 'Marcos').trim();
+        let desc = body.description || 'Lançamento Manual';
+        if (!desc.includes('(')) {
+          desc = `${desc} (${resp})`;
+        }
+        let txDate = body.date;
+        if (!txDate) {
+          const activeYM = getCurrentYearMonth();
+          txDate = new Date().toISOString().startsWith(activeYM) ? new Date().toISOString() : `${activeYM}-05T12:00:00.000Z`;
+        } else if (!txDate.includes('T')) {
+          txDate = `${txDate}T12:00:00.000Z`;
+        }
+
+        const db = await dbAdapter.getData();
+
+        // 1. Caso especial: Ajuste Manual de Saldo em Conta
+        if (body.type === 'BALANCE' || body.isBalanceAdjustment) {
+          const newBalance = amount;
+          await dbAdapter.updateBalance(newBalance);
+          const adjTx = {
+            id: 'tx-' + Date.now().toString(36),
+            description: desc || `Ajuste Manual de Saldo (${resp})`,
+            type: 'INCOME',
+            amount: newBalance,
+            category: 'Ajuste de Saldo',
+            paymentMethod: 'PIX',
+            cardId: null,
+            isInstallment: false,
+            date: txDate,
+            responsible: resp,
+            account: body.account || resp,
+            source: 'WEB'
+          };
+          await dbAdapter.addTransaction(adjTx);
+          const updatedFin = await calculateFinancials();
+          broadcastSSE('financial-updated', updatedFin);
+          res.writeHead(201, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ success: true, transaction: adjTx, newBalance }));
+          return;
+        }
+
+        // 2. Compra Parcelada com Quantidade de Parcelas
+        const isInstallment = Boolean(body.isInstallment);
+        const installmentsCount = parseInt(body.installmentsCount, 10) || 1;
+        let cardId = body.cardId || null;
+
+        // Failsafe: se meio de pagamento for CREDIT_CARD mas cardId não veio explícito, tenta inferir
+        if ((body.paymentMethod === 'CREDIT_CARD' || isInstallment) && !cardId) {
+          const cards = db.cards || [];
+          const accLower = (body.account || '').toLowerCase();
+          const descLower = (desc || '').toLowerCase();
+          const matchedCard = cards.find(c => 
+            (c.id && accLower.includes(c.id.toLowerCase())) ||
+            (c.name && accLower.includes(c.name.toLowerCase())) ||
+            (c.brand && accLower.includes(c.brand.toLowerCase())) ||
+            (c.name && descLower.includes(c.name.toLowerCase().replace('cartão ', '')))
+          );
+          if (matchedCard) {
+            cardId = matchedCard.id;
+          }
+        }
+
+        let accountName = body.account || resp;
+        if (cardId && db.cards) {
+          const cObj = db.cards.find(c => c.id === cardId);
+          if (cObj && (!body.account || body.account === resp || body.account === 'Conta Principal')) {
+            accountName = cObj.name;
+          }
+        }
+
+        let installmentId = null;
+        let finalAmount = amount;
+        let finalDesc = desc;
+
+        if (isInstallment && installmentsCount > 1) {
+          const totalAmount = body.totalAmount ? parseFloat(body.totalAmount) : (amount * (body.amountIsInstallment ? installmentsCount : 1));
+          const instAmount = body.installmentAmount ? parseFloat(body.installmentAmount) : (body.amountIsInstallment ? amount : Number((amount / installmentsCount).toFixed(2)));
+          const startMonth = txDate.slice(0, 7) || getCurrentYearMonth();
+          const endMonth = addMonthsToYearMonth(startMonth, installmentsCount - 1);
+
+          const newInstallment = {
+            id: 'inst-' + Date.now().toString(36),
+            cardId: cardId,
+            description: desc,
+            category: body.category || 'Compras Parceladas',
+            totalAmount: totalAmount,
+            installmentAmount: instAmount,
+            totalInstallments: installmentsCount,
+            currentInstallment: 1,
+            startMonth: startMonth,
+            endMonth: endMonth,
+            responsible: resp
+          };
+          await dbAdapter.addInstallment(newInstallment);
+
+          installmentId = newInstallment.id;
+          finalAmount = instAmount;
+          finalDesc = `${desc} (1/${installmentsCount})`;
+        }
+
         const newTx = {
           id: 'tx-' + Date.now().toString(36),
-          description: body.description || 'Lançamento Manual',
+          description: finalDesc,
           type: body.type === 'INCOME' ? 'INCOME' : 'EXPENSE',
-          amount: amount,
+          amount: finalAmount,
           category: body.category || 'Geral',
           paymentMethod: body.paymentMethod || 'PIX',
-          cardId: body.cardId || null,
-          isInstallment: false,
-          date: body.date || new Date().toISOString(),
+          cardId: cardId,
+          isInstallment: isInstallment && installmentsCount > 1,
+          installmentId: installmentId,
+          date: txDate,
+          dueDate: body.dueDate || null,
+          isPaid: body.isPaid !== undefined ? Boolean(body.isPaid) : true,
+          responsible: resp,
+          account: accountName,
           source: 'WEB'
         };
 
-        const db = await dbAdapter.getData();
-        if (newTx.type === 'INCOME') {
-          await dbAdapter.updateBalance(db.accountBalance + amount);
-        } else if (newTx.paymentMethod !== 'CREDIT_CARD') {
-          await dbAdapter.updateBalance(Math.max(0, db.accountBalance - amount));
+        const shouldUpdateBalance = body.updateBalance !== undefined ? Boolean(body.updateBalance) : true;
+        if (shouldUpdateBalance) {
+          if (newTx.type === 'INCOME') {
+            await dbAdapter.updateBalance(db.accountBalance + finalAmount);
+          } else if (newTx.paymentMethod !== 'CREDIT_CARD' && !cardId && !isInstallment) {
+            await dbAdapter.updateBalance(Math.max(0, db.accountBalance - finalAmount));
+          }
         }
 
         await dbAdapter.addTransaction(newTx);
@@ -798,6 +1074,42 @@ const server = http.createServer(async (req, res) => {
       }
       return;
     }
+  }
+
+  // UPDATE TRANSACTION: PUT /api/transactions/:id or PATCH
+  if (pathname.startsWith('/api/transactions/') && (req.method === 'PUT' || req.method === 'PATCH')) {
+    const id = pathname.replace('/api/transactions/', '');
+    try {
+      const body = await parseBody(req);
+      const updates = {};
+      if (body.description !== undefined) updates.description = body.description;
+      if (body.type !== undefined) updates.type = body.type;
+      if (body.amount !== undefined) updates.amount = parseFloat(body.amount);
+      if (body.category !== undefined) updates.category = body.category;
+      if (body.paymentMethod !== undefined) updates.paymentMethod = body.paymentMethod;
+      if (body.cardId !== undefined) updates.cardId = body.cardId;
+      if (body.isInstallment !== undefined) updates.isInstallment = Boolean(body.isInstallment);
+      if (body.installmentId !== undefined) updates.installmentId = body.installmentId;
+      if (body.date !== undefined) {
+        let d = body.date;
+        if (d && !d.includes('T')) d = `${d}T12:00:00.000Z`;
+        updates.date = d;
+      }
+      if (body.responsible !== undefined) updates.responsible = body.responsible;
+      if (body.account !== undefined) updates.account = body.account;
+      if (body.isPaid !== undefined) updates.isPaid = Boolean(body.isPaid);
+      if (body.dueDate !== undefined) updates.dueDate = body.dueDate;
+
+      const updated = await dbAdapter.updateTransaction(id, updates);
+      const updatedFin = await calculateFinancials();
+      broadcastSSE('financial-updated', updatedFin);
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ success: true, transaction: updated }));
+    } catch (err) {
+      res.writeHead(400, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: err.message }));
+    }
+    return;
   }
 
   if (pathname.startsWith('/api/transactions/') && req.method === 'DELETE') {
@@ -987,6 +1299,7 @@ const server = http.createServer(async (req, res) => {
       }
 
       const invoiceAmount = card.currentInvoice || 0;
+      const currentYM = getCurrentYearMonth();
       if (invoiceAmount > 0) {
         // Register payment transaction
         const payTx = {
@@ -998,7 +1311,7 @@ const server = http.createServer(async (req, res) => {
           paymentMethod: 'DEBIT',
           cardId: null,
           isInstallment: false,
-          date: new Date().toISOString(),
+          date: new Date().toISOString().startsWith(currentYM) ? new Date().toISOString() : `${currentYM}-05T12:00:00.000Z`,
           source: 'WEB'
         };
 
@@ -1180,7 +1493,10 @@ const server = http.createServer(async (req, res) => {
     if (err || !stats.isFile()) {
       const fallbackIndex = path.join(PUBLIC_DIR, 'index.html');
       if (fs.existsSync(fallbackIndex)) {
-        res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+        res.writeHead(200, {
+          'Content-Type': 'text/html; charset=utf-8',
+          'Cache-Control': 'no-cache, no-store, must-revalidate'
+        });
         fs.createReadStream(fallbackIndex).pipe(res);
       } else {
         res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
@@ -1188,7 +1504,10 @@ const server = http.createServer(async (req, res) => {
       }
       return;
     }
-    res.writeHead(200, { 'Content-Type': contentType });
+    res.writeHead(200, {
+      'Content-Type': contentType,
+      'Cache-Control': 'no-cache, no-store, must-revalidate'
+    });
     fs.createReadStream(filePath).pipe(res);
   });
 });

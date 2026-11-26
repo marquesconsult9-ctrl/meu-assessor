@@ -524,9 +524,18 @@
 
   /* Compact Topbar */
   .app-topbar {
-    padding: 0 12px;
-    height: 52px;
+    padding: 8px 12px;
+    height: auto;
     min-height: 52px;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .topbar-left {
+    flex-wrap: wrap;
+    gap: 6px;
+    flex: 1 1 auto;
+    min-width: 0;
   }
 
   .mobile-menu-btn {
@@ -540,11 +549,12 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 140px;
+    max-width: 150px;
   }
 
   .topbar-right {
     gap: 5px;
+    margin-left: auto;
   }
 
   /* Hide Desktop User Full Name on mobile */

@@ -56,7 +56,7 @@
               <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
               <circle cx="12" cy="7" r="4"></circle>
             </svg>
-            <input type="text" id="login-username" class="login-input" placeholder="admin" autocomplete="username" required />
+            <input type="text" id="login-username" class="login-input" placeholder="admin" value="admin" autocomplete="username" required />
           </div>
         </div>
 
@@ -67,7 +67,7 @@
               <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
               <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
             </svg>
-            <input type="password" id="login-password" class="login-input" placeholder="••••••••" autocomplete="current-password" required />
+            <input type="password" id="login-password" class="login-input" placeholder="123456" value="123456" autocomplete="current-password" required />
             <button type="button" id="btn-toggle-login-pass" class="login-eye-btn" title="Mostrar/ocultar senha">
               <svg id="eye-icon-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
@@ -97,7 +97,7 @@
       <div class="login-footer-info">
         Protegido por Criptografia End-to-End & Supabase DB
         <br>
-        <span class="login-hint-badge">Credenciais padrão: admin / 123456</span>
+        <span class="login-hint-badge" id="btn-autofill-login" style="cursor: pointer; display: inline-block; margin-top: 6px;" title="Clique para preencher e entrar automaticamente">⚡ Credenciais padrão: <strong>admin</strong> / <strong>123456</strong> (Clique para preencher)</span>
       </div>
     </div>
   </div>
@@ -182,9 +182,82 @@
             </svg>
           </button>
           <h1 id="topbar-title" class="topbar-title">Dashboard</h1>
-          <div class="competency-pill" title="Competência financeira atual da planilha">
+          <div class="competency-pill" id="competency-selector-pill" title="Filtrar competência por mês e ano">
             <span class="competency-dot"></span>
-            <span>Competência: <strong>Novembro/2026</strong></span>
+            <button type="button" class="competency-nav-btn" id="btn-comp-prev" onclick="window.stepCompetency(-1)" title="Mês anterior">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polyline points="15 18 9 12 15 6"></polyline>
+              </svg>
+            </button>
+            <span class="competency-label-prefix">Competência:</span>
+            <select id="comp-select-month" class="competency-select" onchange="window.onCompetencySelectChange()" aria-label="Mês de Competência">
+              <option value="01">Janeiro</option>
+              <option value="02">Fevereiro</option>
+              <option value="03">Março</option>
+              <option value="04">Abril</option>
+              <option value="05">Maio</option>
+              <option value="06">Junho</option>
+              <option value="07">Julho</option>
+              <option value="08">Agosto</option>
+              <option value="09">Setembro</option>
+              <option value="10">Outubro</option>
+              <option value="11" selected>Novembro</option>
+              <option value="12">Dezembro</option>
+            </select>
+            <span class="competency-sep">/</span>
+            <select id="comp-select-year" class="competency-select" onchange="window.onCompetencySelectChange()" aria-label="Ano de Competência">
+              <option value="2024">2024</option>
+              <option value="2025">2025</option>
+              <option value="2026" selected>2026</option>
+              <option value="2027">2027</option>
+              <option value="2028">2028</option>
+              <option value="2029">2029</option>
+              <option value="2030">2030</option>
+            </select>
+            <button type="button" class="competency-nav-btn" id="btn-comp-next" onclick="window.stepCompetency(1)" title="Próximo mês">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </button>
+            <button type="button" class="competency-today-btn" id="btn-comp-today" onclick="window.resetCompetencyToDefault()" title="Voltar para o mês atual" style="display: none;">
+              Atual
+            </button>
+          </div>
+
+          <!-- Global Filter by Responsible (Multiselect) -->
+          <div class="resp-multiselect-wrapper" id="global-resp-wrapper">
+            <button type="button" class="resp-multiselect-trigger" id="global-resp-trigger" onclick="window.toggleRespDropdown('global')" title="Filtrar por Responsável(is)">
+              <svg class="resp-trigger-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+              </svg>
+              <span class="resp-trigger-label" id="global-resp-label">Todos os Responsáveis</span>
+              <span class="resp-count-badge" id="global-resp-badge" style="display: none;">0</span>
+              <span class="resp-trigger-clear-btn" id="global-resp-clear-btn" style="display: none;" onclick="event.stopPropagation(); window.clearResponsibleFilter()" title="Limpar filtro">✕</span>
+              <svg class="resp-chevron-icon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+            <div class="resp-dropdown-menu" id="global-resp-dropdown">
+              <div class="resp-dropdown-header">
+                <div class="resp-dropdown-quick-actions">
+                  <button type="button" class="btn-resp-quick" onclick="window.selectAllResponsibles()">Selecionar Todos</button>
+                  <button type="button" class="btn-resp-quick secondary" onclick="window.clearResponsibleFilter()">Limpar</button>
+                </div>
+                <div class="resp-search-container">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                  </svg>
+                  <input type="text" class="resp-search-input" placeholder="Buscar responsável..." oninput="window.filterRespList(this.value, 'global')" />
+                </div>
+              </div>
+              <div class="resp-options-container" id="global-resp-options-list">
+                <!-- Dynamic options generated by JS -->
+              </div>
+            </div>
           </div>
         </div>
 
@@ -235,7 +308,7 @@
           <!-- TOP 3 METRICS ROW -->
           <div class="top-summary-grid">
             <!-- Entradas -->
-            <div class="mi-card summary-card-metric">
+            <div class="mi-card summary-card-metric" onmouseenter="window.showSummaryCardTooltip(event, 'income')" onmousemove="window.positionChartTooltip(event)" onmouseleave="window.hideChartTooltip()">
               <div class="metric-label-small">Entradas no Mês</div>
               <div class="metric-value-huge primary" id="dash-metric-income" data-val="0.00">R$ 0,00</div>
               <div class="metric-trend-pill positive">
@@ -244,7 +317,7 @@
             </div>
 
             <!-- Saídas -->
-            <div class="mi-card summary-card-metric">
+            <div class="mi-card summary-card-metric" onmouseenter="window.showSummaryCardTooltip(event, 'expense')" onmousemove="window.positionChartTooltip(event)" onmouseleave="window.hideChartTooltip()">
               <div class="metric-label-small">Despesas Consolidadas</div>
               <div class="metric-value-huge" id="dash-metric-expense" data-val="0.00">R$ 0,00</div>
               <div class="metric-trend-pill negative">
@@ -253,17 +326,29 @@
             </div>
 
             <!-- Saldo do Mês -->
-            <div class="mi-card balance-hero-card">
+            <div class="mi-card balance-hero-card" onmouseenter="window.showSummaryCardTooltip(event, 'balance')" onmousemove="window.positionChartTooltip(event)" onmouseleave="window.hideChartTooltip()">
               <div class="balance-card-tabs">
                 <button class="balance-tab-btn active" data-btype="saldo">Saldo em Conta</button>
                 <button class="balance-tab-btn" data-btype="emergencia">Reserva Liquidez</button>
                 <button class="balance-tab-btn" data-btype="investimento">Investimentos</button>
               </div>
               <div>
-                <div class="balance-hero-value" id="dash-metric-balance" data-val="0.00">R$ 0,00</div>
+                <div style="display: flex; align-items: baseline; gap: 8px;">
+                  <div class="balance-hero-value" id="dash-metric-balance" data-val="0.00">R$ 0,00</div>
+                  <button type="button" class="btn-action-text" style="font-size: 11px; padding: 2px 6px; width: auto; color: var(--color-primary-light); cursor: pointer;" onclick="window.openBalanceModal()" title="Definir saldo em conta manualmente">✏️ Ajustar</button>
+                </div>
                 <div class="balance-hero-sub">Saldo disponível para liquidação imediata</div>
               </div>
             </div>
+          </div>
+
+          <!-- Dashboard Active Filter Indicator -->
+          <div id="dash-active-filter-banner" class="dash-active-filter-banner" style="display: none;">
+            <div class="active-filter-info">
+              <span>👤 Visão filtrada por: <strong id="dash-filter-resp-name">Marcos</strong></span>
+              <span class="active-filter-stats" id="dash-filter-stats">• Total no mês: R$ 0,00</span>
+            </div>
+            <button type="button" class="btn-clear-filter" onclick="window.clearResponsibleFilter()">✕ Ver Todos</button>
           </div>
 
           <!-- 2-COLUMN MAIN DASHBOARD GRID -->
@@ -325,26 +410,10 @@
                 <div class="mi-card">
                   <div class="progress-section-header">
                     <span class="chart-card-title">Metas Estratégicas</span>
+                    <button class="btn-action-text" style="font-size: 11px; width: auto; color: var(--color-primary-light);" onclick="window.openMetaModal()">+ Adicionar</button>
                   </div>
-                  <div class="progress-group-list">
-                    <div class="progress-row-item">
-                      <div class="progress-label-row">
-                        <span>Aporte Residencial</span>
-                        <span class="progress-pct-badge">60%</span>
-                      </div>
-                      <div class="progress-bar-track">
-                        <div class="progress-bar-fill" style="width: 60%;"></div>
-                      </div>
-                    </div>
-                    <div class="progress-row-item">
-                      <div class="progress-label-row">
-                        <span>Fundo de Reserva</span>
-                        <span class="progress-pct-badge">60%</span>
-                      </div>
-                      <div class="progress-bar-track">
-                        <div class="progress-bar-fill" style="width: 60%;"></div>
-                      </div>
-                    </div>
+                  <div class="progress-group-list" id="dash-metas-list">
+                    <!-- Dynamic metas generated by JS with hover tooltips -->
                   </div>
                 </div>
 
@@ -352,26 +421,10 @@
                 <div class="mi-card">
                   <div class="progress-section-header">
                     <span class="chart-card-title">Teto Orçamentário</span>
+                    <button class="btn-action-text" style="font-size: 11px; width: auto; color: var(--color-primary-light);" onclick="window.openBudgetModal()">+ Definir</button>
                   </div>
-                  <div class="progress-group-list">
-                    <div class="progress-row-item">
-                      <div class="progress-label-row">
-                        <span>Alimentação / Mercado</span>
-                        <span class="progress-pct-badge">60%</span>
-                      </div>
-                      <div class="progress-bar-track">
-                        <div class="progress-bar-fill" style="width: 60%;"></div>
-                      </div>
-                    </div>
-                    <div class="progress-row-item">
-                      <div class="progress-label-row">
-                        <span>Logística & Transporte</span>
-                        <span class="progress-pct-badge">60%</span>
-                      </div>
-                      <div class="progress-bar-track">
-                        <div class="progress-bar-fill" style="width: 60%;"></div>
-                      </div>
-                    </div>
+                  <div class="progress-group-list" id="dash-orcamento-list">
+                    <!-- Dynamic budgets generated by JS with hover tooltips -->
                   </div>
                 </div>
               </div>
@@ -429,7 +482,7 @@
               <div class="mi-card">
                 <div class="calendar-card-header">
                   <span class="action-list-title">Calendário Financeiro</span>
-                  <span style="font-size: 10px; color: var(--text-muted); text-transform: uppercase;">Outubro 2026</span>
+                  <span id="dash-calendar-month-label" style="font-size: 10px; color: var(--text-muted); text-transform: uppercase;">Novembro 2026</span>
                 </div>
                 <div class="calendar-grid" id="dash-calendar-grid">
                   <!-- Rendered via JS -->
@@ -452,19 +505,130 @@
               <h2 style="font-size: 15px; font-weight: 600;">Extrato de Lançamentos</h2>
               <p style="font-size: 11px; color: var(--text-muted);">Auditoria completa de entradas, saídas e compromissos</p>
             </div>
+            <div style="display: flex; gap: 8px;">
+              <button class="btn-primary-pill" style="background: var(--bg-card-secondary); color: var(--text-main); border: 1px solid var(--border-medium); font-size: 11px;" onclick="window.openBalanceModal()">
+                💰 Ajustar Saldo em Conta
+              </button>
+            </div>
           </div>
 
           <!-- Filter Pills Row -->
-          <div class="filter-pills-bar">
-            <div class="pills-group" id="tx-filter-pills-group">
-              <button class="filter-pill active" data-filter="todos">Todos</button>
-              <button class="filter-pill" data-filter="pagos">Liquidados</button>
-              <button class="filter-pill" data-filter="agendados">Agendados</button>
-              <button class="filter-pill" data-filter="atrasados">Atrasados</button>
-              <button class="filter-pill" data-filter="faturas">Faturas Cartão</button>
-              <button class="filter-pill" data-filter="mes">Mês Vigente</button>
+          <div class="filter-pills-bar" style="display: flex; flex-direction: column; gap: 8px;">
+            <!-- Row 1: Status & Type Quick Filter Pills + Live Metric Pill -->
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; width: 100%;">
+              <div class="pills-group" id="tx-filter-pills-group">
+                <button class="filter-pill active" data-filter="todos">Todos</button>
+                <button class="filter-pill filter-pill-income" data-filter="entradas" title="Apenas receitas / entradas financeiras">
+                  <span style="color: #38bdf8; font-weight: 700; margin-right: 3px;">+</span> Entradas
+                </button>
+                <button class="filter-pill filter-pill-expense" data-filter="saidas" title="Apenas despesas / saídas financeiras">
+                  <span style="color: #f87171; font-weight: 700; margin-right: 3px;">-</span> Saídas
+                </button>
+                <button class="filter-pill" data-filter="pagos">Liquidados</button>
+                <button class="filter-pill" data-filter="agendados">Agendados</button>
+                <button class="filter-pill" data-filter="atrasados">Atrasados</button>
+                <button class="filter-pill" data-filter="faturas">Faturas Cartão</button>
+                <button class="filter-pill" data-filter="contas_fixas" title="Apenas contas fixas e compromissos recorrentes">📌 Contas Fixas</button>
+                <button class="filter-pill" data-filter="mes">Mês Vigente</button>
+              </div>
+
+              <!-- Live Metrics of Filtered Transactions -->
+              <div id="tx-filtered-metrics-pill" class="filtered-metrics-pill" style="display: none;"></div>
             </div>
-            <input type="text" class="search-box-input" id="tx-search-input" placeholder="Filtrar por descrição..." />
+
+            <!-- Row 2: Advanced Filters (Cartão, Mês, Período, Responsável, Busca) -->
+            <div class="filter-inputs-row" style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap; width: 100%; padding-top: 6px; border-top: 1px solid rgba(255, 255, 255, 0.05);">
+              
+              <!-- Filter by Card -->
+              <div class="filter-control-wrap" title="Filtrar por Cartão de Crédito">
+                <span class="filter-control-icon">💳</span>
+                <select class="filter-select-pill" id="tx-filter-card">
+                  <option value="all">Todos os Cartões</option>
+                  <option value="no_card">🏦 Sem Cartão (Conta / Pix)</option>
+                </select>
+              </div>
+
+              <!-- Filter by Category -->
+              <div class="filter-control-wrap" title="Filtrar por Categoria">
+                <span class="filter-control-icon">🏷️</span>
+                <select class="filter-select-pill" id="tx-filter-category">
+                  <option value="all">Todas as Categorias</option>
+                </select>
+              </div>
+
+              <!-- Filter by Period Range -->
+              <div class="filter-control-wrap" title="Filtrar por Intervalo de Período">
+                <span class="filter-control-icon">🗓️</span>
+                <select class="filter-select-pill" id="tx-filter-period-preset">
+                  <option value="all">Todo o Período</option>
+                  <option value="current_month">Mês Vigente</option>
+                  <option value="last7">Últimos 7 dias</option>
+                  <option value="last30">Últimos 30 dias</option>
+                  <option value="last90">Últimos 90 dias</option>
+                  <option value="year">Ano Atual (2026)</option>
+                  <option value="custom">Personalizado...</option>
+                </select>
+                <div id="tx-filter-custom-dates" style="display: none; align-items: center; gap: 4px; margin-left: 4px;">
+                  <input type="date" class="search-box-input" id="tx-filter-date-start" style="width: 125px; padding: 2px 6px;" title="Data Inicial" />
+                  <span style="font-size: 11px; color: var(--text-muted);">até</span>
+                  <input type="date" class="search-box-input" id="tx-filter-date-end" style="width: 125px; padding: 2px 6px;" title="Data Final" />
+                </div>
+              </div>
+
+              <!-- Multiselect filter by responsible -->
+              <div class="resp-multiselect-wrapper" id="tx-resp-wrapper">
+                <button type="button" class="resp-multiselect-trigger" id="tx-resp-trigger" onclick="window.toggleRespDropdown('tx')" title="Filtrar por Responsável(is)">
+                  <svg class="resp-trigger-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                  </svg>
+                  <span class="resp-trigger-label" id="tx-resp-label">Todos os Responsáveis</span>
+                  <span class="resp-count-badge" id="tx-resp-badge" style="display: none;">0</span>
+                  <span class="resp-trigger-clear-btn" id="tx-resp-clear-btn" style="display: none;" onclick="event.stopPropagation(); window.clearResponsibleFilter()" title="Limpar filtro">✕</span>
+                  <svg class="resp-chevron-icon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </button>
+                <div class="resp-dropdown-menu" id="tx-resp-dropdown">
+                  <div class="resp-dropdown-header">
+                    <div class="resp-dropdown-quick-actions">
+                      <button type="button" class="btn-resp-quick" onclick="window.selectAllResponsibles()">Selecionar Todos</button>
+                      <button type="button" class="btn-resp-quick secondary" onclick="window.clearResponsibleFilter()">Limpar</button>
+                    </div>
+                    <div class="resp-search-container">
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                      </svg>
+                      <input type="text" class="resp-search-input" placeholder="Buscar responsável..." oninput="window.filterRespList(this.value, 'tx')" />
+                    </div>
+                  </div>
+                  <div class="resp-options-container" id="tx-resp-options-list">
+                    <!-- Dynamic options generated by JS -->
+                  </div>
+                </div>
+              </div>
+
+              <!-- Search Box -->
+              <input type="text" class="search-box-input" id="tx-search-input" placeholder="Filtrar por descrição..." style="flex: 1; min-width: 140px;" />
+
+              <!-- Clear All Filters Button -->
+              <button type="button" class="btn-clear-filter" id="btn-clear-tx-filters" onclick="window.clearAllTxFilters()" style="display: none;" title="Limpar todos os filtros ativos">
+                ✕ Limpar
+              </button>
+            </div>
+          </div>
+
+          <!-- Active Filter Banner in Lançamentos -->
+          <div id="tx-active-filter-banner" class="active-filter-banner" style="display: none; margin-bottom: 12px;">
+            <div class="active-filter-info">
+              <span class="active-filter-dot"></span>
+              <span>Filtrando por: <strong id="active-filter-resp-name">Todos</strong></span>
+              <span class="active-filter-stats" id="active-filter-stats"></span>
+            </div>
+            <button type="button" class="btn-clear-filter" onclick="window.clearAllTxFilters()">✕ Limpar Filtros</button>
           </div>
 
           <!-- 2-Column Lançamentos Layout -->
@@ -478,7 +642,7 @@
                     <tr>
                       <th>Data</th>
                       <th>Descrição</th>
-                      <th>Conta</th>
+                      <th>Responsável</th>
                       <th>Valor</th>
                       <th style="text-align: right;">Ações</th>
                     </tr>
@@ -595,11 +759,15 @@
              TAB 4: CARTÕES & FATURAS
              =============================================================== -->
         <div class="tab-content-pane" id="tab-open-finance">
-          <div class="tx-top-actions">
+          <div class="tx-top-actions" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
             <div>
               <h2 style="font-size: 15px; font-weight: 600;">Cartões & Faturas</h2>
               <p style="font-size: 11px; color: var(--text-muted);">Gestão de cartões de crédito, limites disponíveis e projeção de faturas parceladas</p>
             </div>
+            <button class="btn-primary-pill" onclick="window.openNewCardModal()" style="display: inline-flex; align-items: center; gap: 6px; cursor: pointer;">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              <span>+ Adicionar Cartão</span>
+            </button>
           </div>
 
           <!-- Cards Grid & Predictive Projection -->
@@ -857,9 +1025,10 @@
     <div class="modal-container">
       <div class="modal-header-nav">
         <div class="modal-type-tabs">
-          <button class="modal-tab-pill active" data-txtype="EXPENSE">Despesa</button>
-          <button class="modal-tab-pill" data-txtype="INCOME">Receita</button>
-          <button class="modal-tab-pill" data-txtype="TRANSFER">Transferência</button>
+          <button type="button" class="modal-tab-pill active" data-txtype="EXPENSE">Despesa</button>
+          <button type="button" class="modal-tab-pill" data-txtype="INCOME">Receita</button>
+          <button type="button" class="modal-tab-pill" data-txtype="TRANSFER">Transferência</button>
+          <button type="button" class="modal-tab-pill" data-txtype="BALANCE">Ajustar Saldo</button>
         </div>
       </div>
 
@@ -885,6 +1054,8 @@
             <select class="form-input-pill" id="tx-modal-category">
               <option value="Operacional">Operacional</option>
               <option value="Mercado">Mercado</option>
+              <option value="Conta Fixa">Conta Fixa</option>
+              <option value="Moradia/Investimento">Moradia/Investimento</option>
               <option value="Logística">Logística & Transporte</option>
               <option value="Infraestrutura">Infraestrutura</option>
               <option value="Receitas">Faturamento & Receita</option>
@@ -893,26 +1064,50 @@
           </div>
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+          <div>
+            <label style="font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 3px; display: block;">Responsável</label>
+            <select class="form-input-pill" id="tx-modal-responsible">
+              <option value="Marcos">Marcos</option>
+              <option value="Grazy">Grazy</option>
+              <option value="Grazy/Marcos">Grazy/Marcos</option>
+              <option value="Mãe">Mãe</option>
+              <option value="Wagner">Wagner</option>
+              <option value="BambuBoys">BambuBoys</option>
+              <option value="Guilherme">Guilherme</option>
+              <option value="Nininha">Nininha</option>
+              <option value="Sogra">Sogra</option>
+              <option value="Junior">Junior</option>
+              <option value="Nelson">Nelson</option>
+            </select>
+          </div>
           <div>
             <label style="font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 3px; display: block;">Vencimento</label>
             <input type="date" class="form-input-pill" id="tx-modal-due" />
           </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
           <div>
+            <label style="font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 3px; display: block;">Meio de Pagamento</label>
+            <select class="form-input-pill" id="tx-modal-method">
+              <option value="DEBIT">Débito em Conta</option>
+              <option value="PIX">Pix</option>
+              <option value="CREDIT_CARD">Cartão de Crédito</option>
+            </select>
+          </div>
+          <div id="tx-modal-account-wrap">
             <label style="font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 3px; display: block;">Conta de Liquidação</label>
             <select class="form-input-pill" id="tx-modal-account">
               <option value="Conta Principal">Conta Principal</option>
-              <option value="Nubank">Nubank</option>
-              <option value="Inter">Inter</option>
-              <option value="Itaú">Itaú</option>
+              <option value="Investimentos">Investimentos</option>
+              <option value="Dinheiro">Dinheiro Espécie</option>
             </select>
           </div>
-          <div>
-            <label style="font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 3px; display: block;">Meio</label>
-            <select class="form-input-pill" id="tx-modal-method">
-              <option value="DEBIT">Débito</option>
-              <option value="PIX">Pix</option>
-              <option value="CREDIT_CARD">Cartão Crédito</option>
+          <div id="tx-modal-card-wrap" style="display: none;">
+            <label style="font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--color-primary-light); margin-bottom: 3px; display: block;">Qual Cartão de Crédito?</label>
+            <select class="form-input-pill" id="tx-modal-card-select">
+              <option value="">Selecione o cartão...</option>
             </select>
           </div>
         </div>
@@ -920,21 +1115,159 @@
         <div class="form-checkbox-row">
           <label class="form-checkbox-item">
             <input type="checkbox" id="tx-modal-is-paid" checked />
-            <span>Liquidado</span>
+            <span id="tx-modal-is-paid-label">Liquidado</span>
           </label>
-          <label class="form-checkbox-item">
+          <label class="form-checkbox-item" id="tx-modal-installment-toggle-wrap">
             <input type="checkbox" id="tx-modal-is-installment" />
             <span>Parcelado</span>
           </label>
-          <label class="form-checkbox-item">
-            <input type="checkbox" id="tx-modal-is-repeat" />
-            <span>Recorrência</span>
+          <label class="form-checkbox-item" id="tx-modal-update-balance-label">
+            <input type="checkbox" id="tx-modal-update-balance" checked />
+            <span>Atualizar Saldo em Conta</span>
           </label>
         </div>
 
-        <div style="display: flex; gap: 8px; margin-top: 6px;">
+        <!-- Bloco dinâmico de Parcelas (exibido quando 'Parcelado' está marcado) -->
+        <div id="tx-installment-details" style="display: none; background: rgba(37, 99, 235, 0.08); border: 1px solid rgba(37, 99, 235, 0.25); border-radius: 8px; padding: 10px; margin-top: 8px;">
+          <div>
+            <label style="font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--color-primary-light); margin-bottom: 3px; display: block;">Número de Parcelas</label>
+            <input type="number" min="2" max="72" value="2" class="form-input-pill" id="tx-modal-installments-count" placeholder="Ex: 10" />
+          </div>
+          <div style="margin-top: 6px; font-size: 11px; color: var(--color-primary-light); font-weight: 500;" id="tx-installment-calc-preview">
+            💡 Simulação: 2x de R$ 0,00
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 8px; margin-top: 10px;">
           <button type="button" class="filter-pill" style="flex: 1;" onclick="closeModal('modal-novo-lancamento')">Cancelar</button>
           <button type="submit" class="btn-submit-action" style="flex: 2; margin-top: 0;">Salvar Lançamento</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===================================================================
+       MODAL: EDITAR LANÇAMENTO
+       =================================================================== -->
+  <div class="modal-overlay" id="modal-editar-lancamento">
+    <div class="modal-container">
+      <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 20px 8px 20px;">
+        <h3 style="font-size: 14px; font-weight: 600;">Editar Lançamento</h3>
+        <button type="button" class="btn-action-text" onclick="closeModal('modal-editar-lancamento')" style="width: auto; padding: 0; font-size: 15px; color: var(--text-muted);">✕</button>
+      </div>
+
+      <form id="form-editar-lancamento" class="modal-body-form">
+        <input type="hidden" id="edit-tx-id" />
+
+        <div style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 8px;">
+          <div>
+            <label style="font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 3px; display: block;">Valor (R$)</label>
+            <input type="number" step="0.01" class="form-input-pill" id="edit-tx-val" placeholder="0,00" required />
+          </div>
+          <div>
+            <label style="font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 3px; display: block;">Descrição</label>
+            <input type="text" class="form-input-pill" id="edit-tx-desc" placeholder="Ex: Fornecedor, Licença de Software" required />
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+          <div>
+            <label style="font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 3px; display: block;">Data de Competência</label>
+            <input type="date" class="form-input-pill" id="edit-tx-date" />
+          </div>
+          <div>
+            <label style="font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 3px; display: block;">Tipo</label>
+            <select class="form-input-pill" id="edit-tx-type">
+              <option value="EXPENSE">Despesa (-)</option>
+              <option value="INCOME">Receita (+)</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+          <div>
+            <label style="font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 3px; display: block;">Categoria</label>
+            <select class="form-input-pill" id="edit-tx-category">
+              <option value="Operacional">Operacional</option>
+              <option value="Mercado">Mercado</option>
+              <option value="Logística">Logística & Transporte</option>
+              <option value="Infraestrutura">Infraestrutura</option>
+              <option value="Receitas">Faturamento & Receita</option>
+              <option value="Conta Fixa">Conta Fixa</option>
+              <option value="Geral">Geral</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 3px; display: block;">Responsável</label>
+            <select class="form-input-pill" id="edit-tx-responsible">
+              <option value="Marcos">Marcos</option>
+              <option value="Grazy">Grazy</option>
+              <option value="Grazy/Marcos">Grazy/Marcos</option>
+              <option value="Mãe">Mãe</option>
+              <option value="Wagner">Wagner</option>
+              <option value="BambuBoys">BambuBoys</option>
+              <option value="Guilherme">Guilherme</option>
+              <option value="Nininha">Nininha</option>
+              <option value="Sogra">Sogra</option>
+              <option value="Junior">Junior</option>
+              <option value="Nelson">Nelson</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+          <div>
+            <label style="font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 3px; display: block;">Meio de Pagamento</label>
+            <select class="form-input-pill" id="edit-tx-method">
+              <option value="PIX">Pix</option>
+              <option value="DEBIT">Débito</option>
+              <option value="CREDIT_CARD">Cartão Crédito</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 3px; display: block;">Status</label>
+            <select class="form-input-pill" id="edit-tx-is-paid">
+              <option value="true">Liquidado</option>
+              <option value="false">Pendente / Agendado</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="edit-tx-card-wrap" style="display: none; margin-top: 8px;">
+          <label style="font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--color-primary-light); margin-bottom: 3px; display: block;">Cartão de Crédito Vinculado</label>
+          <select class="form-input-pill" id="edit-tx-card-select">
+            <option value="">Selecione o cartão...</option>
+          </select>
+        </div>
+
+        <div style="display: flex; gap: 8px; margin-top: 10px;">
+          <button type="button" class="filter-pill" style="flex: 1;" onclick="closeModal('modal-editar-lancamento')">Cancelar</button>
+          <button type="submit" class="btn-submit-action" style="flex: 2; margin-top: 0;">Salvar Alterações</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===================================================================
+       MODAL: AJUSTAR SALDO EM CONTA (MANUAL)
+       =================================================================== -->
+  <div class="modal-overlay" id="modal-ajustar-saldo">
+    <div class="modal-container" style="max-width: 360px;">
+      <div style="padding: 16px 20px 8px 20px; display: flex; justify-content: space-between; align-items: center;">
+        <h3 style="font-size: 14px; font-weight: 600;">Definir Saldo em Conta</h3>
+        <button type="button" class="btn-action-text" onclick="closeModal('modal-ajustar-saldo')" style="width: auto; padding: 0; font-size: 15px; color: var(--text-muted);">✕</button>
+      </div>
+      <form id="form-ajustar-saldo" class="modal-body-form">
+        <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 10px;">
+          Informe o valor real atualmente disponível na sua conta corrente para sincronizar com o banco.
+        </p>
+        <div>
+          <label style="font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 3px; display: block;">Novo Saldo em Conta (R$)</label>
+          <input type="number" step="0.01" class="form-input-pill" id="manual-balance-val" placeholder="0,00" required />
+        </div>
+        <div style="display: flex; gap: 8px; margin-top: 12px;">
+          <button type="button" class="filter-pill" style="flex: 1;" onclick="closeModal('modal-ajustar-saldo')">Cancelar</button>
+          <button type="submit" class="btn-submit-action" style="flex: 2; margin-top: 0;">Atualizar Saldo</button>
         </div>
       </form>
     </div>
@@ -994,10 +1327,151 @@
     </div>
   </div>
 
+  <!-- ===================================================================
+       MODAL: NOVO CARTÃO
+       =================================================================== -->
+  <div class="modal-overlay" id="modal-novo-cartao">
+    <div class="modal-container" style="max-width: 420px;">
+      <div style="padding: 16px 20px 8px 20px; display: flex; justify-content: space-between; align-items: center;">
+        <h3 style="font-size: 14px; font-weight: 600;">Adicionar Novo Cartão</h3>
+        <button type="button" class="btn-action-text" onclick="closeModal('modal-novo-cartao')" style="width: auto; padding: 0; font-size: 15px; color: var(--text-muted);">✕</button>
+      </div>
+      <form id="form-novo-cartao" class="modal-body-form">
+        <div>
+          <label style="font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 3px; display: block;">Nome do Cartão / Identificação</label>
+          <input type="text" class="form-input-pill" id="new-card-name" placeholder="Ex: NuBank Marcos, Inter Platinum" required />
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+          <div>
+            <label style="font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 3px; display: block;">Bandeira</label>
+            <select class="form-input-pill" id="new-card-brand">
+              <option value="Mastercard">Mastercard</option>
+              <option value="Visa">Visa</option>
+              <option value="Elo">Elo</option>
+              <option value="American Express">American Express</option>
+              <option value="Hipercard">Hipercard</option>
+              <option value="Diversos">Outro / Carnê</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 3px; display: block;">Últimos 4 Dígitos</label>
+            <input type="text" maxlength="4" class="form-input-pill" id="new-card-last4" placeholder="Ex: 8842" required />
+          </div>
+        </div>
+        <div>
+          <label style="font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 3px; display: block;">Limite Total (R$)</label>
+          <input type="number" step="0.01" class="form-input-pill" id="new-card-limit" placeholder="Ex: 8500.00" required />
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+          <div>
+            <label style="font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 3px; display: block;">Dia Fechamento</label>
+            <input type="number" min="1" max="31" class="form-input-pill" id="new-card-closing" placeholder="Ex: 24" required />
+          </div>
+          <div>
+            <label style="font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 3px; display: block;">Dia Vencimento</label>
+            <input type="number" min="1" max="31" class="form-input-pill" id="new-card-due" placeholder="Ex: 3" required />
+          </div>
+        </div>
+        <div>
+          <label style="font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 3px; display: block;">Estilo / Cor do Cartão</label>
+          <select class="form-input-pill" id="new-card-color">
+            <option value="linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)">Azul Elétrico (Padrão)</option>
+            <option value="linear-gradient(135deg, #820ad1 0%, #4c0677 100%)">Roxo Nubank</option>
+            <option value="linear-gradient(135deg, #ff7a00 0%, #b84f00 100%)">Laranja Inter</option>
+            <option value="linear-gradient(135deg, #11c76f 0%, #0b8043 100%)">Verde PicPay</option>
+            <option value="linear-gradient(135deg, #009ee3 0%, #007eb5 100%)">Azul Mercado Pago</option>
+            <option value="linear-gradient(135deg, #00e5ff 0%, #0099cc 100%)">Ciano Neon</option>
+            <option value="linear-gradient(135deg, #1e293b 0%, #0f172a 100%)">Black Titânio</option>
+            <option value="linear-gradient(135deg, #ec4899 0%, #be185d 100%)">Rosa / Grazy</option>
+            <option value="linear-gradient(135deg, #d97706 0%, #b45309 100%)">Ouro Gold</option>
+            <option value="linear-gradient(135deg, #64748b 0%, #334155 100%)">Cinza Neutro</option>
+          </select>
+        </div>
+        <div style="display: flex; gap: 8px; margin-top: 12px;">
+          <button type="button" class="filter-pill" style="flex: 1;" onclick="closeModal('modal-novo-cartao')">Cancelar</button>
+          <button type="submit" class="btn-submit-action" style="flex: 2; margin-top: 0;">Salvar Cartão</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===================================================================
+       MODAL: EDITAR CARTÃO
+       =================================================================== -->
+  <div class="modal-overlay" id="modal-editar-cartao">
+    <div class="modal-container" style="max-width: 420px;">
+      <div style="padding: 16px 20px 8px 20px; display: flex; justify-content: space-between; align-items: center;">
+        <h3 style="font-size: 14px; font-weight: 600;">Editar Cartão</h3>
+        <button type="button" class="btn-action-text" onclick="closeModal('modal-editar-cartao')" style="width: auto; padding: 0; font-size: 15px; color: var(--text-muted);">✕</button>
+      </div>
+      <form id="form-editar-cartao" class="modal-body-form">
+        <input type="hidden" id="edit-card-id" />
+        <div>
+          <label style="font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 3px; display: block;">Nome do Cartão / Identificação</label>
+          <input type="text" class="form-input-pill" id="edit-card-name" required />
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+          <div>
+            <label style="font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 3px; display: block;">Bandeira</label>
+            <select class="form-input-pill" id="edit-card-brand">
+              <option value="Mastercard">Mastercard</option>
+              <option value="Visa">Visa</option>
+              <option value="Elo">Elo</option>
+              <option value="American Express">American Express</option>
+              <option value="Hipercard">Hipercard</option>
+              <option value="Diversos">Outro / Carnê</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 3px; display: block;">Últimos 4 Dígitos</label>
+            <input type="text" maxlength="4" class="form-input-pill" id="edit-card-last4" required />
+          </div>
+        </div>
+        <div>
+          <label style="font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 3px; display: block;">Limite Total (R$)</label>
+          <input type="number" step="0.01" class="form-input-pill" id="edit-card-limit" required />
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+          <div>
+            <label style="font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 3px; display: block;">Dia Fechamento</label>
+            <input type="number" min="1" max="31" class="form-input-pill" id="edit-card-closing" required />
+          </div>
+          <div>
+            <label style="font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 3px; display: block;">Dia Vencimento</label>
+            <input type="number" min="1" max="31" class="form-input-pill" id="edit-card-due" required />
+          </div>
+        </div>
+        <div>
+          <label style="font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 3px; display: block;">Estilo / Cor do Cartão</label>
+          <select class="form-input-pill" id="edit-card-color">
+            <option value="linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)">Azul Elétrico (Padrão)</option>
+            <option value="linear-gradient(135deg, #820ad1 0%, #4c0677 100%)">Roxo Nubank</option>
+            <option value="linear-gradient(135deg, #ff7a00 0%, #b84f00 100%)">Laranja Inter</option>
+            <option value="linear-gradient(135deg, #11c76f 0%, #0b8043 100%)">Verde PicPay</option>
+            <option value="linear-gradient(135deg, #009ee3 0%, #007eb5 100%)">Azul Mercado Pago</option>
+            <option value="linear-gradient(135deg, #00e5ff 0%, #0099cc 100%)">Ciano Neon</option>
+            <option value="linear-gradient(135deg, #1e293b 0%, #0f172a 100%)">Black Titânio</option>
+            <option value="linear-gradient(135deg, #ec4899 0%, #be185d 100%)">Rosa / Grazy</option>
+            <option value="linear-gradient(135deg, #d97706 0%, #b45309 100%)">Ouro Gold</option>
+            <option value="linear-gradient(135deg, #64748b 0%, #334155 100%)">Cinza Neutro</option>
+          </select>
+        </div>
+        <div style="display: flex; gap: 8px; margin-top: 12px;">
+          <button type="button" class="btn-action-text" style="color: #f87171; border: 1px solid rgba(248, 113, 113, 0.3); padding: 8px 12px; border-radius: 8px; width: auto;" onclick="window.deleteCardFromModal()">Excluir</button>
+          <button type="button" class="filter-pill" style="flex: 1;" onclick="closeModal('modal-editar-cartao')">Cancelar</button>
+          <button type="submit" class="btn-submit-action" style="flex: 2; margin-top: 0;">Salvar Alterações</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- FLOATING CHART TOOLTIP -->
+  <div id="chart-floating-tooltip" class="chart-floating-tooltip"></div>
+
   <!-- TOAST NOTIFICATIONS -->
   <div id="toast-container" style="position: fixed; bottom: 20px; left: 20px; display: flex; flex-direction: column; gap: 6px; z-index: 9999;"></div>
 
   <!-- SCRIPT -->
-  <script src="js/dashboard.js"></script>
+  <script src="js/dashboard.js?v=2.9"></script>
 </body>
 </html>

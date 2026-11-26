@@ -569,9 +569,464 @@
       "currentInstallment": 1,
       "startMonth": "2026-11",
       "endMonth": "2027-08"
+    },
+    {
+      "id": "inst-mwk15j9u",
+      "cardId": "card-picpay",
+      "description": "JN teixeira e Cia limoeiro (Marcos)",
+      "category": "Geral",
+      "totalAmount": 9.99,
+      "installmentAmount": 1,
+      "totalInstallments": 10,
+      "currentInstallment": 1,
+      "startMonth": "2026-10",
+      "endMonth": "2027-07",
+      "responsible": "Marcos"
+    },
+    {
+      "id": "inst-mwk1b1w8",
+      "cardId": "card-nubank",
+      "description": "Oscar calçados (Marcos)",
+      "category": "Geral",
+      "totalAmount": 53.61,
+      "installmentAmount": 10.72,
+      "totalInstallments": 5,
+      "currentInstallment": 1,
+      "startMonth": "2026-11",
+      "endMonth": "2027-03",
+      "responsible": "Marcos"
+    },
+    {
+      "id": "inst-mwk1cttq",
+      "cardId": "card-nubank",
+      "description": "Oscar calçados (Marcos)",
+      "category": "Geral",
+      "totalAmount": 227.57,
+      "installmentAmount": 56.89,
+      "totalInstallments": 4,
+      "currentInstallment": 1,
+      "startMonth": "2026-11",
+      "endMonth": "2027-02",
+      "responsible": "Marcos"
+    },
+    {
+      "id": "inst-mwk1fzcq",
+      "cardId": "card-nubank",
+      "description": "Oscar calçados (Marcos)",
+      "category": "Geral",
+      "totalAmount": 184.99,
+      "installmentAmount": 61.66,
+      "totalInstallments": 3,
+      "currentInstallment": 1,
+      "startMonth": "2026-11",
+      "endMonth": "2027-01",
+      "responsible": "Marcos"
+    },
+    {
+      "id": "inst-mwk1h2yf",
+      "cardId": "card-nubank",
+      "description": "Oscar calçados (Marcos)",
+      "category": "Geral",
+      "totalAmount": 259.99,
+      "installmentAmount": 52,
+      "totalInstallments": 5,
+      "currentInstallment": 1,
+      "startMonth": "2026-11",
+      "endMonth": "2027-03",
+      "responsible": "Marcos"
     }
   ],
   "transactions": [
+    {
+      "id": "tx-mwkwq1bh",
+      "description": "Filamento Branco (BambuBoys)",
+      "type": "EXPENSE",
+      "amount": 50,
+      "category": "Geral",
+      "paymentMethod": "PIX",
+      "cardId": null,
+      "isInstallment": false,
+      "installmentId": null,
+      "date": "2026-11-02T12:00:00.000Z",
+      "dueDate": "2026-11-23",
+      "isPaid": true,
+      "responsible": "BambuBoys",
+      "account": "Conta Principal",
+      "source": "WEB"
+    },
+    {
+      "id": "tx-mwk1pxr3",
+      "description": "Atacarejo limoeiro (Marcos)",
+      "type": "EXPENSE",
+      "amount": 17.95,
+      "category": "Geral",
+      "paymentMethod": "CREDIT_CARD",
+      "cardId": null,
+      "isInstallment": false,
+      "installmentId": null,
+      "date": "2026-11-01T12:00:00.000Z",
+      "dueDate": "2026-11-23",
+      "isPaid": true,
+      "responsible": "Marcos",
+      "account": "Nubank",
+      "source": "WEB"
+    },
+    {
+      "id": "tx-mwk1odf0",
+      "description": "Supermercado natianas (Marcos)",
+      "type": "EXPENSE",
+      "amount": 197.3,
+      "category": "Geral",
+      "paymentMethod": "CREDIT_CARD",
+      "cardId": null,
+      "isInstallment": false,
+      "installmentId": null,
+      "date": "2026-11-03T12:00:00.000Z",
+      "dueDate": "2026-11-23",
+      "isPaid": true,
+      "responsible": "Marcos",
+      "account": "Nubank",
+      "source": "WEB"
+    },
+    {
+      "id": "tx-mwk1n908",
+      "description": "Atacarejo (Marcos)",
+      "type": "EXPENSE",
+      "amount": 533.54,
+      "category": "Mercado",
+      "paymentMethod": "CREDIT_CARD",
+      "cardId": null,
+      "isInstallment": false,
+      "installmentId": null,
+      "date": "2026-11-03T12:00:00.000Z",
+      "dueDate": "2026-06-23",
+      "isPaid": true,
+      "responsible": "Marcos",
+      "account": "Nubank",
+      "source": "WEB"
+    },
+    {
+      "id": "tx-mwk1m1z9",
+      "description": "Panela Prime (Marcos)",
+      "type": "EXPENSE",
+      "amount": 192.77,
+      "category": "Geral",
+      "paymentMethod": "CREDIT_CARD",
+      "cardId": null,
+      "isInstallment": false,
+      "installmentId": null,
+      "date": "2026-11-05T12:00:00.000Z",
+      "dueDate": "2026-11-23",
+      "isPaid": true,
+      "responsible": "Marcos",
+      "account": "Nubank",
+      "source": "WEB"
+    },
+    {
+      "id": "tx-mwk1h336",
+      "description": "Oscar calçados (Marcos) (1/5)",
+      "type": "EXPENSE",
+      "amount": 52,
+      "category": "Geral",
+      "paymentMethod": "CREDIT_CARD",
+      "cardId": "card-nubank",
+      "isInstallment": true,
+      "installmentId": "inst-mwk1h2yf",
+      "date": "2026-11-06T12:00:00.000Z",
+      "dueDate": "2026-11-23",
+      "isPaid": true,
+      "responsible": "Marcos",
+      "account": "Conta Principal",
+      "source": "WEB"
+    },
+    {
+      "id": "tx-mwk1fzi3",
+      "description": "Oscar calçados (Marcos) (1/3)",
+      "type": "EXPENSE",
+      "amount": 61.66,
+      "category": "Geral",
+      "paymentMethod": "CREDIT_CARD",
+      "cardId": "card-nubank",
+      "isInstallment": true,
+      "installmentId": "inst-mwk1fzcq",
+      "date": "2026-11-06T12:00:00.000Z",
+      "dueDate": "2026-06-23",
+      "isPaid": true,
+      "responsible": "Marcos",
+      "account": "Conta Principal",
+      "source": "WEB"
+    },
+    {
+      "id": "tx-mwk1ctxe",
+      "description": "Oscar calçados (Marcos) (1/4)",
+      "type": "EXPENSE",
+      "amount": 56.89,
+      "category": "Geral",
+      "paymentMethod": "CREDIT_CARD",
+      "cardId": "card-nubank",
+      "isInstallment": true,
+      "installmentId": "inst-mwk1cttq",
+      "date": "2026-11-06T12:00:00.000Z",
+      "dueDate": "2026-11-23",
+      "isPaid": true,
+      "responsible": "Marcos",
+      "account": "Conta Principal",
+      "source": "WEB"
+    },
+    {
+      "id": "tx-mwk1b21h",
+      "description": "Oscar calçados (Marcos) (1/5)",
+      "type": "EXPENSE",
+      "amount": 55.61,
+      "category": "Geral",
+      "paymentMethod": "CREDIT_CARD",
+      "cardId": "card-nubank",
+      "isInstallment": true,
+      "installmentId": "inst-mwk1b1w8",
+      "date": "2026-11-06T12:00:00.000Z",
+      "dueDate": "2026-11-23",
+      "isPaid": true,
+      "responsible": "1/5",
+      "account": "1/5",
+      "source": "WEB"
+    },
+    {
+      "id": "tx-mwk15jek",
+      "description": "JN teixeira e Cia limoeiro (Marcos) (1/10)",
+      "type": "EXPENSE",
+      "amount": 9.99,
+      "category": "Geral",
+      "paymentMethod": "CREDIT_CARD",
+      "cardId": "card-picpay",
+      "isInstallment": true,
+      "installmentId": "inst-mwk15j9u",
+      "date": "2026-10-01T12:00:00.000Z",
+      "dueDate": "2026-11-20",
+      "isPaid": true,
+      "responsible": "1/10",
+      "account": "1/10",
+      "source": "WEB"
+    },
+    {
+      "id": "tx-mwk0zjtc",
+      "description": "3 parcelas do cartão Junior (Junior)",
+      "type": "EXPENSE",
+      "amount": 600,
+      "category": "Geral",
+      "paymentMethod": "PIX",
+      "cardId": null,
+      "isInstallment": false,
+      "installmentId": null,
+      "date": "2026-11-01T12:00:00.000Z",
+      "dueDate": "2026-11-20",
+      "isPaid": true,
+      "responsible": "Junior",
+      "account": "Conta Principal",
+      "source": "WEB"
+    },
+    {
+      "id": "tx-mvzqw0ko",
+      "description": "Viagem JP Charles bar (Marcos)",
+      "type": "EXPENSE",
+      "amount": 82,
+      "category": "Geral",
+      "paymentMethod": "PIX",
+      "cardId": null,
+      "isInstallment": false,
+      "installmentId": null,
+      "date": "2026-11-02T12:00:00.000Z",
+      "dueDate": "2026-11-02",
+      "isPaid": true,
+      "responsible": "Marcos",
+      "account": "Conta Principal",
+      "source": "WEB"
+    },
+    {
+      "id": "tx-mvzqutbz",
+      "description": "Viagem JP Bar Seu Antonio (Marcos)",
+      "type": "EXPENSE",
+      "amount": 200,
+      "category": "Geral",
+      "paymentMethod": "CREDIT_CARD",
+      "cardId": "card-nubank",
+      "isInstallment": false,
+      "installmentId": null,
+      "date": "2026-11-01T12:00:00.000Z",
+      "dueDate": "2026-11-20",
+      "isPaid": true,
+      "responsible": "Marcos",
+      "account": "NuBank",
+      "source": "WEB"
+    },
+    {
+      "id": "tx-mvzqu33j",
+      "description": "Viagem JP Dia 2 praia (Marcos)",
+      "type": "EXPENSE",
+      "amount": 80,
+      "category": "Operacional",
+      "paymentMethod": "PIX",
+      "cardId": null,
+      "isInstallment": false,
+      "installmentId": null,
+      "date": "2026-11-01T12:00:00.000Z",
+      "dueDate": "2026-11-02",
+      "isPaid": true,
+      "responsible": "Marcos",
+      "account": "Conta Principal",
+      "source": "WEB"
+    },
+    {
+      "id": "tx-mvzqt81q",
+      "description": "Viagem JP Marcado (Marcos)",
+      "type": "EXPENSE",
+      "amount": 100,
+      "category": "Geral",
+      "paymentMethod": "PIX",
+      "cardId": null,
+      "isInstallment": false,
+      "installmentId": null,
+      "date": "2026-11-01T12:00:00.000Z",
+      "dueDate": "2026-11-02",
+      "isPaid": true,
+      "responsible": "Marcos",
+      "account": "Marcos",
+      "source": "WEB"
+    },
+    {
+      "id": "tx-mvzqsjbe",
+      "description": "Viagem JP Bar Seu Antonio (Marcos)",
+      "type": "EXPENSE",
+      "amount": 193.4,
+      "category": "Operacional",
+      "paymentMethod": "CREDIT_CARD",
+      "cardId": "card-nubank",
+      "isInstallment": false,
+      "installmentId": null,
+      "date": "2026-11-01T12:00:00.000Z",
+      "dueDate": "2026-11-20",
+      "isPaid": true,
+      "responsible": "Marcos",
+      "account": "NuBank",
+      "source": "WEB"
+    },
+    {
+      "id": "tx-mvzqrrfg",
+      "description": "Viagem JP Dia 1 na praia (Marcos)",
+      "type": "EXPENSE",
+      "amount": 50,
+      "category": "Operacional",
+      "paymentMethod": "PIX",
+      "cardId": null,
+      "isInstallment": false,
+      "installmentId": null,
+      "date": "2026-11-01T12:00:00.000Z",
+      "dueDate": "2026-11-20",
+      "isPaid": true,
+      "responsible": "Marcos",
+      "account": "Marcos",
+      "source": "WEB"
+    },
+    {
+      "id": "tx-mvzqqsix",
+      "description": "Viagem JP Transporte (Marcos)",
+      "type": "EXPENSE",
+      "amount": 200,
+      "category": "Geral",
+      "paymentMethod": "PIX",
+      "cardId": null,
+      "isInstallment": false,
+      "installmentId": null,
+      "date": "2026-11-01T12:00:00.000Z",
+      "dueDate": "2026-11-20",
+      "isPaid": true,
+      "responsible": "Marcos",
+      "account": "Marcos",
+      "source": "WEB"
+    },
+    {
+      "id": "tx-mvvoa05f",
+      "description": "Nininha - pagamento cartão (Nininha)",
+      "type": "INCOME",
+      "amount": 147,
+      "category": "Operacional",
+      "paymentMethod": "DEBIT",
+      "cardId": null,
+      "isInstallment": false,
+      "date": "2026-10-31T00:38:11.523Z",
+      "responsible": "Nininha",
+      "account": "Nininha",
+      "source": "WEB"
+    },
+    {
+      "id": "tx-mvvo8btm",
+      "description": "Wagner - pagamento cartão (Marcos)",
+      "type": "INCOME",
+      "amount": 340,
+      "category": "Operacional",
+      "paymentMethod": "PIX",
+      "cardId": null,
+      "isInstallment": false,
+      "date": "2026-10-31T00:36:53.338Z",
+      "responsible": "Marcos",
+      "account": "Marcos",
+      "source": "WEB"
+    },
+    {
+      "id": "tx-mvvo3jlo",
+      "description": "Mãe - pagamento cartão (Marcos)",
+      "type": "INCOME",
+      "amount": 1025,
+      "category": "Operacional",
+      "paymentMethod": "PIX",
+      "cardId": null,
+      "isInstallment": false,
+      "date": "2026-10-31T00:33:10.140Z",
+      "responsible": "Marcos",
+      "account": "Marcos",
+      "source": "WEB"
+    },
+    {
+      "id": "tx-mvvo1miz",
+      "description": "3/3 Fogão (Sogra)",
+      "type": "INCOME",
+      "amount": 300,
+      "category": "Operacional",
+      "paymentMethod": "PIX",
+      "cardId": null,
+      "isInstallment": false,
+      "date": "2026-10-31T00:31:40.619Z",
+      "responsible": "Sogra",
+      "account": "Sogra",
+      "source": "WEB"
+    },
+    {
+      "id": "tx-mvvnwg4e",
+      "description": "Salário Grazy (Grazy)",
+      "type": "INCOME",
+      "amount": 1620,
+      "category": "Operacional",
+      "paymentMethod": "PIX",
+      "cardId": null,
+      "isInstallment": false,
+      "date": "2026-10-31T00:27:39.038Z",
+      "responsible": "Grazy",
+      "account": "Grazy",
+      "source": "WEB"
+    },
+    {
+      "id": "tx-mvvnvlyz",
+      "description": "Salário Marques (Marcos)",
+      "type": "INCOME",
+      "amount": 3500,
+      "category": "Operacional",
+      "paymentMethod": "PIX",
+      "cardId": null,
+      "isInstallment": false,
+      "date": "2026-10-31T00:26:59.963Z",
+      "responsible": "Marcos",
+      "account": "Marcos",
+      "source": "WEB"
+    },
     {
       "id": "tx-fixa-nov-12",
       "description": "Academia (Grazy)",
@@ -694,20 +1149,6 @@
       "cardId": null,
       "isInstallment": false,
       "date": "2026-11-04T12:00:00.000Z",
-      "source": "PLANILHA",
-      "account": "Marcos",
-      "isPaid": false
-    },
-    {
-      "id": "tx-fixa-nov-3",
-      "description": "Mercado (Marcos)",
-      "type": "EXPENSE",
-      "amount": 800,
-      "category": "Conta Fixa",
-      "paymentMethod": "PIX",
-      "cardId": null,
-      "isInstallment": false,
-      "date": "2026-11-03T12:00:00.000Z",
       "source": "PLANILHA",
       "account": "Marcos",
       "isPaid": false
@@ -1357,8 +1798,35 @@
     }
   ],
   "chatHistory": [],
-  "budgets": [],
-  "goals": [],
+  "budgets": [
+    {
+      "id": "orc-mwkyeqqh",
+      "category": "Mercado",
+      "monthlyLimit": 800,
+      "spentAmount": 0
+    },
+    {
+      "id": "orc-mwkyf34h",
+      "category": "Lanche",
+      "monthlyLimit": 200,
+      "spentAmount": 0
+    },
+    {
+      "id": "orc-mwkyfzfh",
+      "category": "Saúde",
+      "monthlyLimit": 300,
+      "spentAmount": 0
+    }
+  ],
+  "goals": [
+    {
+      "id": "goal-mwky9xq3",
+      "title": "Reposição casa",
+      "targetAmount": 14000,
+      "currentAmount": 0,
+      "deadlineDate": "2027-11-12"
+    }
+  ],
   "bills": [
     {
       "id": "bill-fixa-v4-1",
@@ -1462,7 +1930,7 @@
       "amount": 785,
       "dueDate": "2026-11-01",
       "type": "PAY",
-      "isPaid": false
+      "isPaid": true
     },
     {
       "id": "bill-fixa-nov-2",
@@ -1470,7 +1938,7 @@
       "amount": 250,
       "dueDate": "2026-11-02",
       "type": "PAY",
-      "isPaid": false
+      "isPaid": true
     },
     {
       "id": "bill-fixa-nov-3",
@@ -1478,7 +1946,7 @@
       "amount": 800,
       "dueDate": "2026-11-03",
       "type": "PAY",
-      "isPaid": false
+      "isPaid": true
     },
     {
       "id": "bill-fixa-nov-4",
@@ -1486,7 +1954,7 @@
       "amount": 150,
       "dueDate": "2026-11-04",
       "type": "PAY",
-      "isPaid": false
+      "isPaid": true
     },
     {
       "id": "bill-fixa-nov-5",
@@ -1494,7 +1962,7 @@
       "amount": 60,
       "dueDate": "2026-11-05",
       "type": "PAY",
-      "isPaid": false
+      "isPaid": true
     },
     {
       "id": "bill-fixa-nov-6",
@@ -1502,7 +1970,7 @@
       "amount": 70,
       "dueDate": "2026-11-06",
       "type": "PAY",
-      "isPaid": false
+      "isPaid": true
     },
     {
       "id": "bill-fixa-nov-7",
@@ -1510,7 +1978,7 @@
       "amount": 87,
       "dueDate": "2026-11-07",
       "type": "PAY",
-      "isPaid": false
+      "isPaid": true
     },
     {
       "id": "bill-fixa-nov-8",
@@ -1518,7 +1986,7 @@
       "amount": 100,
       "dueDate": "2026-11-08",
       "type": "PAY",
-      "isPaid": false
+      "isPaid": true
     },
     {
       "id": "bill-fixa-nov-9",
@@ -1526,7 +1994,7 @@
       "amount": 250,
       "dueDate": "2026-11-09",
       "type": "PAY",
-      "isPaid": false
+      "isPaid": true
     },
     {
       "id": "bill-fixa-nov-10",
@@ -1534,7 +2002,7 @@
       "amount": 60,
       "dueDate": "2026-11-10",
       "type": "PAY",
-      "isPaid": false
+      "isPaid": true
     },
     {
       "id": "bill-fixa-nov-11",
@@ -1542,7 +2010,7 @@
       "amount": 250,
       "dueDate": "2026-11-11",
       "type": "PAY",
-      "isPaid": false
+      "isPaid": true
     },
     {
       "id": "bill-fixa-nov-12",
@@ -1550,7 +2018,7 @@
       "amount": 100,
       "dueDate": "2026-11-12",
       "type": "PAY",
-      "isPaid": false
+      "isPaid": true
     }
   ],
   "loginPassword": "123456",
